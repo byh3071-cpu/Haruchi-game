@@ -1,0 +1,5 @@
+{
+  "buildCommand": null,
+  "outputDirectory": "tama",
+  "functions": { "api/game.js": { "memory": 128 } }
+}

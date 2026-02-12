@@ -1,0 +1,3106 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>Hamster Tamagotchi Transparent</title>
+  <link rel="icon" type="image/png" href="assets/hamster/normal.png">
+
+  <!-- Vercel 링크 공유 시 썸네일 (카톡, SNS 등) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Hamster Tamagotchi - 하루치" />
+  <meta property="og:description" content="귀여운 햄스터 키우기! 하루치를 돌봐주세요 🐹" />
+  <meta property="og:image" content="/assets/Thumbnail_og.png" />
+  <meta property="og:image:width" content="1000" />
+  <meta property="og:image:height" content="822" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="/assets/Thumbnail_og.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* [수정 1] 전체 배경 투명화 */
+      background-color: transparent !important;
+      
+      /* === 프레임 설정 === */
+      --frame-w: 673px;
+      --frame-h: 673px;
+
+      /* === 상단 화면 위치 안정화 === */
+      --screen-top-x: 142px;
+      --screen-top-y: 90px;  /* 위쪽 여백 최소화 */
+      --screen-top-w: 390px;
+      --screen-top-h: 280px; 
+
+      /* === 하단 패널 위치 === */
+      --panel-x: 142px;
+      --panel-y: 408px;
+      --panel-w: 390px;
+      --panel-h: 135px;
+
+      /* [테마] 게임보이 그린 */
+      --color-bg: #9bbc0f;      
+      --color-ui-bg: #8bac0f;   
+      --color-text: #0f380f;    
+      --exp-bar-bg: #306230;    
+      --exp-bar-fill: #0f380f;  
+
+      /* === 버튼 테스트 이미지(throw up / throw up 2) 위치·크기 조정 === */
+      --btn-test-left: 58%;
+      --btn-test-top: 60%;
+      --btn-test-width: 160px;
+      --btn-test-height: 160px;
+      /* === stop drink.png 전용 위치·크기 (기본 58% / 58% / 80px / 80px) === */
+      --btn-test-stopdrink-left: 60%;
+      --btn-test-stopdrink-top: 55%;
+      --btn-test-stopdrink-width: 90px;
+      --btn-test-stopdrink-height: 90px;
+      /* === throw up 2.png 전용 위치·크기 === */
+      --btn-test-throwup2-left: 58%;
+      --btn-test-throwup2-top: 58%;
+      --btn-test-throwup2-width: 100px;
+      --btn-test-throwup2-height: 100px;
+      /* === full_and_sleep.png 전용 위치·크기 (밥 먹고 잠들기) === */
+      --full-and-sleep-left: 85%;
+      --full-and-sleep-top: 65%;
+      --full-and-sleep-width: 115px;
+      --full-and-sleep-height: 115px;
+
+      /* === 로고 위치 (라이브/노션 동일 적용, localStorage 미사용) === */
+      /* main_logo: 게임기 상단(검은 막대) 중앙 | logo2: 프레임 화면 안 오른쪽 상단 */
+      /* 라이브 서버에서 원하는 위치로 조정 후 이 값들을 수정하면 노션에서도 동일하게 표시됨 */
+      --logo-top: 9%;
+      --logo-left: 69%;
+      --logo-max-width: 135px;
+      --logo-max-height: 135px;
+      --main-logo-top: 1.5%;
+      --main-logo-left: 50%;
+      --main-logo-max-width: 130px;
+      --main-logo-max-height: 130px;
+
+      /* === A, B, C 버튼 위치 === */
+      --btn-size: 65px;
+      --btn-bottom: 61px;
+      --btn-b-bottom: 39px;
+      --btn-a-left: 186px;
+      --btn-b-left: 303px;
+      --btn-c-left: 420px;
+
+      /* === 물방울 위치 조정 === */
+      /* 
+       * 현재 물방울 떨어지는 최적 위치 (물 급수통에 어울리는 위치)
+       * 이 값들은 물 급수통 클릭 영역의 중앙 하단을 기준으로 계산됩니다.
+       * 물 급수통 위치가 변경되면 이 값도 조정이 필요합니다.
+       */
+      --water-drop-offset-x: -140px; /* 물방울 X 위치 오프셋 (양수=오른쪽, 음수=왼쪽) - 조정 필요 */
+      --water-drop-offset-y: -100px; /* 물방울 Y 위치 오프셋 (양수=아래, 음수=위) - 조정 필요 */
+
+      /* === 그루밍 애니메이션 위치 조정 === */
+      /* 
+       * 그루밍 애니메이션이 표시될 고정 위치를 설정합니다.
+       * 기본값은 햄스터 이미지와 동일한 위치(68%, 50%)입니다.
+       * 위치를 변경하려면 아래 값들을 조정하세요.
+       */
+      --grooming-top: 68%; /* 그루밍 애니메이션 상단 위치 (% 또는 px) - 조정 가능 */
+      --grooming-left: 50%; /* 그루밍 애니메이션 좌측 위치 (% 또는 px) - 조정 가능 */
+      --grooming-offset-x: 0px; /* 그루밍 X 위치 미세 조정 (양수=오른쪽, 음수=왼쪽) - 조정 가능 */
+      --grooming-offset-y: -30px; /* 그루밍 Y 위치 미세 조정 (양수=아래, 음수=위) - 조정 가능 */
+      
+      /* === 각 프레임(행)별 Y 위치 개별 조정 === */
+      /* 
+       * 스프라이트 시트 구조 (4x4 그리드, 총 16프레임):
+       * 
+       * [맨 위 줄 - 행 0]  프레임 0  |  프레임 1  |  프레임 2  |  프레임 3
+       * [두 번째 줄 - 행 1]  프레임 4  |  프레임 5  |  프레임 6  |  프레임 7
+       * [세 번째 줄 - 행 2]  프레임 8  |  프레임 9  |  프레임 10 |  프레임 11
+       * [네 번째 줄 - 행 3]  프레임 12 |  프레임 13 |  프레임 14 |  프레임 15
+       * 
+       * 각 행마다 위치가 다를 경우 개별적으로 조정 가능합니다.
+       * 애니메이션을 재생하면서 어떤 줄이 위/아래로 움직이는지 확인하고 조정하세요.
+       */
+      --grooming-row-0-y-offset: -16px; /* 맨 위 줄 (행 0, 프레임 0-3) Y 오프셋 (양수=아래, 음수=위) */
+      --grooming-row-1-y-offset: 9px; /* 두 번째 줄 (행 1, 프레임 4-7) Y 오프셋 (양수=아래, 음수=위) */
+      --grooming-row-2-y-offset: -2px; /* 세 번째 줄 (행 2, 프레임 8-11) Y 오프셋 (양수=아래, 음수=위) */
+      --grooming-row-3-y-offset: 8px; /* 네 번째 줄 (행 3, 프레임 12-15) Y 오프셋 (양수=아래, 음수=위) */
+      
+      /* 각 행별 X 오프셋 (왼쪽/오른쪽 조정) */
+      --grooming-row-0-x-offset: 0px; /* 맨 위 줄 (행 0, 프레임 0-3) X 오프셋 (양수=오른쪽, 음수=왼쪽) */
+      --grooming-row-1-x-offset: 0px; /* 두 번째 줄 (행 1, 프레임 4-7) X 오프셋 (양수=오른쪽, 음수=왼쪽) */
+      --grooming-row-2-x-offset: 0px; /* 세 번째 줄 (행 2, 프레임 8-11) X 오프셋 (양수=오른쪽, 음수=왼쪽) */
+      --grooming-row-3-x-offset: 0px; /* 네 번째 줄 (행 3, 프레임 12-15) X 오프셋 (양수=오른쪽, 음수=왼쪽) */
+      
+      /* === 위쪽 이미지 잘라내기 조정 === */
+      /* 각 행의 오프셋을 조정한 후 위쪽에서 다른 햄스터 이미지가 보이면 이 값을 증가시키세요 */
+      --grooming-clip-top: 28px; /* 위쪽에서 잘라낼 픽셀 수 (값이 클수록 더 많이 잘림) - 조정 가능 */
+      
+      /* === 그루밍 애니메이션 속도 조정 === */
+      /* 프레임당 밀리초 (값이 클수록 느림, 작을수록 빠름) */
+      /* 권장값: 100-150ms (자연스러운 속도), 80ms (빠른 속도), 200ms (느린 속도) */
+      --grooming-animation-speed: 42ms; /* 그루밍 애니메이션 기본 속도 - 조정 가능 */
+      
+      /* === 그루밍 애니메이션 자연스러움 조정 === */
+      /* 프레임 홀드: 특정 프레임을 여러 번 반복하여 더 오래 보여주기 (자연스러운 느낌) */
+      /* 값이 클수록 해당 프레임을 더 오래 보여줌 (예: 2 = 2배 오래, 3 = 3배 오래) */
+      --grooming-frame-hold: 3; /* 프레임 홀드 배수 (1 = 기본, 2 = 2배, 3 = 3배) - 조정 가능 */
+      
+      /* === 그루밍 애니메이션 반복 횟수 === */
+      /* 전체 애니메이션을 몇 번 반복할지 설정 (1 = 1번만 재생, 2 = 2번 반복, 3 = 3번 반복) */
+      --grooming-repeat-count: 2; /* 애니메이션 반복 횟수 (1 = 기본, 2 = 2배 시간, 3 = 3배 시간) - 조정 가능 */
+      
+      /* 프레임별 가변 속도: 특정 프레임에만 다른 속도 적용 (0 = 기본 속도 사용, 양수 = 해당 프레임만 이 속도로) */
+      /* 예: --grooming-frame-0-speed: 150ms; (프레임 0만 150ms로 재생) */
+      /* 각 프레임(0-15)별로 개별 속도 설정 가능 (설정하지 않으면 기본 속도 사용) */
+      --grooming-frame-0-speed: 42ms;    /* 시작 프레임을 조금 느리게 */
+      --grooming-frame-8-speed: 42ms;    /* 중간 프레임 속도 */
+      --grooming-frame-15-speed: 42ms;   /* 끝 프레임을 조금 느리게 */
+
+      /* === back.png (화난/삐진 모습) 위치·크기 조정 === */
+      --back-left: 54%;           /* 기본 위치 (% 또는 px) - 조정 가능 */
+      --back-top: 68%;            /* 기본 위치 (% 또는 px) - 조정 가능 */
+      --back-width: 245px;        /* back.png 크기 - 조정 가능 */
+      --back-height: 245px;       /* back.png 크기 - 조정 가능 */
+      --back-offset-x: 0px;       /* X 미세 조정 (양수=오른쪽, 음수=왼쪽) */
+      --back-offset-y: 0px;       /* Y 미세 조정 (양수=아래, 음수=위) */
+
+      /* === 화난 말풍선 위치 조정 === */
+      --angry-bubble-right: 62px; /* 오른쪽에서의 거리 (값이 클수록 왼쪽으로) */
+      --angry-bubble-top: 56%;    /* 세로 위치 (% 또는 px) */
+      --angry-bubble-offset-x: 0px; /* X 미세 조정 (양수=오른쪽, 음수=왼쪽) */
+      --angry-bubble-offset-y: 0px; /* Y 미세 조정 (양수=아래, 음수=위) */
+
+      /* === 게임 스타트 버튼 위치/크기 조절 === */
+      --start-btn-top: 91.3%;
+      --start-btn-left: 50%;
+      --start-btn-width: 555px;
+      --start-btn-height: 175px;
+    }
+
+    * { box-sizing: border-box; }
+    
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+      overflow: hidden;
+      /* [수정 2] body 배경 투명화 */
+      background-color: transparent !important;
+      font-family: 'Press Start 2P', 'Noto Sans KR', sans-serif;
+    }
+
+    /* 반응형 래퍼 (Notion 임베드용) */
+    .device-wrapper {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+      overflow: hidden;
+      /* [수정 3] 래퍼 배경 투명화 */
+      background-color: transparent !important;
+    }
+
+    .scale-wrapper {
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: transparent !important;
+    }
+
+    .device-container {
+      position: relative;
+      width: var(--frame-w);
+      height: var(--frame-h);
+      transform-origin: top left;
+      flex-shrink: 0;
+    }
+
+    /* === 레이어 1: 상단 화면 === */
+    .screen-top {
+      position: absolute;
+      left: var(--screen-top-x);
+      top: var(--screen-top-y);
+      width: var(--screen-top-w);
+      height: var(--screen-top-h);
+      background-color: var(--color-bg);
+      z-index: 10;
+      overflow: hidden; 
+      border-radius: 25px 25px 10px 10px; 
+    }
+
+    .bg-image {
+      width: 100%;
+      height: 100%; 
+      object-fit: cover;
+      object-position: 30% bottom; /* 왼쪽 쳇바퀴가 보이도록 */
+      image-rendering: pixelated;
+      display: block;
+    }
+
+    /* 집 클릭 영역 */
+    .house-click-area {
+      position: absolute;
+      right: 10px;
+      top: 90px;
+      width: 57px;
+      height: 110px;
+      z-index: 15;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    /* 그릇 클릭 영역 */
+    .bowl-click-area {
+      position: absolute;
+      right: 75px;
+      bottom: 90px;
+      width: 60px;
+      height: 49px;
+      z-index: 25; /* 하루치(z-index: 20)보다 높게 설정 */
+      cursor: pointer;
+      background: transparent;
+    }
+
+    /* 물 급수통 클릭 영역 */
+    /* 
+     * 위치 조정 방법:
+     * - right: 오른쪽에서의 거리 (값이 클수록 왼쪽으로 이동)
+     * - bottom: 아래에서의 거리 (값이 클수록 위로 이동)
+     * - width/height: 클릭 영역 크기
+     * 
+     * bg.png의 물 급수통 위치에 맞춰 조정하세요.
+     * 현재: right: 15px (오른쪽 끝), bottom: 90px (아래에서 90px 위)
+     */
+    .water-bottle-click-area {
+      position: absolute;
+      right: 196px; /* 오른쪽에 배치 (그릇과 집 사이) - 물 급수통 위치에 맞춰 조정 */
+      bottom: 146px; /* 아래에서 90px 위 - 물 급수통 높이에 맞춰 조정 */
+      width: 42px; /* 물 급수통 크기에 맞춰 조정 */
+      height: 118px; /* 물 급수통 높이에 맞춰 조정 */
+      z-index: 25; /* 하루치(z-index: 20)보다 높게 설정 */
+      cursor: pointer;
+      background: transparent;
+    }
+
+    /* 물 10회 이상 시 물 급수통 쪽 토하는 모션 (throw up 2) 오버레이 */
+    .throwup2-overlay {
+      position: absolute;
+      right: 170px;
+      bottom: 140px;
+      width: 90px;
+      height: 90px;
+      z-index: 26;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .throwup2-overlay img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+
+    /* 하루치 위치 조정 */
+    .hamster {
+      position: absolute;
+      width: 290px; /* 원래 크기 유지 */
+      height: 290px; /* 원래 크기 유지 */
+      left: 50%; 
+      top: 68%; 
+      transform: translate(-50%, -50%);
+      image-rendering: pixelated;
+      z-index: 20;
+      pointer-events: none; /* 이미지 자체는 클릭 불가 */
+      background-size: 400% 400%; /* 4x4 그리드 (16프레임) */
+      background-repeat: no-repeat;
+      background-position: 0% 0%;
+    }
+    /* A 버튼 throw up.png 전용 위치·크기 (조정 패널에서 변경) */
+    .hamster.btn-test-adjust {
+      left: var(--btn-test-left) !important;
+      top: var(--btn-test-top) !important;
+      width: var(--btn-test-width) !important;
+      height: var(--btn-test-height) !important;
+    }
+    /* C 버튼 throw up 2.png 전용 위치·크기 */
+    .hamster.btn-test-throwup2 {
+      left: var(--btn-test-throwup2-left) !important;
+      top: var(--btn-test-throwup2-top) !important;
+      width: var(--btn-test-throwup2-width) !important;
+      height: var(--btn-test-throwup2-height) !important;
+    }
+    /* B 버튼 stop drink.png 전용 위치·크기 (58%/58%, 80px/80px 기본) */
+    .hamster.btn-test-stopdrink {
+      left: var(--btn-test-stopdrink-left) !important;
+      top: var(--btn-test-stopdrink-top) !important;
+      width: var(--btn-test-stopdrink-width) !important;
+      height: var(--btn-test-stopdrink-height) !important;
+    }
+
+    /* back.png (화난/삐진 모습) 전용 위치·크기 */
+    .hamster.angry {
+      left: calc(var(--back-left) + var(--back-offset-x)) !important;
+      top: calc(var(--back-top) + var(--back-offset-y)) !important;
+      width: var(--back-width) !important;
+      height: var(--back-height) !important;
+      transform: translate(-50%, -50%) !important;
+    }
+
+    /* 그루밍 애니메이션 */
+    .hamster.grooming {
+      /* img 태그의 src 이미지를 완전히 숨김 */
+      opacity: 0 !important; /* normal 이미지 숨김 */
+      visibility: hidden !important; /* 완전히 숨김 */
+      /* 프레임 크기는 원래대로 유지 (290px) */
+      /* 위치 고정 - bounce 애니메이션 제거로 인한 위치 변경 방지 */
+      transform: translate(-50%, -50%) !important;
+    }
+    
+    /* 그루밍 애니메이션용 오버레이 div */
+    .grooming-overlay {
+      position: absolute;
+      top: calc(var(--grooming-top) + var(--grooming-offset-y)); /* CSS 변수로 위치 조정 가능 */
+      left: calc(var(--grooming-left) + var(--grooming-offset-x)); /* CSS 변수로 위치 조정 가능 */
+      transform: translate(-50%, -50%) !important; /* 중앙 정렬, 위치 고정 */
+      width: 120px; /* 그루밍 애니메이션 크기 (노멀 이미지와 동일한 크기) */
+      height: 120px; /* 그루밍 애니메이션 크기 (노멀 이미지와 동일한 크기) */
+      background-image: url('./assets/animations/spr_hamster_shedding.png');
+      /* background-size는 JavaScript에서 동적으로 설정됨 */
+      background-repeat: no-repeat;
+      background-position: 0px 0px; /* JavaScript로 업데이트됨 */
+      image-rendering: pixelated;
+      pointer-events: none;
+      z-index: 21; /* 햄스터 위에 표시 */
+      display: none;
+      overflow: hidden; /* 영역 밖의 이미지 숨김 */
+      /* 위쪽 부분을 잘라내기 위한 clip-path (CSS 변수로 조정 가능) */
+      clip-path: inset(var(--grooming-clip-top) 0 0 0); /* 위쪽에서 잘라내기 (조정 가능) */
+    }
+    
+    .grooming-overlay.active {
+      display: block;
+    }
+
+    /* 하루치 쓰다듬기 클릭 영역 */
+    .hamster-click-area {
+      position: absolute;
+      width: 70px; /* 클릭 영역 크기 (원하는 크기로 조정) */
+      height: 86px; /* 클릭 영역 크기 (원하는 크기로 조정) */
+      left: 50%;
+      top: 67%;
+      transform: translate(-50%, -50%);
+      z-index: 21; /* 햄스터 이미지 위에 */
+      cursor: pointer;
+      background: transparent;
+    }
+
+    /* === 상단 패널 위 살짝 여백 (검은색 유지 - 기기 내부 디자인) === */
+    .panel-gap-top {
+      position: absolute;
+      left: var(--panel-x);
+      top: var(--screen-top-y);
+      width: var(--panel-w);
+      height: 14px;
+      background-color: #000;
+      z-index: 10;
+      border-radius: 25px 25px 0 0;
+    }
+
+    /* === 상단·하단 패널 사이 여백 (검은색 유지 - 기기 내부 디자인) === */
+    .panel-gap {
+      position: absolute;
+      left: var(--panel-x);
+      top: calc(var(--screen-top-y) + var(--screen-top-h));
+      width: var(--panel-w);
+      height: calc(var(--panel-y) - var(--screen-top-y) - var(--screen-top-h));
+      background-color: #000;
+      z-index: 10;
+    }
+
+    /* === 레이어 2: 하단 패널 === */
+    .screen-bottom {
+      position: absolute;
+      left: var(--panel-x);
+      top: var(--panel-y);
+      width: var(--panel-w);
+      height: var(--panel-h);
+      background-color: var(--color-ui-bg);
+      z-index: 10;
+      border-radius: 5px 5px 30px 30px; 
+      padding: 0; 
+      display: flex;
+      gap: 0; 
+      color: var(--color-text);
+      align-items: stretch;
+    }
+
+    /* === 레이어 3: 프레임 === */
+    .layer-frame {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 100; 
+      pointer-events: none; 
+    }
+    .layer-frame img.frame-img { width: 100%; display: block; }
+    /* logo2.png: 프레임 화면 안 오른쪽 상단 (HARUCHI) - :root 기본값 = Notion 임베드용 */
+    .device-logo {
+      position: absolute;
+      top: var(--logo-top);
+      left: var(--logo-left);
+      transform: translateX(-50%);
+      width: var(--logo-width, auto);
+      max-width: var(--logo-max-width);
+      max-height: var(--logo-max-height);
+      object-fit: contain;
+      z-index: 101;
+      image-rendering: pixelated;
+    }
+    /* main_logo: 게임기 상단(검은 막대) 중앙 (YH) */
+    .main-logo {
+      position: absolute;
+      top: var(--main-logo-top);
+      left: var(--main-logo-left);
+      transform: translateX(-50%);
+      width: var(--main-logo-width, auto);
+      max-width: var(--main-logo-max-width);
+      max-height: var(--main-logo-max-height);
+      object-fit: contain;
+      z-index: 102;
+      image-rendering: pixelated;
+    }
+
+    /* 왼쪽 패널 (LV/EXP) */
+    .panel-left {
+      flex: 1;
+      width: 50%; 
+      display: flex;
+      flex-direction: column;
+      justify-content: center; 
+      align-items: center; 
+      padding-top: 0;
+      padding-bottom: 15px;
+      border-right: 2px dashed rgba(15, 56, 15, 0.5); 
+    }
+
+    .stat-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      width: 100px; 
+      margin-bottom: 1px;
+    }
+
+    .stat-row span:first-child {
+      font-size: 14px;
+      font-weight: bold;
+      color: #0f380f; 
+    }
+
+    #expText {
+      font-size: 10px; 
+      color: #306230;
+      font-weight: normal;
+    } 
+
+    .val-level { 
+      font-size: 16px; 
+      color: #ffffff; 
+      text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
+    }
+
+    .exp-track {
+      width: 120px;
+      height: 12px;
+      background: var(--exp-bar-bg);
+      border: 2px solid var(--color-text);
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+    .exp-fill {
+      height: 100%;
+      width: 0%;
+      background-color: var(--exp-bar-fill);
+      transition: width 0.3s;
+    }
+
+    /* 일일 목표 진행률 */
+    .goal-row {
+      margin-top: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 8px;
+      color: var(--color-text);
+      line-height: 1.1;
+    }
+
+    .goal-label {
+      font-weight: bold;
+      font-size: 10px;
+      transform: translate(-3px, -1px);
+    }
+
+    .goal-progress {
+      color: #ffffff;
+      font-weight: bold;
+      font-size: 8px;
+    }
+
+    .goal-percent {
+      color: #ffffff;
+      font-size: 8px;
+      margin-left: 4px;
+      font-weight: bold;
+    }
+
+    /* 레벨별 칭호 */
+    .title-row {
+      margin-top: 4px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hamster-title {
+      font-size: 12px;
+      color: #ffffff;
+      font-weight: bold;
+      text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 10px;
+      background: rgba(15, 56, 15, 0.5);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-radius: 6px;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2);
+      letter-spacing: 0.5px;
+      line-height: 1.4;
+      width: calc(100% - 16px);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* EXP 파티클 효과 */
+    .exp-particle {
+      position: absolute;
+      color: #8bac0f;
+      font-size: 22px;
+      font-weight: bold;
+      pointer-events: none;
+      z-index: 300;
+      text-shadow: 2px 2px 0px rgba(0,0,0,0.8), 0 0 8px rgba(139,172,15,0.6);
+      animation: expFloat 1.5s ease-out forwards;
+    }
+
+    @keyframes expFloat {
+      0% {
+        opacity: 1;
+        transform: translateY(0) translateX(0) scale(0.8);
+      }
+      25% {
+        transform: translateY(-20px) translateX(-3px) scale(1.0);
+      }
+      50% {
+        opacity: 1;
+        transform: translateY(-40px) translateX(3px) scale(1.2);
+      }
+      75% {
+        transform: translateY(-60px) translateX(-2px) scale(1.0);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-80px) translateX(0) scale(0.8);
+      }
+    }
+
+    /* 오른쪽 패널 (로그) */
+    .panel-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding-top: 10px; 
+      padding-left: 20px; 
+      overflow: hidden;
+    }
+
+    .log-title {
+      font-size: 8px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      opacity: 1;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #0f380f;
+    }
+
+    .log-content {
+      width: 100%;
+      flex: 1;
+      font-family: 'Noto Sans KR', sans-serif;
+      overflow-y: auto;
+      font-size: 11px;
+      line-height: 1.5;
+      padding-bottom: 5px; 
+      scrollbar-width: none; 
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start; 
+      gap: 2px; 
+      padding-top: 0; 
+    }
+    .log-content::-webkit-scrollbar { display: none; }
+
+    .log-panel-clickable { cursor: pointer; }
+    
+    .log-modal-panel { max-width: 90%; width: 400px; max-height: 70vh; }
+    .log-modal-content {
+      overflow-y: auto;
+      max-height: calc(70vh - 60px);
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .log-modal-content .log-line { margin-bottom: 4px; }
+    .log-section { margin-bottom: 14px; }
+    .log-section-title {
+      font-size: 10px;
+      font-weight: bold;
+      color: var(--color-text);
+      margin-bottom: 6px;
+      padding-bottom: 4px;
+      border-bottom: 2px solid var(--exp-bar-bg);
+    }
+    .log-cat-tag {
+      display: inline-block;
+      font-size: 8px;
+      padding: 1px 5px;
+      margin-right: 6px;
+      border-radius: 4px;
+      background: var(--exp-bar-bg);
+      color: #fff;
+    }
+    .log-xp { color: var(--exp-bar-fill); font-weight: bold; }
+    .log-item { margin-bottom: 3px; }
+
+
+    .log-item.new { color: #0f380f; font-weight: bold; animation: flash 0.5s; } /* 일반 로그 */
+    .log-item.level-up { color: #ffcc00; font-weight: bold; animation: flash 0.5s; } /* 레벨 업 - 밝은 골드 */
+    .log-item.important { color: #2d3d1f; font-weight: bold; animation: flash 0.5s; } /* 중요 메시지 */
+    @keyframes flash { 0% { opacity: 0; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+    /* 화난 말풍선 (오른쪽, 빠직 표현) - 위치는 CSS 변수로 조정 가능 */
+    .angry-speech-bubble {
+      position: absolute;
+      right: calc(var(--angry-bubble-right) + var(--angry-bubble-offset-x));
+      top: calc(var(--angry-bubble-top) + var(--angry-bubble-offset-y));
+      transform: translateY(-50%);
+      background: #fff;
+      border: 3px solid #0f380f;
+      border-radius: 12px;
+      padding: 8px 14px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #0f380f;
+      z-index: 22;
+      box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+      display: none;
+      animation: angryBubblePop 0.3s ease-out;
+      white-space: nowrap;
+    }
+    .angry-speech-bubble::after {
+      content: '';
+      position: absolute;
+      left: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 8px solid transparent;
+      border-right-color: #fff;
+      border-left: none;
+    }
+    .angry-speech-bubble::before {
+      content: '';
+      position: absolute;
+      left: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 9px solid transparent;
+      border-right-color: #0f380f;
+      border-left: none;
+    }
+    .angry-speech-bubble.show {
+      display: block;
+    }
+    @keyframes angryBubblePop {
+      0% { transform: translateY(-50%) scale(0.5); opacity: 0; }
+      70% { transform: translateY(-50%) scale(1.1); opacity: 1; }
+      100% { transform: translateY(-50%) scale(1); opacity: 1; }
+    }
+
+    /* 물 마시는 말풍선 (챱챱챱 / 할짝할짝) */
+    .drink-speech-bubble {
+      position: absolute;
+      left: 53%;
+      top: 28%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      border: 3px solid #0f380f;
+      border-radius: 12px;
+      padding: 8px 14px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #0f380f;
+      z-index: 22;
+      box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+      display: none;
+      animation: drinkBubblePop 0.3s ease-out;
+      white-space: nowrap;
+    }
+    .drink-speech-bubble::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: -12px;
+      transform: translateX(-50%);
+      border: 8px solid transparent;
+      border-top-color: #fff;
+      border-bottom: none;
+    }
+    .drink-speech-bubble::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: -15px;
+      transform: translateX(-50%);
+      border: 9px solid transparent;
+      border-top-color: #0f380f;
+      border-bottom: none;
+    }
+    .drink-speech-bubble.show {
+      display: block;
+    }
+    @keyframes drinkBubblePop {
+      0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+      70% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+
+    /* 뒤태 말풍선 (씰룩씰룩 / 토실토실) - 오른쪽 배치 */
+    .butt-speech-bubble {
+      position: absolute;
+      right: calc(var(--angry-bubble-right) + var(--angry-bubble-offset-x));
+      top: calc(var(--angry-bubble-top) + var(--angry-bubble-offset-y));
+      transform: translateY(-50%);
+      background: #fff;
+      border: 3px solid #0f380f;
+      border-radius: 12px;
+      padding: 8px 14px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #0f380f;
+      z-index: 22;
+      box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+      display: none;
+      animation: buttBubblePop 0.3s ease-out;
+      white-space: nowrap;
+    }
+    .butt-speech-bubble::after {
+      content: '';
+      position: absolute;
+      left: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 8px solid transparent;
+      border-right-color: #fff;
+      border-left: none;
+    }
+    .butt-speech-bubble::before {
+      content: '';
+      position: absolute;
+      left: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 9px solid transparent;
+      border-right-color: #0f380f;
+      border-left: none;
+    }
+    .butt-speech-bubble.show {
+      display: block;
+    }
+    @keyframes buttBubblePop {
+      0% { transform: translateY(-50%) scale(0.5); opacity: 0; }
+      70% { transform: translateY(-50%) scale(1.1); opacity: 1; }
+      100% { transform: translateY(-50%) scale(1); opacity: 1; }
+    }
+
+    /* back.png 뒤태 모드 - 씰룩씰룩일 때 엉덩이 흔들림 애니메이션 */
+    .hamster.butt {
+      left: calc(var(--back-left) + var(--back-offset-x)) !important;
+      top: calc(var(--back-top) + var(--back-offset-y)) !important;
+      width: var(--back-width) !important;
+      height: var(--back-height) !important;
+      transform-origin: center 75%; /* 하단 쪽 기준점 (엉덩이 쪽) */
+    }
+    .hamster.butt:not(.butt-wiggle) {
+      transform: translate(-50%, -50%) !important;
+    }
+    .hamster.butt.butt-wiggle {
+      animation: buttWiggle 0.42s cubic-bezier(0.22, 1.5, 0.45, 1) infinite;
+    }
+    /* 빵빵 흔들흔들 찰진 빵댕이 - 빠르고 경쾌하게 */
+    @keyframes buttWiggle {
+      0%, 100% { transform: translate(-50%, -50%) rotate(0deg) scale(1, 1); }
+      20% { transform: translate(-50%, -50%) rotate(7deg) scale(1.06, 0.92); }
+      40% { transform: translate(-50%, -50%) rotate(-6deg) scale(0.93, 1.08); }
+      60% { transform: translate(-50%, -50%) rotate(5deg) scale(1.05, 0.94); }
+      80% { transform: translate(-50%, -50%) rotate(-4deg) scale(0.95, 1.05); }
+    }
+
+    /* 버튼 영역 */
+    .btn-area {
+      position: absolute;
+      bottom: var(--btn-bottom);
+      width: var(--btn-size);
+      height: var(--btn-size);
+      z-index: 200;
+      cursor: pointer;
+      border-radius: 50%;
+      background: transparent;
+    }
+    .btn-a { left: var(--btn-a-left); }
+    .btn-b { left: var(--btn-b-left); bottom: var(--btn-b-bottom); }
+    .btn-c { left: var(--btn-c-left); }
+
+    .bounce { animation: bounce 2s infinite ease-in-out; }
+    @keyframes bounce { 
+      0%, 100% { transform: translate(-50%, -50%) translateY(0); } 
+      50% { transform: translate(-50%, -50%) translateY(-6px); } 
+    }
+
+    /* 잠자는 모습 (오른쪽 집 안) */
+    .hamster.sleeping {
+      left: 89% !important; /* 살짝 오른쪽으로 */
+      top: 65% !important; /* 살짝 위로 */
+      width: 120px !important; /* 크기 살짝 줄이기 */
+      height: 120px !important;
+      transform: translate(-50%, -50%);
+      animation: sleepBreath 2s infinite ease-in-out;
+    }
+    /* full_and_sleep 전용 위치·크기 (조정 패널에서 변경) */
+    .hamster.sleeping.full-and-sleep-adjust {
+      left: var(--full-and-sleep-left) !important;
+      top: var(--full-and-sleep-top) !important;
+      width: var(--full-and-sleep-width) !important;
+      height: var(--full-and-sleep-height) !important;
+    }
+
+    @keyframes sleepBreath {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.05); }
+    }
+
+    /* 레벨업 효과 (부드러운 버전) */
+    .levelup-flash {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255, 204, 0, 0.2) 0%, transparent 70%);
+      z-index: 500;
+      pointer-events: none;
+      animation: levelupFlash 0.6s ease-out;
+    }
+
+    @keyframes levelupFlash {
+      0% { opacity: 0; transform: scale(0.8); }
+      50% { opacity: 0.3; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1.1); }
+    }
+
+    .hamster.levelup {
+      animation: hamsterLevelup 0.8s ease-out;
+      filter: drop-shadow(0 0 8px rgba(255, 204, 0, 0.6));
+    }
+
+    @keyframes hamsterLevelup {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      30% { transform: translate(-50%, -50%) scale(1.1) rotate(-3deg); }
+      60% { transform: translate(-50%, -50%) scale(1.15) rotate(3deg); }
+    }
+
+    .star-particle {
+      position: absolute;
+      color: #ffcc00;
+      font-size: 20px;
+      pointer-events: none;
+      z-index: 600;
+      opacity: 0.8;
+      animation: starFloat 1.2s ease-out forwards;
+    }
+
+    @keyframes starFloat {
+      0% {
+        opacity: 0.8;
+        transform: translate(0, 0) scale(0.6) rotate(0deg);
+      }
+      50% {
+        opacity: 0.9;
+        transform: translate(var(--star-x), var(--star-y)) scale(1.2) rotate(180deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(calc(var(--star-x) * 1.3), calc(var(--star-y) * 1.3)) scale(0.6) rotate(360deg);
+      }
+    }
+
+    /* 통계 모달 */
+    .stats-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      /* 모달 뒷배경은 살짝 어둡게 유지 (가독성 위함) */
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .stats-modal.show {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .stats-panel {
+      background-color: var(--color-ui-bg);
+      border: 3px solid var(--color-text);
+      border-radius: 10px;
+      padding: 20px;
+      width: 90%;
+      max-width: 400px;
+      max-height: 80vh;
+      overflow-y: auto;
+      color: var(--color-text);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .stats-panel::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .stats-panel::-webkit-scrollbar-track {
+      background: var(--exp-bar-bg);
+      border-radius: 4px;
+    }
+
+    .stats-panel::-webkit-scrollbar-thumb {
+      background: var(--color-text);
+      border-radius: 4px;
+    }
+
+    .stats-title {
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .stats-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px dashed rgba(15, 56, 15, 0.3);
+      font-size: 12px;
+    }
+
+    .stats-item:last-child {
+      border-bottom: none;
+    }
+
+    .stats-section {
+      margin-bottom: 20px;
+    }
+
+    .stats-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .stats-section-title {
+      font-size: 13px;
+      font-weight: bold;
+      color: #8bac0f;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid rgba(15, 56, 15, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    .stats-label {
+      color: var(--color-text);
+      font-weight: bold;
+    }
+
+    .stats-value {
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    .stats-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      background: var(--color-text);
+      color: var(--color-ui-bg);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    .stats-close:hover {
+      background: #ffffff;
+    }
+
+    /* 물 마시는 모습 - 물 급수통 위치로 이동 */
+    /* 
+     * 물 급수통 클릭 영역 위치와 동일하게 맞춰주세요.
+     * .water-bottle-click-area의 right, bottom 값과 동일하게 설정하는 것을 권장합니다.
+     * 이미지 크기는 transform: scale()로 조절됩니다.
+     */
+    .hamster.drinking {
+      right: 61px !important; /* 물 급수통 위치 (소수점 px로 미세 조정 가능, 값↑=왼쪽) */
+      bottom: 3px !important; /* 물 급수통 클릭 영역의 bottom 값에서 하루치 높이만큼 조정 */
+      left: auto !important;
+      top: auto !important;
+      transform-origin: center center; /* 확대/축소 기준점 */
+    }
+    
+    /* drink.png 전용 크기 조절 (scale 값으로 조정) */
+    /* scale 값: 1.0 = 100%, 0.7 = 70%, 1.2 = 120% 등 */
+    .hamster.drinking.drink-normal {
+      transform: scale(0.909) !important; /* 70% 크기로 축소 (원하는 크기로 조정) */
+    }
+    
+    /* drinkwater.png 전용 크기 및 위치 조절 */
+    .hamster.drinking.drink-water {
+      transform: scale(0.58) !important; /* 65% 크기로 축소 (원하는 크기로 조정) */
+      /* drinkwater 전용 위치 조정 */
+      right: 36px !important; /* 오른쪽에서의 거리 (값이 클수록 왼쪽으로) */
+      bottom: -10px !important; /* 아래로 내리려면 음수 값 사용 (예: -10px, -20px, -30px) */
+      /* 위로 올리려면 양수 값 사용 (예: 0px, 10px, 20px) */
+    }
+
+    /* 물방울 애니메이션 */
+    .water-drop {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      /* 더 사실적인 물방울 효과 */
+      background: radial-gradient(
+        circle at 30% 30%,
+        rgba(255, 255, 255, 0.8) 0%,
+        rgba(173, 216, 230, 0.9) 20%,
+        rgba(135, 206, 250, 0.8) 50%,
+        rgba(100, 180, 220, 0.7) 100%
+      );
+      border-radius: 50%;
+      /* 하이라이트 효과 (빛 반사) */
+      box-shadow: 
+        inset -2px -2px 4px rgba(255, 255, 255, 0.5),
+        inset 2px 2px 4px rgba(100, 150, 200, 0.3),
+        0 2px 4px rgba(0, 0, 0, 0.2);
+      pointer-events: none;
+      z-index: 30;
+      animation: waterDropFall 1s ease-out forwards;
+    }
+
+    @keyframes waterDropFall {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0px);
+      }
+      30% {
+        opacity: 0.95;
+        transform: translateY(20px) scale(1.1);
+        filter: blur(0.5px);
+      }
+      60% {
+        opacity: 0.85;
+        transform: translateY(40px) scale(0.9);
+        filter: blur(1px);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(70px) scale(0.6);
+        filter: blur(2px);
+      }
+    }
+
+    /* === 게임 시작 화면 (썸네일 기반) === */
+    .start-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: transparent;
+      transition: opacity 0.6s ease-out;
+    }
+    .start-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .start-screen-bg {
+      position: absolute;
+      inset: 0;
+      background: url('./assets/Thumbnail.png') center center no-repeat;
+      background-size: contain;
+    }
+    .start-screen-content {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+    }
+    /* 게임 스타트 버튼 (위치/크기 CSS 변수로 조절, 투명 영역) */
+    .game-start-btn {
+      position: absolute;
+      top: var(--start-btn-top);
+      left: var(--start-btn-left);
+      transform: translate(-50%, -50%);
+      width: var(--start-btn-width);
+      height: var(--start-btn-height);
+      padding: 0;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 14px;
+      color: transparent;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      cursor: pointer;
+      text-shadow: none;
+      box-shadow: none;
+      transition: none;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .game-start-btn:hover {
+      transform: translate(-50%, -50%);
+    }
+    /* 썸네일 화면 제작 표시 (썸네일 이미지 안 오른쪽 하단) */
+    .credit-start {
+      position: absolute;
+      bottom: 0.5%;
+      right: 24.5%;
+      z-index: 4;
+      font-family: 'Press Start 2P', 'Noto Sans KR', sans-serif;
+      font-size: 10px;
+      color: rgba(155, 188, 15, 0.9);
+      text-shadow: 1px 1px 0 #0f380f;
+      pointer-events: none;
+    }
+    /* 게임 화면 제작 표시 */
+    .credit-game {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      z-index: 105;
+      font-family: 'Press Start 2P', 'Noto Sans KR', sans-serif;
+      font-size: 8px;
+      color: rgba(155, 188, 15, 0.85);
+      text-shadow: 1px 1px 0 #0f380f;
+      pointer-events: none;
+    }
+    
+  </style>
+</head>
+<body>
+
+  <!-- 오프닝 곡 오디오 (시작 화면에서 재생) -->
+  <audio id="openingBgm" loop preload="auto" playsinline>
+    <source src="./assets/audio/opening.MP3" type="audio/mpeg">
+    <source src="./assets/audio/opening.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- 게임 시작 화면 (썸네일 배경) -->
+  <div class="start-screen" id="startScreen">
+    <div class="start-screen-bg"></div>
+    <div class="start-screen-content">
+      <button type="button" class="game-start-btn" id="gameStartBtn" onclick="startGame()">게임 스타트</button>
+    </div>
+    <div class="credit-start">제작 by bbaekyohan</div>
+  </div>
+
+  <div class="device-wrapper" id="deviceWrapper" style="display: none;">
+  <div class="scale-wrapper" id="scaleWrapper">
+  <div class="device-container" id="device">
+    
+    <div class="panel-gap-top"></div>
+    
+    <div class="screen-top">
+      <img src="./assets/scene/bg.png" class="bg-image" alt="배경">
+      <img src="./assets/hamster/normal.png" class="hamster bounce" id="hamster" alt="하루치">
+      <div class="grooming-overlay" id="groomingOverlay"></div>
+      <div class="hamster-click-area" onclick="handleHamsterClick()" title="클릭: 쓰다듬기"></div>
+      
+      <div class="house-click-area" onclick="handleHouseClick()" title="클릭: 잠자기"></div>
+      
+      <div class="bowl-click-area" onclick="handleBowlClick()" title="클릭: 먹이주기"></div>
+      
+      <div class="water-bottle-click-area" onclick="handleWaterBottleClick()" title="클릭: 물 마시기"></div>
+      
+      <div class="angry-speech-bubble" id="angrySpeechBubble">빠직!</div>
+      <div class="drink-speech-bubble" id="drinkSpeechBubble">챱챱챱...</div>
+      <div class="butt-speech-bubble" id="buttSpeechBubble">토실토실</div>
+    </div>
+
+    <div class="panel-gap"></div>
+
+    <div class="screen-bottom">
+      <div class="panel-left" ondblclick="showStats()" style="cursor: pointer;" title="더블클릭: 통계">
+        <div class="stat-row">
+          <span>LV.</span>
+          <span class="val-level" id="uiLevel">1</span>
+        </div>
+
+        <div class="stat-row">
+          <span>EXP</span>
+          <span id="expText">0%</span>
+        </div>
+
+        <div class="exp-track">
+          <div class="exp-fill" id="uiExp"></div>
+        </div>
+
+        <div class="goal-row">
+          <span class="goal-label">목표</span>
+          <span>
+            <span class="goal-progress" id="goalProgress">0/5</span>
+            <span class="goal-percent" id="goalPercent">0%</span>
+          </span>
+        </div>
+
+        <div class="title-row" id="titleRow">
+          <span class="hamster-title" id="hamsterTitle">새내기 하루치</span>
+        </div>
+      </div>
+      <div class="panel-right log-panel-clickable" onclick="openLogModal()" title="클릭하면 전체 로그 보기">
+        <div class="log-title">SYSTEM LOG</div>
+        <div class="log-content" id="uiLog">
+          <div>> 시스템 가동..</div>
+          <div>> 하루치가 기다려요!</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="layer-frame">
+      <img src="./assets/scene/frame.png" class="frame-img" alt="Frame">
+      <img src="./assets/logo2.png" class="device-logo" alt="Logo">
+      <img src="./assets/main_logo.png" class="main-logo" alt="Main Logo">
+    </div>
+
+    <div class="btn-area btn-a" onclick="handleBtn('A')" title="밥주기"></div>
+    <div class="btn-area btn-b" onclick="handleBtn('B')" title="엉덩이 흔들기"></div>
+    <div class="btn-area btn-c" onclick="handleBtn('C')" title="화난 모습"></div>
+
+    <div class="stats-modal" id="statsModal">
+      <div class="stats-panel">
+        <button class="stats-close" onclick="closeStats()">×</button>
+        <div class="stats-title">📊 STATISTICS</div>
+        <div id="statsContent">
+          </div>
+      </div>
+    </div>
+
+    <div class="stats-modal" id="logModal">
+      <div class="stats-panel log-modal-panel">
+        <button class="stats-close" onclick="closeLogModal()">×</button>
+        <div class="stats-title">📋 SYSTEM LOG</div>
+        <div class="log-modal-content" id="logModalContent"></div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="credit-game">제작 by bbaekyohan</div>
+  </div>
+
+  <script>
+    const hamster = document.getElementById('hamster');
+    const uiLevel = document.getElementById('uiLevel');
+
+    /* 게임 시작: 시작 화면 숨기고 게임기 표시, 오디오 중지 */
+    function startGame() {
+      var bgm = document.getElementById('openingBgm');
+      if (bgm) bgm.pause();
+      var startScreen = document.getElementById('startScreen');
+      var deviceWrapper = document.getElementById('deviceWrapper');
+      startScreen.classList.add('hidden');
+      deviceWrapper.style.display = 'flex';
+      setTimeout(function() {
+        startScreen.style.display = 'none';
+      }, 650);
+    }
+    const uiExp = document.getElementById('uiExp');
+    const expText = document.getElementById('expText');
+    const uiLog = document.getElementById('uiLog');
+
+    /* 로그 히스토리 (팝업용, 최대 200개) - category: 할일/루틴/운동/독서/SNS/목표보너스 | 밥먹기/물마시기/쓰다듬기 | 레벨업 | 기타 */
+    let logHistory = [];
+    const LOG_CATEGORY_TASK = ['할일', '루틴', '운동', '독서', 'SNS', '목표보너스'];
+    const LOG_CATEGORY_CLICK = ['밥먹기', '물마시기', '쓰다듬기'];
+
+    /* 일일 밥/물 횟수 (10회 이상 시 과다 반응), 밥 먹은 뒤 집 클릭 시 full_and_sleep */
+    const DAILY_EAT_DRINK_KEY = 'hamsterDailyEatDrink';
+    const MAX_EAT_BEFORE_THROWUP = 10;
+    const MAX_DRINK_BEFORE_STOP = 10;
+    const JUST_ATE_WINDOW_MS = 15000; /* 밥 먹은 뒤 이 시간 안에 집 클릭 시 full_and_sleep */
+    let justAteAt = 0;
+
+    const EAT_DRINK_COOLDOWN_MS = 60000; /* 1분 쿨다운 */
+    function getDailyEatDrink() {
+      const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' });
+      try {
+        const raw = localStorage.getItem(DAILY_EAT_DRINK_KEY);
+        const parsed = raw ? JSON.parse(raw) : null;
+        if (parsed && parsed.date === today) {
+          return {
+            date: today,
+            eat: parsed.eat || 0,
+            drink: parsed.drink || 0,
+            eatCooldownUntil: parsed.eatCooldownUntil || 0,
+            drinkCooldownUntil: parsed.drinkCooldownUntil || 0
+          };
+        }
+      } catch (_) {}
+      return { date: today, eat: 0, drink: 0, eatCooldownUntil: 0, drinkCooldownUntil: 0 };
+    }
+    function saveDailyEatDrink(obj) {
+      localStorage.setItem(DAILY_EAT_DRINK_KEY, JSON.stringify(obj));
+    }
+
+    /* [수정] 시작 레벨 1, 경험치 0으로 초기화 */
+    let game = { 
+      level: 1, 
+      exp: 0, 
+      maxExp: 100, 
+      isBusy: false,
+      lastActionTime: Date.now(), // 마지막 액션 시간 추적
+      lastSadTime: 0, // 마지막 sad 표시 시간 (중복 방지)
+      lastAngryTime: 0, // 마지막 angry 표시 시간 (중복 방지)
+      lastGroomingTime: 0 // 마지막 그루밍 표시 시간 (중복 방지)
+    };
+
+    /* 통계 데이터 */
+    let stats = {
+      totalActions: 0,
+      totalExp: 0,
+      playDays: new Set(),
+      firstPlayDate: null,
+      lastActionDate: null,
+      consecutiveDays: 0
+    };
+
+    /* 일일 목표 데이터 */
+    let dailyGoal = {
+      date: null,
+      target: 5, // 기본 목표: 5개
+      completed: 0,
+      achieved: false // 오늘 목표 달성 여부
+    };
+
+
+    /* 통계 초기화 - 로컬 경험치(물/밥/쓰다듬기 등)로 레벨·EXP 복원 */
+    function initStats() {
+      const saved = localStorage.getItem('hamsterStats');
+      if(saved) {
+        const parsed = JSON.parse(saved);
+        stats = {
+          totalActions: parsed.totalActions || 0,
+          totalExp: parsed.totalExp || 0,
+          playDays: new Set(parsed.playDays || []),
+          firstPlayDate: parsed.firstPlayDate || null,
+          lastActionDate: parsed.lastActionDate || null,
+          consecutiveDays: parsed.consecutiveDays || 0
+        };
+        /* 저장된 총 경험치로 레벨/EXP 복원 (노션 동기화 전에도 물·밥·쓰다듬기 경험치 유지) */
+        if (stats.totalExp > 0) {
+          game.level = Math.floor(stats.totalExp / game.maxExp) + 1;
+          game.exp = stats.totalExp % game.maxExp;
+        }
+      }
+
+      const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' });
+      if(!stats.firstPlayDate) {
+        stats.firstPlayDate = today;
+      }
+      stats.playDays.add(today);
+      saveStats();
+    }
+
+    /* 일일 목표 초기화 */
+    function initDailyGoal() {
+      const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' });
+      const saved = localStorage.getItem('hamsterDailyGoal');
+      
+      if(saved) {
+        const parsed = JSON.parse(saved);
+        if(parsed.date === today) {
+          // 같은 날이면 복원
+          dailyGoal = {
+            date: parsed.date,
+            target: parsed.target || 5,
+            completed: parsed.completed || 0,
+            achieved: parsed.achieved || false
+          };
+        } else {
+          // 새 날이면 리셋
+          dailyGoal = {
+            date: today,
+            target: parsed.target || 5, // 목표는 유지
+            completed: 0,
+            achieved: false
+          };
+          saveDailyGoal();
+        }
+      } else {
+        dailyGoal = {
+          date: today,
+          target: 5,
+          completed: 0,
+          achieved: false
+        };
+        saveDailyGoal();
+      }
+      
+      updateGoalUI();
+    }
+
+    /* 일일 목표 저장 */
+    function saveDailyGoal() {
+      localStorage.setItem('hamsterDailyGoal', JSON.stringify(dailyGoal));
+    }
+
+    /* 목표 UI 업데이트 */
+    function updateGoalUI() {
+      const goalProgress = document.getElementById('goalProgress');
+      const goalPercent = document.getElementById('goalPercent');
+      
+      if(goalProgress && goalPercent) {
+        const percent = dailyGoal.target > 0 
+          ? Math.min(Math.floor((dailyGoal.completed / dailyGoal.target) * 100), 100)
+          : 0;
+        
+        // 더 간결한 표시: "3/5 60%"
+        goalProgress.textContent = `${dailyGoal.completed}/${dailyGoal.target}`;
+        goalPercent.textContent = `${percent}%`;
+        
+        // 목표 달성 시 색상 변경
+        if(dailyGoal.achieved || dailyGoal.completed >= dailyGoal.target) {
+          goalProgress.style.color = '#ffcc00';
+          goalPercent.style.color = '#ffcc00';
+        } else {
+          goalProgress.style.color = '#ffffff';
+          goalPercent.style.color = '#ffffff';
+        }
+      }
+    }
+
+    /* 통계 저장 */
+    function saveStats() {
+      localStorage.setItem('hamsterStats', JSON.stringify({
+        ...stats,
+        playDays: Array.from(stats.playDays)
+      }));
+    }
+
+    /* 통계 업데이트 (액션 시) - countsTowardGoal: 할일/루틴/독서/책형/운동/SNS만 true, 물·밥·쓰다듬기는 false */
+    function updateStats(expGained, countsTowardGoal = false) {
+      const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' });
+      
+      stats.totalActions++;
+      stats.totalExp += expGained;
+      stats.playDays.add(today);
+      
+      // 연속 플레이 일수 계산
+      if(stats.lastActionDate) {
+        const lastDate = new Date(stats.lastActionDate);
+        const todayDate = new Date(today);
+        const diffDays = Math.floor((todayDate - lastDate) / (1000 * 60 * 60 * 24));
+        
+        if(diffDays === 1) {
+          stats.consecutiveDays++;
+        } else if(diffDays > 1) {
+          stats.consecutiveDays = 1;
+        }
+      } else {
+        stats.consecutiveDays = 1;
+      }
+      
+      stats.lastActionDate = today;
+      saveStats();
+
+      // 일일 목표: 할일/루틴/독서세션/책형/운동/SNS만 카운트 (물·밥·쓰다듬기 제외)
+      if(expGained > 0 && countsTowardGoal) {
+        if(dailyGoal.date !== today) {
+          dailyGoal = {
+            date: today,
+            target: dailyGoal.target,
+            completed: 0,
+            achieved: false
+          };
+        }
+        
+        dailyGoal.completed++;
+        saveDailyGoal();
+        
+        if(!dailyGoal.achieved && dailyGoal.completed >= dailyGoal.target) {
+          dailyGoal.achieved = true;
+          saveDailyGoal();
+          showGoalAchievedEffect();
+          const bonusExp = Math.floor(expGained * 0.5);
+          log(`🎯 목표 달성! 보너스 +${bonusExp} EXP`, { category: '목표보너스', xp: bonusExp });
+          game.exp += bonusExp;
+          if(game.exp >= game.maxExp) {
+            game.level++;
+            game.exp -= game.maxExp;
+            logLevelUp(`⭐ LEVEL UP! LV.${game.level} ⭐`);
+            showLevelUpEffect();
+          }
+          updateUI();
+        }
+        
+        updateGoalUI();
+      }
+    }
+
+    /* Notion XP 실시간 동기화 - 베르셀 링크 임베드에서 노션 경험치 반영 */
+    const GOAL_COUNT_TYPES = ['할일', '루틴', '운동', '독서', '콘텐츠'];
+    const PROCESSED_LOG_IDS_KEY = 'hamsterProcessedNotionLogIds';
+
+    function getProcessedLogIds() {
+      try {
+        const raw = localStorage.getItem(PROCESSED_LOG_IDS_KEY);
+        return raw ? new Set(JSON.parse(raw)) : new Set();
+      } catch (_) { return new Set(); }
+    }
+
+    function saveProcessedLogIds(ids) {
+      const arr = Array.from(ids).slice(-200);
+      localStorage.setItem(PROCESSED_LOG_IDS_KEY, JSON.stringify(arr));
+    }
+
+    async function fetchAndApplyNotionXP() {
+      try {
+        const res = await fetch('/api/game');
+        const data = await res.json();
+        if (!data || typeof data.totalXP !== 'number') return;
+
+        const notionTotal = data.totalXP;
+        const maxExp = data.maxExp || game.maxExp || 100;
+        const currentTotal = (game.level - 1) * game.maxExp + game.exp;
+        const localTotal = stats.totalExp || 0;
+        /* 노션(할일/루틴 등) + 로컬(물/밥/쓰다듬기 등) 경험치 유지: 둘 중 큰 쪽으로 합침 */
+        const total = Math.max(notionTotal, currentTotal, localTotal);
+
+        const newLevel = Math.floor(total / maxExp) + 1;
+        const newExp = total % maxExp;
+        const didLevelUp = newLevel > game.level;
+
+        if (newLevel !== game.level || newExp !== game.exp) {
+          game.level = newLevel;
+          game.exp = newExp;
+          if (total > stats.totalExp) {
+            stats.totalExp = total;
+            saveStats();
+          }
+          updateUI();
+          if (didLevelUp) {
+            logLevelUp(`⭐ LEVEL UP! LV.${game.level} ⭐`);
+            showLevelUpEffect();
+          }
+        }
+
+        /* recentLogs: 새로 처리된 할일/루틴/독서/운동/SNS만 목표 + 시스템 로그에 반영 */
+        const recentLogs = data.recentLogs || [];
+        const processed = getProcessedLogIds();
+        const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' });
+
+        for (const entry of recentLogs) {
+          if (processed.has(entry.id)) continue;
+          processed.add(entry.id);
+
+          const type = entry.type || '';
+          const xp = entry.xp || 0;
+          if (!GOAL_COUNT_TYPES.includes(type)) continue;
+
+          if (dailyGoal.date !== today) {
+            dailyGoal = { date: today, target: dailyGoal.target, completed: 0, achieved: false };
+          }
+          dailyGoal.completed++;
+          saveDailyGoal();
+
+          const typeLabel = type === '콘텐츠' ? 'SNS' : type;
+          log(`[${typeLabel}] 완료 +${xp}XP`, { category: typeLabel, xp: xp });
+          updateGoalUI();
+
+          if (!dailyGoal.achieved && dailyGoal.completed >= dailyGoal.target) {
+            dailyGoal.achieved = true;
+            saveDailyGoal();
+            showGoalAchievedEffect();
+            const bonusExp = Math.floor(xp * 0.5);
+            log(`🎯 목표 달성! 보너스 +${bonusExp} EXP`, { category: '목표보너스', xp: bonusExp });
+            game.exp += bonusExp;
+            stats.totalExp += bonusExp;
+            saveStats();
+            if (game.exp >= game.maxExp) {
+              game.level++;
+              game.exp -= game.maxExp;
+              logLevelUp(`⭐ LEVEL UP! LV.${game.level} ⭐`);
+              showLevelUpEffect();
+            }
+            updateUI();
+          }
+        }
+        saveProcessedLogIds(processed);
+      } catch (e) {
+        /* 네트워크/로컬 환경 등에서 실패 시 무시 */
+      }
+    }
+
+    /* 저장된 throw up/stop drink/throw up 2/full_and_sleep 위치·크기 적용 (localStorage) */
+    function loadSavedImagePositions() {
+      const root = document.documentElement;
+      try {
+        let raw = localStorage.getItem('hamsterBtnTestAdjust');
+        if (raw) {
+          const o = JSON.parse(raw);
+          if (o.left != null) root.style.setProperty('--btn-test-left', String(o.left).includes('%') ? o.left : o.left + '%');
+          if (o.top != null) root.style.setProperty('--btn-test-top', String(o.top).includes('%') ? o.top : o.top + '%');
+          if (o.width != null) root.style.setProperty('--btn-test-width', String(o.width).includes('px') ? o.width : o.width + 'px');
+          if (o.height != null) root.style.setProperty('--btn-test-height', String(o.height).includes('px') ? o.height : o.height + 'px');
+        }
+        raw = localStorage.getItem('hamsterBtnTestStopDrinkAdjust');
+        if (raw) {
+          const o = JSON.parse(raw);
+          if (o.left != null) root.style.setProperty('--btn-test-stopdrink-left', String(o.left).includes('%') ? o.left : o.left + '%');
+          if (o.top != null) root.style.setProperty('--btn-test-stopdrink-top', String(o.top).includes('%') ? o.top : o.top + '%');
+          if (o.width != null) root.style.setProperty('--btn-test-stopdrink-width', String(o.width).includes('px') ? o.width : o.width + 'px');
+          if (o.height != null) root.style.setProperty('--btn-test-stopdrink-height', String(o.height).includes('px') ? o.height : o.height + 'px');
+        }
+        raw = localStorage.getItem('hamsterBtnTestThrowUp2Adjust');
+        if (raw) {
+          const o = JSON.parse(raw);
+          if (o.left != null) root.style.setProperty('--btn-test-throwup2-left', String(o.left).includes('%') ? o.left : o.left + '%');
+          if (o.top != null) root.style.setProperty('--btn-test-throwup2-top', String(o.top).includes('%') ? o.top : o.top + '%');
+          if (o.width != null) root.style.setProperty('--btn-test-throwup2-width', String(o.width).includes('px') ? o.width : o.width + 'px');
+          if (o.height != null) root.style.setProperty('--btn-test-throwup2-height', String(o.height).includes('px') ? o.height : o.height + 'px');
+        }
+        raw = localStorage.getItem('hamsterFullAndSleepAdjust');
+        if (raw) {
+          const o = JSON.parse(raw);
+          if (o.left != null) root.style.setProperty('--full-and-sleep-left', String(o.left).includes('%') ? o.left : o.left + '%');
+          if (o.top != null) root.style.setProperty('--full-and-sleep-top', String(o.top).includes('%') ? o.top : o.top + '%');
+          if (o.width != null) root.style.setProperty('--full-and-sleep-width', String(o.width).includes('px') ? o.width : o.width + 'px');
+          if (o.height != null) root.style.setProperty('--full-and-sleep-height', String(o.height).includes('px') ? o.height : o.height + 'px');
+        }
+        /* 로고 위치: localStorage 사용 안 함. :root 값만 사용 → 라이브/노션 동일하게 표시 */
+      } catch (_) {}
+    }
+
+    function init() {
+      initStats();
+      initDailyGoal();
+      updateUI();
+      fitScale();
+      window.addEventListener('resize', fitScale);
+      loadSavedImagePositions();
+
+      /* 초기 로그 히스토리 (팝업용) */
+      if (logHistory.length === 0) {
+        logHistory = [
+          { msg: '시스템 가동..', kind: 'normal' },
+          { msg: '하루치가 기다려요!', kind: 'normal' }
+        ];
+      }
+
+      /* Notion XP 초기 로드 및 30초마다 실시간 갱신 */
+      fetchAndApplyNotionXP();
+      setInterval(fetchAndApplyNotionXP, 30000);
+
+      // sad 이미지 랜덤 표시 체크 시작
+      startSadCheckTimer();
+
+      // 그루밍 애니메이션 체크 시작
+      startGroomingCheckTimer();
+    }
+
+    function fitScale() {
+      const device = document.getElementById('device');
+      const scaleWrapper = document.getElementById('scaleWrapper');
+      const fw = 673, fh = 673;
+      const pad = 20;
+      const embedScale = 1.0; /* 게임 화면 배율 (1.0 = 기본, 줄이려면 0.9 등) */
+      let scale = Math.min(
+        (window.innerWidth - pad) / fw,
+        (window.innerHeight - pad) / fh
+      );
+      scale = Math.min(scale * embedScale, 1.2); /* 최대 1.2배까지 */
+      scaleWrapper.style.width = (fw * scale) + 'px';
+      scaleWrapper.style.height = (fh * scale) + 'px';
+      device.style.transform = `scale(${scale})`;
+    }
+
+    function handleBtn(btn) {
+      if(game.isBusy) {
+        const lastEmotionTime = Math.max(game.lastSadTime, game.lastAngryTime);
+        if(Math.random() < 0.05 && Date.now() - lastEmotionTime > 10000) {
+          showSadOrAngryRandomly();
+        }
+        return;
+      }
+      if(btn === 'A') {
+        log("하루치 그루밍 중 ...");
+        game.isBusy = false;
+        showGroomingAnimation();
+      } else if(btn === 'B') {
+        showButtAction();
+      } else if(btn === 'C') {
+        showAngryFaceAction();
+      }
+    }
+
+    /* 하루치 클릭 핸들러 (쓰다듬기) */
+    function handleHamsterClick() {
+      if(game.isBusy) {
+        // 버튼이 안 눌러질 때 가끔씩 sad/angry 표시 (5% 확률, 70% sad, 30% angry)
+        const lastEmotionTime = Math.max(game.lastSadTime, game.lastAngryTime);
+        if(Math.random() < 0.05 && Date.now() - lastEmotionTime > 10000) {
+          showSadOrAngryRandomly();
+        }
+        return;
+      }
+      game.isBusy = true;
+      game.lastActionTime = Date.now(); // 액션 시간 업데이트
+      log("쓰담쓰담.. 기분 최고! +5", { category: '쓰다듬기', xp: 5 });
+      changeAction('./assets/hamster/happy.png', 2000);
+      showExpParticle(5);
+      addExp(5);
+      updateStats(5, false);  /* 쓰다듬기: 목표 미포함 */
+    }
+
+    /* 집 클릭 핸들러 - 밥 먹은 뒤 일정 시간 안에 클릭 시 full_and_sleep (밥 먹고 자면 기분 좋다) */
+    function handleHouseClick() {
+      if(game.isBusy) {
+        const lastEmotionTime = Math.max(game.lastSadTime, game.lastAngryTime);
+        if(Math.random() < 0.05 && Date.now() - lastEmotionTime > 10000) {
+          showSadOrAngryRandomly();
+        }
+        return;
+      }
+      game.isBusy = true;
+      game.lastActionTime = Date.now();
+      const useFullAndSleep = justAteAt > 0 && (Date.now() - justAteAt) < JUST_ATE_WINDOW_MS;
+      justAteAt = 0;
+      if (useFullAndSleep) {
+        log("밥 먹고 잠들었어요.. 기분 좋아요 😴");
+        changeSleepAction(5000, 'assets/hamster/overfed/full_and_sleep.png', 'full-and-sleep-adjust');
+      } else {
+        log("집에 들어가서 잠자기... Zzz +0");
+        changeSleepAction(5000);
+      }
+      addExp(0);
+    }
+
+    /* 그릇 클릭 - 10회 시 throw up, 1분 쿨다운 중 시 stop drink, 1분 후 다시 활성화 */
+    function handleBowlClick() {
+      if(game.isBusy) {
+        const lastEmotionTime = Math.max(game.lastSadTime, game.lastAngryTime);
+        if(Math.random() < 0.05 && Date.now() - lastEmotionTime > 10000) {
+          showSadOrAngryRandomly();
+        }
+        return;
+      }
+      const daily = getDailyEatDrink();
+      const now = Date.now();
+      if (daily.eat >= MAX_EAT_BEFORE_THROWUP) {
+        if (daily.eatCooldownUntil && now > daily.eatCooldownUntil) {
+          daily.eat = 0;
+          daily.eatCooldownUntil = 0;
+          saveDailyEatDrink(daily);
+        } else if (daily.eatCooldownUntil && now <= daily.eatCooldownUntil) {
+          game.isBusy = true;
+          log("잠깐만요, 더 이상 못 먹어요! 😣");
+          hamster.classList.add('btn-test-stopdrink');
+          hamster.src = 'assets/hamster/overfed/stop drink.png';
+          hamster.classList.remove('bounce', 'sleeping');
+          hamster.onerror = function() {
+            hamster.src = './assets/hamster/normal.png';
+            hamster.classList.add('bounce');
+            hamster.classList.remove('btn-test-stopdrink');
+            game.isBusy = false;
+            hamster.onerror = null;
+          };
+          setTimeout(() => {
+            hamster.src = './assets/hamster/normal.png';
+            hamster.classList.add('bounce');
+            hamster.classList.remove('btn-test-stopdrink');
+            hamster.onerror = null;
+            game.isBusy = false;
+          }, 2500);
+          return;
+        } else {
+          game.isBusy = true;
+          log("너무 많이 먹었어요! 😵");
+          hamster.classList.add('btn-test-adjust');
+          changeAction('assets/hamster/overfed/throw up.png', 2500);
+          daily.eatCooldownUntil = now + EAT_DRINK_COOLDOWN_MS;
+          saveDailyEatDrink(daily);
+          setTimeout(() => { hamster.classList.remove('btn-test-adjust'); game.isBusy = false; }, 2500);
+          return;
+        }
+      }
+      game.isBusy = true;
+      game.lastActionTime = Date.now();
+      daily.eat++;
+      saveDailyEatDrink(daily);
+      justAteAt = Date.now();
+      
+      const eatMessages = [
+        "냠냠! 해바라기씨 맛있다 +10",
+        "냠냠! 해바라기씨 맛있다 야르~ +10",
+        "하루치 두쫀쿠 먹고 싶다 +10",
+        "야미~ 야미~ 야미야미야미 +10"
+      ];
+      const randomMessage = eatMessages[Math.floor(Math.random() * eatMessages.length)];
+      log(randomMessage, { category: '밥먹기', xp: 10 });
+
+      changeAction('./assets/hamster/eat.png', 2000);
+      showExpParticle(10);
+      addExp(10);
+      updateStats(10, false);
+    }
+
+    /* 물 급수통 클릭 - 10회 시 throw up 2, 1분 쿨다운 중 시 stop drink, 1분 후 다시 활성화 */
+    function handleWaterBottleClick() {
+      if(game.isBusy) {
+        const lastEmotionTime = Math.max(game.lastSadTime, game.lastAngryTime);
+        if(Math.random() < 0.05 && Date.now() - lastEmotionTime > 10000) {
+          showSadOrAngryRandomly();
+        }
+        return;
+      }
+      const daily = getDailyEatDrink();
+      const now = Date.now();
+      if (daily.drink >= MAX_DRINK_BEFORE_STOP) {
+        if (daily.drinkCooldownUntil && now > daily.drinkCooldownUntil) {
+          daily.drink = 0;
+          daily.drinkCooldownUntil = 0;
+          saveDailyEatDrink(daily);
+        } else if (daily.drinkCooldownUntil && now <= daily.drinkCooldownUntil) {
+          game.isBusy = true;
+          log("물 더 이상 마시기 싫어요! 😣");
+          hamster.classList.add('btn-test-stopdrink');
+          hamster.src = 'assets/hamster/overfed/stop drink.png';
+          hamster.classList.remove('bounce', 'sleeping', 'drinking');
+          hamster.onerror = function() {
+            hamster.src = './assets/hamster/normal.png';
+            hamster.classList.add('bounce');
+            hamster.classList.remove('btn-test-stopdrink');
+            game.isBusy = false;
+            hamster.onerror = null;
+          };
+          setTimeout(() => {
+            hamster.src = './assets/hamster/normal.png';
+            hamster.classList.add('bounce');
+            hamster.classList.remove('btn-test-stopdrink');
+            hamster.onerror = null;
+            game.isBusy = false;
+          }, 2500);
+          return;
+        } else {
+          game.isBusy = true;
+          log("물 너무 많이 마셨어요! 😵");
+          hamster.classList.add('btn-test-throwup2');
+          hamster.src = 'assets/hamster/overfed/throw up 2.png';
+          hamster.classList.remove('bounce', 'sleeping', 'drinking');
+          hamster.onerror = function() {
+            hamster.src = './assets/hamster/normal.png';
+            hamster.classList.add('bounce');
+            hamster.classList.remove('btn-test-throwup2');
+            game.isBusy = false;
+            hamster.onerror = null;
+          };
+          daily.drinkCooldownUntil = now + EAT_DRINK_COOLDOWN_MS;
+          saveDailyEatDrink(daily);
+          setTimeout(() => {
+            hamster.src = './assets/hamster/normal.png';
+            hamster.classList.add('bounce');
+            hamster.classList.remove('btn-test-throwup2');
+            hamster.onerror = null;
+            game.isBusy = false;
+          }, 2500);
+          return;
+        }
+      }
+      game.isBusy = true;
+      game.lastActionTime = Date.now();
+      daily.drink++;
+      saveDailyEatDrink(daily);
+      
+      const useDrinkWater = Math.random() < 0.2;
+      const drinkImage = useDrinkWater ? './assets/hamster/drinkwater.png' : './assets/hamster/drink.png';
+      if(useDrinkWater) {
+        log("벌컥벌컥! 물을 마시는 중... +10", { category: '물마시기', xp: 10 });
+      } else {
+        log("물을 마시는 중... +10", { category: '물마시기', xp: 10 });
+      }
+      changeDrinkAction(drinkImage, 2000);
+      showExpParticle(10);
+      addExp(10);
+      updateStats(10, false);
+    }
+
+    /* 물 10회 이상 시 물 급수통 쪽에 throw up 2 오버레이 표시 */
+    function showThrowUp2NearWaterBottle() {
+      const screenTop = document.querySelector('.screen-top');
+      if (!screenTop) return;
+      const overlay = document.createElement('div');
+      overlay.className = 'throwup2-overlay';
+      const img = document.createElement('img');
+      img.src = 'assets/hamster/overfed/throw up 2.png';
+      img.alt = '';
+      overlay.appendChild(img);
+      screenTop.appendChild(overlay);
+      setTimeout(() => overlay.remove(), 2500);
+    }
+
+    /* 이미지 사라짐 방지 */
+    function changeAction(imgSrc, duration) {
+      const originalSrc = './assets/hamster/normal.png';
+      hamster.src = imgSrc;
+      hamster.classList.remove('bounce', 'sleeping');
+      
+      // 이미지 로드 실패 시 원상복구
+      hamster.onerror = function() {
+        console.warn("이미지 로드 실패:", imgSrc);
+        log("⚠ 오류: 이미지가 없어요!");
+        hamster.src = originalSrc;
+        hamster.classList.add('bounce');
+        hamster.classList.remove('sleeping');
+        game.isBusy = false;
+      };
+
+      setTimeout(() => {
+        hamster.src = originalSrc;
+        hamster.classList.add('bounce');
+        hamster.classList.remove('sleeping');
+        game.isBusy = false;
+        hamster.onerror = null; 
+      }, duration);
+    }
+
+    /* 잠자는 모습 (오른쪽 집 안) - sleepImageSrc 생략 시 sleep.png, 밥 먹고 잠들면 full_and_sleep.png. adjustClass 있으면 해당 클래스로 위치·크기 적용 */
+    function changeSleepAction(duration, sleepImageSrc, adjustClass) {
+      const originalSrc = './assets/hamster/normal.png';
+      const sleepImg = sleepImageSrc || './assets/hamster/sleep.png';
+      hamster.src = sleepImg;
+      hamster.classList.remove('bounce');
+      hamster.classList.add('sleeping');
+      if (adjustClass) hamster.classList.add(adjustClass);
+      
+      hamster.onerror = function() {
+        console.warn("이미지 로드 실패:", sleepImg);
+        log("⚠ 오류: 잠자는 이미지가 없어요!");
+        hamster.src = originalSrc;
+        hamster.classList.add('bounce');
+        hamster.classList.remove('sleeping');
+        if (adjustClass) hamster.classList.remove(adjustClass);
+        game.isBusy = false;
+      };
+
+      setTimeout(() => {
+        hamster.src = originalSrc;
+        hamster.classList.add('bounce');
+        hamster.classList.remove('sleeping');
+        if (adjustClass) hamster.classList.remove(adjustClass);
+        game.isBusy = false;
+        hamster.onerror = null;
+      }, duration);
+    }
+
+    /* 물 마시는 모습 (물 급수통 위치로 이동) */
+    function changeDrinkAction(imgSrc, duration) {
+      const originalSrc = './assets/hamster/normal.png';
+      
+      // 이미지에 따라 다른 크기 클래스 설정
+      const isDrinkWater = imgSrc.includes('drinkwater');
+      const sizeClass = isDrinkWater ? 'drink-water' : 'drink-normal';
+      
+      // 물 급수통 위치로 이동
+      hamster.src = imgSrc;
+      hamster.classList.remove('bounce', 'sleeping', 'drink-normal', 'drink-water');
+      hamster.classList.add('drinking', sizeClass);
+      
+      // 물 마시는 말풍선 표시 (챱챱챱... / 할짝할짝 랜덤)
+      const drinkBubble = document.getElementById('drinkSpeechBubble');
+      const drinkBubbleTexts = ['챱챱챱...', '할짝할짝'];
+      if(drinkBubble) {
+        drinkBubble.textContent = drinkBubbleTexts[Math.floor(Math.random() * drinkBubbleTexts.length)];
+        drinkBubble.classList.add('show');
+      }
+      
+      // 물방울 애니메이션 시작
+      startWaterDropAnimation(duration);
+      
+      // 이미지 로드 실패 시 원상복구
+      hamster.onerror = function() {
+        console.warn("이미지 로드 실패:", imgSrc);
+        log("⚠ 오류: 물 마시는 이미지가 없어요!");
+        hamster.src = originalSrc;
+        hamster.classList.remove('drinking', 'drink-normal', 'drink-water');
+        hamster.classList.add('bounce');
+        const drinkBubble = document.getElementById('drinkSpeechBubble');
+        if(drinkBubble) drinkBubble.classList.remove('show');
+        game.isBusy = false;
+      };
+
+      setTimeout(() => {
+        hamster.src = originalSrc;
+        hamster.classList.remove('drinking', 'drink-normal', 'drink-water');
+        hamster.classList.add('bounce');
+        const drinkBubble = document.getElementById('drinkSpeechBubble');
+        if(drinkBubble) drinkBubble.classList.remove('show');
+        game.isBusy = false;
+        hamster.onerror = null;
+      }, duration);
+    }
+
+    /* 물방울 애니메이션 */
+    function startWaterDropAnimation(duration) {
+      const screenTop = document.querySelector('.screen-top');
+      const waterBottleArea = document.querySelector('.water-bottle-click-area');
+      
+      if (!screenTop || !waterBottleArea) return;
+      
+      // 물 급수통 클릭 영역의 실제 위치 계산
+      const bottleRect = waterBottleArea.getBoundingClientRect();
+      const screenRect = screenTop.getBoundingClientRect();
+      
+      // CSS 변수에서 오프셋 값 가져오기
+      // 현재 최적 위치: X=-115px, Y=-90px (물 급수통에 어울리는 위치)
+      const rootStyles = getComputedStyle(document.documentElement);
+      const offsetX = parseFloat(rootStyles.getPropertyValue('--water-drop-offset-x')) || -80;
+      const offsetY = parseFloat(rootStyles.getPropertyValue('--water-drop-offset-y')) || -65;
+      
+      // 물방울이 떨어지는 시작 위치 (물 급수통 아래쪽 중앙)
+      // 물 급수통 클릭 영역의 중앙 X 위치, 하단 Y 위치
+      const baseX = bottleRect.left + bottleRect.width / 2 - screenRect.left;
+      const baseY = bottleRect.bottom - screenRect.top;
+      
+      // CSS 변수로 설정한 오프셋 적용
+      const startX = baseX + offsetX;
+      const startY = baseY + offsetY;
+      
+      // 물 마시는 동안 여러 개의 물방울 생성
+      const dropCount = 12; // 총 8개의 물방울
+      
+      for (let i = 0; i < dropCount; i++) {
+        setTimeout(() => {
+          createWaterDrop(screenTop, startX, startY);
+        }, i * (duration / dropCount));
+      }
+    }
+
+    /* 물방울 생성 */
+    function createWaterDrop(container, x, y) {
+      const drop = document.createElement('div');
+      drop.className = 'water-drop';
+      
+      // 약간의 랜덤 오프셋 추가
+      const offsetX = (Math.random() - 0.5) * 20;
+      drop.style.left = (x + offsetX) + 'px';
+      drop.style.top = y + 'px';
+      
+      container.appendChild(drop);
+      
+      // 애니메이션 종료 후 제거
+      setTimeout(() => {
+        if (drop.parentNode) {
+          drop.parentNode.removeChild(drop);
+        }
+      }, 1000);
+    }
+
+    /* sad 또는 angry 이미지 랜덤 표시 (70% sad, 30% angry) */
+    function showSadOrAngryRandomly(forceShow = false) {
+      // forceShow가 false이고, 이미 busy 상태이거나 최근에 감정을 표시했다면 건너뛰기
+      const lastEmotionTime = Math.max(game.lastSadTime, game.lastAngryTime);
+      if(!forceShow && (game.isBusy || Date.now() - lastEmotionTime < 10000)) {
+        return;
+      }
+      
+      // 70% sad, 30% angry 랜덤 선택
+      const isAngry = Math.random() < 0.3;
+      
+      if(isAngry) {
+        showAngryRandomly(forceShow);
+      } else {
+        showSadRandomly(forceShow);
+      }
+    }
+
+    /* sad 이미지 랜덤 표시 */
+    function showSadRandomly(forceShow = false) {
+      // forceShow가 false이고, 이미 busy 상태이거나 최근에 sad를 표시했다면 건너뛰기
+      if(!forceShow && (game.isBusy || Date.now() - game.lastSadTime < 10000)) {
+        return;
+      }
+      
+      game.isBusy = true;
+      game.lastSadTime = Date.now();
+      
+      // 랜덤 sad 메시지 배열
+      const sadMessages = [
+        "😢 하루치가 슬퍼 보여요...",
+        "😞 하루치가 외로워하는 것 같아요",
+        "😔 하루치가 기다리고 있어요...",
+        "💔 하루치가 관심을 원해요",
+        "😿 하루치가 쓸쓸해 보여요",
+        "😰 하루치가 불안해하는 것 같아요",
+        "😥 하루치가 심심해하는 것 같아요",
+        "😪 하루치가 지쳐 보여요...",
+        "😓 하루치가 힘들어하는 것 같아요",
+        "😭 하루치가 울고 있어요..."
+      ];
+      
+      // 랜덤으로 메시지 선택
+      const randomMessage = sadMessages[Math.floor(Math.random() * sadMessages.length)];
+      log(randomMessage);
+      
+      const originalSrc = './assets/hamster/normal.png';
+      hamster.src = 'assets/hamster/sad.png';
+      hamster.classList.remove('bounce', 'sleeping', 'drinking');
+      
+      // 이미지 로드 실패 시 원상복구
+      hamster.onerror = function() {
+        console.warn("이미지 로드 실패: sad.png");
+        log("⚠ 오류: sad 이미지가 없어요!");
+        hamster.src = originalSrc;
+        hamster.classList.add('bounce');
+        game.isBusy = false;
+        hamster.onerror = null;
+      };
+      
+      // 2-4초 사이 랜덤하게 표시
+      const duration = 2000 + Math.random() * 2000;
+      
+      setTimeout(() => {
+        hamster.src = originalSrc;
+        hamster.classList.add('bounce');
+        game.isBusy = false;
+        hamster.onerror = null;
+      }, duration);
+    }
+
+    /* angry 이미지 랜덤 표시 (back.png - 삐져서 뒤돌아 선 모습 + 오른쪽 말풍선 빠직) */
+    function showAngryRandomly(forceShow = false) {
+      // forceShow가 false이고, 이미 busy 상태이거나 최근에 angry를 표시했다면 건너뛰기
+      if(!forceShow && (game.isBusy || Date.now() - game.lastAngryTime < 10000)) {
+        return;
+      }
+      
+      game.isBusy = true;
+      game.lastAngryTime = Date.now();
+      
+      // 랜덤 angry 메시지 배열
+      const angryMessages = [
+        "😠 하루치가 화가 났어요!",
+        "😡 하루치가 매우 화가 나있어요!",
+        "💢 하루치가 짜증이 났어요!",
+        "🤬 하루치가 화가 나서 떠들어요!",
+        "😤 하루치가 불만이 많아요!",
+        "💥 하루치가 폭발 직전이에요!"
+      ];
+      
+      // 랜덤으로 메시지 선택
+      const randomMessage = angryMessages[Math.floor(Math.random() * angryMessages.length)];
+      log(randomMessage);
+      
+      const originalSrc = './assets/hamster/normal.png';
+      hamster.src = 'assets/hamster/back.png';
+      hamster.classList.remove('bounce', 'sleeping', 'drinking');
+      hamster.classList.add('angry');
+      
+      // 오른쪽 말풍선 빠직 표시
+      const speechBubble = document.getElementById('angrySpeechBubble');
+      const angryBubbleTexts = ['빠직!', '찍찍!', '찍!!', '...'];
+      if(speechBubble) {
+        speechBubble.textContent = angryBubbleTexts[Math.floor(Math.random() * angryBubbleTexts.length)];
+        speechBubble.classList.add('show');
+      }
+      
+      // 이미지 로드 실패 시 원상복구
+      hamster.onerror = function() {
+        console.warn("이미지 로드 실패: back.png");
+        log("⚠ 오류: back 이미지가 없어요!");
+        hamster.src = originalSrc;
+        hamster.classList.add('bounce');
+        hamster.classList.remove('angry');
+        if(speechBubble) speechBubble.classList.remove('show');
+        game.isBusy = false;
+        hamster.onerror = null;
+      };
+      
+      // 3-5초 사이 랜덤하게 표시 (sad보다 조금 더 길게)
+      const duration = 3000 + Math.random() * 2000;
+      
+      setTimeout(() => {
+        hamster.src = originalSrc;
+        hamster.classList.add('bounce');
+        hamster.classList.remove('angry');
+        if(speechBubble) speechBubble.classList.remove('show');
+        game.isBusy = false;
+        hamster.onerror = null;
+      }, duration);
+    }
+
+    /* C 버튼: 화난 모습 (angry.png - 정면 화난 표정) */
+    function showAngryFaceAction() {
+      if(game.isBusy) return;
+      
+      game.isBusy = true;
+      
+      const angryMessages = [
+        "😠 하루치가 화가 났어요!",
+        "😡 하루치가 매우 화가 나있어요!",
+        "💢 하루치가 짜증이 났어요!"
+      ];
+      log(angryMessages[Math.floor(Math.random() * angryMessages.length)]);
+      
+      const originalSrc = './assets/hamster/normal.png';
+      hamster.src = './assets/hamster/angry.png';
+      hamster.classList.remove('bounce', 'sleeping', 'drinking');
+      
+      const speechBubble = document.getElementById('angrySpeechBubble');
+      const angryBubbleTexts = ['빠직!', '빠직!!', '빠악!', '쳇!'];
+      if(speechBubble) {
+        speechBubble.textContent = angryBubbleTexts[Math.floor(Math.random() * angryBubbleTexts.length)];
+        speechBubble.classList.add('show');
+      }
+      
+      hamster.onerror = function() {
+        console.warn("이미지 로드 실패: angry.png");
+        hamster.src = originalSrc;
+        hamster.classList.add('bounce');
+        if(speechBubble) speechBubble.classList.remove('show');
+        game.isBusy = false;
+        hamster.onerror = null;
+      };
+      
+      const duration = 2500 + Math.random() * 1500;
+      setTimeout(() => {
+        hamster.src = originalSrc;
+        hamster.classList.add('bounce');
+        if(speechBubble) speechBubble.classList.remove('show');
+        game.isBusy = false;
+        hamster.onerror = null;
+      }, duration);
+    }
+
+    /* B 버튼: 뒤태 (back.png) - 씰룩씰룩(엉덩이 흔들림) / 토실토실(귀여운 엉덩이) */
+    function showButtAction() {
+      if(game.isBusy) return;
+      
+      game.isBusy = true;
+      
+      const isWiggle = Math.random() < 0.5; // 50% 씰룩씰룩, 50% 토실토실
+      const bubbleText = isWiggle ? '씰룩씰룩' : '토실토실';
+      
+      log(isWiggle ? '🍑 하루치 엉덩이가 씰룩씰룩~' : '🍑 하루치 토실토실한 엉덩이!');
+      
+      const originalSrc = './assets/hamster/normal.png';
+      hamster.src = 'assets/hamster/back.png';
+      hamster.classList.remove('bounce', 'sleeping', 'drinking', 'angry');
+      hamster.classList.add('butt');
+      if(isWiggle) hamster.classList.add('butt-wiggle');
+      
+      const buttBubble = document.getElementById('buttSpeechBubble');
+      if(buttBubble) {
+        buttBubble.textContent = bubbleText;
+        buttBubble.classList.add('show');
+      }
+      
+      hamster.onerror = function() {
+        console.warn("이미지 로드 실패: back.png");
+        hamster.src = originalSrc;
+        hamster.classList.add('bounce');
+        hamster.classList.remove('butt', 'butt-wiggle');
+        if(buttBubble) buttBubble.classList.remove('show');
+        game.isBusy = false;
+        hamster.onerror = null;
+      };
+      
+      const duration = 2500 + Math.random() * 1000;
+      setTimeout(() => {
+        hamster.src = originalSrc;
+        hamster.classList.add('bounce');
+        hamster.classList.remove('butt', 'butt-wiggle');
+        if(buttBubble) buttBubble.classList.remove('show');
+        game.isBusy = false;
+        hamster.onerror = null;
+      }, duration);
+    }
+
+    /* 장시간 대기 시 sad/angry 체크 타이머 */
+    function startSadCheckTimer() {
+      // 30초마다 체크
+      setInterval(() => {
+        if(!game.isBusy) {
+          const idleTime = Date.now() - game.lastActionTime;
+          const lastEmotionTime = Math.max(game.lastSadTime, game.lastAngryTime);
+          
+          // 5분(300초) 이상 방치 시 angry 1% 확률
+          if(idleTime >= 300000) {
+            if(Math.random() < 0.01 && Date.now() - lastEmotionTime > 60000) {
+              showAngryRandomly();
+              return;
+            }
+          }
+          
+          // 2분(120초) 이상 대기 중일 때 sad/angry 랜덤 (70% sad, 30% angry)
+          if(idleTime >= 120000) {
+            // 3% 확률로 감정 표시 (가끔씩만)
+            if(Math.random() < 0.03 && Date.now() - lastEmotionTime > 30000) {
+              showSadOrAngryRandomly();
+            }
+          }
+        }
+      }, 30000); // 30초마다 체크
+    }
+
+    /* 그루밍 애니메이션 변수 */
+    let groomingAnimationInterval = null;
+    let currentGroomingFrame = 0;
+    const GROOMING_FRAME_COUNT = 16; // 총 16프레임
+    const GROOMING_FRAME_WIDTH = 64; // 원본 1프레임 너비 (256px / 4)
+    const GROOMING_FRAME_HEIGHT = 64; // 원본 1프레임 높이 (256px / 4)
+    const DISPLAY_FRAME_WIDTH = 200; // 그루밍 애니메이션 표시 크기 (오버레이 크기에 맞춤)
+    const DISPLAY_FRAME_HEIGHT = 200; // 그루밍 애니메이션 표시 크기 (오버레이 크기에 맞춤)
+    
+    /* 그루밍 애니메이션 속도 (CSS 변수에서 읽어옴, 기본값 120ms) */
+    function getGroomingAnimationSpeed(frameIndex = null) {
+      const rootStyles = getComputedStyle(document.documentElement);
+      
+      // 프레임별 개별 속도가 설정되어 있는지 확인
+      if(frameIndex !== null) {
+        const frameSpeed = rootStyles.getPropertyValue(`--grooming-frame-${frameIndex}-speed`);
+        if(frameSpeed && frameSpeed.trim() !== '') {
+          const speed = parseFloat(frameSpeed.replace('ms', '').trim());
+          if(speed > 0) return speed;
+        }
+      }
+      
+      // 기본 속도 사용
+      const speedValue = rootStyles.getPropertyValue('--grooming-animation-speed') || '120ms';
+      const speed = parseFloat(speedValue.replace('ms', '')) || 120;
+      return speed;
+    }
+    
+    /* 프레임 홀드 배수 가져오기 */
+    function getGroomingFrameHold() {
+      const rootStyles = getComputedStyle(document.documentElement);
+      const holdValue = rootStyles.getPropertyValue('--grooming-frame-hold') || '1';
+      return parseFloat(holdValue) || 1;
+    }
+    
+    /* 애니메이션 반복 횟수 가져오기 */
+    function getGroomingRepeatCount() {
+      const rootStyles = getComputedStyle(document.documentElement);
+      const repeatValue = rootStyles.getPropertyValue('--grooming-repeat-count') || '1';
+      return parseFloat(repeatValue) || 1;
+    }
+
+    /* 그루밍 애니메이션 프레임 업데이트 */
+    function updateGroomingFrame() {
+      const groomingOverlay = document.getElementById('groomingOverlay');
+      if(!groomingOverlay) return;
+      
+      // 현재 프레임 인덱스로 열(col)과 행(row) 계산
+      const col = currentGroomingFrame % 4; // 0~3
+      const row = Math.floor(currentGroomingFrame / 4); // 0~3
+      
+      // 오버레이 크기 가져오기 (동적으로 계산)
+      const frameWidth = window.currentDisplayFrameWidth || DISPLAY_FRAME_WIDTH;
+      const frameHeight = window.currentDisplayFrameHeight || DISPLAY_FRAME_HEIGHT;
+      
+      // 각 행(row)별 X, Y 오프셋을 CSS 변수에서 가져오기
+      const rootStyles = getComputedStyle(document.documentElement);
+      const rowYOffsets = [
+        parseFloat(rootStyles.getPropertyValue('--grooming-row-0-y-offset')) || 0,
+        parseFloat(rootStyles.getPropertyValue('--grooming-row-1-y-offset')) || 0,
+        parseFloat(rootStyles.getPropertyValue('--grooming-row-2-y-offset')) || 0,
+        parseFloat(rootStyles.getPropertyValue('--grooming-row-3-y-offset')) || 0
+      ];
+      const rowXOffsets = [
+        parseFloat(rootStyles.getPropertyValue('--grooming-row-0-x-offset')) || 0,
+        parseFloat(rootStyles.getPropertyValue('--grooming-row-1-x-offset')) || 0,
+        parseFloat(rootStyles.getPropertyValue('--grooming-row-2-x-offset')) || 0,
+        parseFloat(rootStyles.getPropertyValue('--grooming-row-3-x-offset')) || 0
+      ];
+      
+      // background-position을 음수 픽셀 값으로 계산 (X 오프셋 적용)
+      const baseX = -col * frameWidth;
+      const rowXOffset = rowXOffsets[row] || 0;
+      const x = baseX + rowXOffset;
+      
+      // y 위치 계산: 기본 위치 + 행별 오프셋
+      const baseY = -row * frameHeight;
+      const rowYOffset = rowYOffsets[row] || 0;
+      const y = baseY + rowYOffset;
+      
+      // background-position 업데이트 (오버레이 div에 적용)
+      groomingOverlay.style.backgroundPosition = `${x}px ${y}px`;
+      
+      // 다음 프레임으로 이동
+      currentGroomingFrame++;
+    }
+
+    /* 그루밍 프레임 자동 정렬 - 모든 프레임이 같은 위치에 오도록 자동 조정 */
+    function autoAlignGroomingFrames() {
+      const groomingOverlay = document.getElementById('groomingOverlay');
+      if(!groomingOverlay) {
+        log("⚠ 그루밍 오버레이를 찾을 수 없습니다.");
+        return;
+      }
+      
+      // 오버레이 크기 가져오기
+      const overlayWidth = parseInt(window.getComputedStyle(groomingOverlay).width) || 290;
+      const overlayHeight = parseInt(window.getComputedStyle(groomingOverlay).height) || 290;
+      
+      // 기준 프레임(프레임 0)의 위치를 기준으로 설정
+      const referenceFrame = 0;
+      const referenceRow = Math.floor(referenceFrame / 4);
+      const referenceCol = referenceFrame % 4;
+      
+      // 기준 프레임의 기본 Y 위치 (오프셋 없이)
+      const referenceBaseY = -referenceRow * overlayHeight;
+      // 기준 프레임의 기본 X 위치 (오프셋 없이, 컬럼 0 기준)
+      const referenceBaseX = -referenceCol * overlayWidth;
+      
+      // 각 행의 오프셋을 계산하여 모든 프레임이 같은 Y, X 위치에 오도록 조정
+      const rowYOffsets = [];
+      const rowXOffsets = [];
+      
+      for(let row = 0; row < 4; row++) {
+        // 각 행의 기본 Y 위치
+        const baseY = -row * overlayHeight;
+        
+        // 기준 프레임과 같은 Y 위치에 오도록 필요한 오프셋 계산
+        const neededYOffset = referenceBaseY - baseY;
+        rowYOffsets[row] = neededYOffset;
+        
+        // 각 행의 첫 번째 프레임(컬럼 0)의 기본 X 위치
+        const baseX = -0 * overlayWidth; // 항상 0이지만 명시적으로 표시
+        
+        // 기준 프레임과 같은 X 위치에 오도록 필요한 오프셋 계산
+        const neededXOffset = referenceBaseX - baseX;
+        rowXOffsets[row] = neededXOffset;
+      }
+      
+      // CSS 변수에 적용
+      for(let i = 0; i < 4; i++) {
+        document.documentElement.style.setProperty(`--grooming-row-${i}-y-offset`, `${rowYOffsets[i]}px`);
+        document.documentElement.style.setProperty(`--grooming-row-${i}-x-offset`, `${rowXOffsets[i]}px`);
+      }
+      
+      // 애니메이션이 실행 중이면 즉시 업데이트
+      if(groomingAnimationInterval) {
+        updateGroomingFrame();
+      }
+    }
+    
+    /* 그루밍 애니메이션 표시 */
+    function showGroomingAnimation() {
+      // 이미 busy 상태이거나 최근에 그루밍을 표시했다면 건너뛰기
+      if(game.isBusy || Date.now() - game.lastGroomingTime < 20000) {
+        return;
+      }
+      
+      // 기존 애니메이션이 실행 중이면 정리
+      if(groomingAnimationInterval) {
+        clearInterval(groomingAnimationInterval);
+        groomingAnimationInterval = null;
+      }
+      
+      game.isBusy = true;
+      game.lastGroomingTime = Date.now();
+      
+      // img 태그를 숨기고 오버레이 div 표시
+      hamster.classList.remove('bounce', 'sleeping', 'drinking');
+      hamster.classList.add('grooming');
+      
+      // normal 이미지 완전히 숨기기
+      hamster.style.opacity = '0';
+      hamster.style.visibility = 'hidden';
+      
+      const groomingOverlay = document.getElementById('groomingOverlay');
+      if(groomingOverlay) {
+        // 오버레이 크기 가져오기
+        const overlayWidth = parseInt(window.getComputedStyle(groomingOverlay).width);
+        const overlayHeight = parseInt(window.getComputedStyle(groomingOverlay).height);
+        
+        // background-size를 오버레이 크기에 맞춰 동적으로 설정 (4x4 그리드)
+        groomingOverlay.style.backgroundSize = `${overlayWidth * 4}px ${overlayHeight * 4}px`;
+        
+        // overflow: hidden으로 영역 밖의 이미지 숨김
+        groomingOverlay.style.overflow = 'hidden';
+        
+        // 위치 고정 (CSS 변수 사용)
+        const rootStyles = getComputedStyle(document.documentElement);
+        const groomingTop = rootStyles.getPropertyValue('--grooming-top') || '68%';
+        const groomingLeft = rootStyles.getPropertyValue('--grooming-left') || '50%';
+        const groomingOffsetX = rootStyles.getPropertyValue('--grooming-offset-x') || '0px';
+        const groomingOffsetY = rootStyles.getPropertyValue('--grooming-offset-y') || '0px';
+        
+        groomingOverlay.style.top = `calc(${groomingTop} + ${groomingOffsetY})`;
+        groomingOverlay.style.left = `calc(${groomingLeft} + ${groomingOffsetX})`;
+        groomingOverlay.style.transform = 'translate(-50%, -50%)';
+        
+        groomingOverlay.classList.add('active');
+        
+        // DISPLAY_FRAME_WIDTH/HEIGHT를 오버레이 크기에 맞춰 업데이트
+        window.currentDisplayFrameWidth = overlayWidth;
+        window.currentDisplayFrameHeight = overlayHeight;
+      }
+      
+      // 자동 정렬 실행 (위/아래, 왼쪽/오른쪽 모두 정렬)
+      autoAlignGroomingFrames();
+      
+      // 프레임 인덱스 초기화
+      currentGroomingFrame = 0;
+      
+      // 첫 프레임 설정
+      updateGroomingFrame();
+      
+      // 프레임 홀드 배수 가져오기
+      const frameHold = getGroomingFrameHold();
+      // 반복 횟수 가져오기
+      const repeatCount = getGroomingRepeatCount();
+      let holdCount = 0;
+      let animationCycle = 0; // 애니메이션 사이클 카운터
+      
+      // 애니메이션 프레임 진행 함수
+      function advanceFrame() {
+        holdCount++;
+        
+        // 프레임 홀드만큼 반복했으면 다음 프레임으로
+        if(holdCount >= frameHold) {
+          holdCount = 0;
+          updateGroomingFrame();
+          
+          // 모든 프레임이 재생되었으면
+          if(currentGroomingFrame >= GROOMING_FRAME_COUNT) {
+            animationCycle++;
+            
+            // 지정된 횟수만큼 반복하지 않았으면 다시 시작
+            if(animationCycle < repeatCount) {
+              currentGroomingFrame = 0;
+              updateGroomingFrame();
+              return;
+            }
+            
+            // 모든 반복이 끝났으면 종료
+            if(groomingAnimationInterval) {
+              clearInterval(groomingAnimationInterval);
+              groomingAnimationInterval = null;
+            }
+            
+            // 원상복구
+            hamster.classList.remove('grooming');
+            hamster.classList.add('bounce');
+            hamster.style.opacity = '';
+            hamster.style.visibility = '';
+            hamster.style.backgroundImage = '';
+            hamster.style.backgroundSize = '';
+            hamster.style.backgroundPosition = '';
+            hamster.style.backgroundRepeat = '';
+            
+            if(groomingOverlay) {
+              groomingOverlay.classList.remove('active');
+            }
+            
+            currentGroomingFrame = 0;
+            game.isBusy = false;
+            return;
+          }
+        }
+        
+        // 현재 프레임의 속도로 다음 인터벌 설정 (프레임별 가변 속도 적용)
+        // updateGroomingFrame()에서 이미 currentGroomingFrame++를 했으므로 현재 프레임 인덱스 사용
+        const currentFrameIndex = currentGroomingFrame < GROOMING_FRAME_COUNT ? currentGroomingFrame : 0;
+        const currentSpeed = getGroomingAnimationSpeed(currentFrameIndex);
+        if(groomingAnimationInterval) {
+          clearInterval(groomingAnimationInterval);
+          groomingAnimationInterval = setInterval(advanceFrame, currentSpeed);
+        }
+      }
+      
+      // setInterval로 애니메이션 시작 (프레임별 가변 속도 적용)
+      groomingAnimationInterval = setInterval(advanceFrame, getGroomingAnimationSpeed(currentGroomingFrame));
+    }
+
+    /* 그루밍 애니메이션 체크 타이머 */
+    function startGroomingCheckTimer() {
+      // 20초마다 체크
+      setInterval(() => {
+        // busy 상태가 아니고, normal 상태일 때만
+        if(!game.isBusy && !hamster.classList.contains('sleeping') && 
+           !hamster.classList.contains('drinking') && 
+           !hamster.classList.contains('grooming')) {
+          
+          // 30초 이상 대기 중일 때 5% 확률로 그루밍
+          const idleTime = Date.now() - game.lastActionTime;
+          if(idleTime >= 30000) {
+            if(Math.random() < 0.05 && Date.now() - game.lastGroomingTime > 20000) {
+              showGroomingAnimation();
+            }
+          }
+        }
+      }, 20000); // 20초마다 체크
+    }
+
+    function addExp(amount) {
+      game.exp += amount;
+      if(game.exp >= game.maxExp) {
+        game.level++;
+        game.exp -= game.maxExp;
+        logLevelUp(`⭐ LEVEL UP! LV.${game.level} ⭐`);
+        showLevelUpEffect();
+      }
+      updateUI();
+    }
+
+    /* EXP 파티클 효과 */
+    function showExpParticle(amount) {
+      // 하루치 머리 위 위치 계산 (액션과 직접 연결)
+      const hamsterRect = hamster.getBoundingClientRect();
+      const centerX = hamsterRect.left + hamsterRect.width / 2;
+      const headY = hamsterRect.top + 50; // 하루치 머리 더 아래쪽
+      
+      const particle = document.createElement('div');
+      particle.className = 'exp-particle';
+      particle.textContent = `+${amount}`;
+      particle.style.left = centerX + 'px';
+      particle.style.top = headY + 'px';
+      particle.style.transform = 'translate(-50%, 0)';
+      
+      document.body.appendChild(particle);
+      setTimeout(() => particle.remove(), 1500);
+    }
+
+    /* 레벨업 화려한 효과 (부드러운 버전) */
+    function showLevelUpEffect() {
+      // 화면 플래시 효과 (부드럽게)
+      const flash = document.createElement('div');
+      flash.className = 'levelup-flash';
+      document.body.appendChild(flash);
+      setTimeout(() => flash.remove(), 600);
+
+      // 하루치 반짝임 효과 (부드럽게)
+      hamster.classList.add('levelup');
+      setTimeout(() => {
+        hamster.classList.remove('levelup');
+      }, 800);
+
+      // 별 파티클 효과 (개수 줄이고 부드럽게)
+      const hamsterRect = hamster.getBoundingClientRect();
+      const centerX = hamsterRect.left + hamsterRect.width / 2;
+      const centerY = hamsterRect.top + hamsterRect.height / 2;
+      
+      const starCount = 8; // 12개에서 8개로 줄임
+      for(let i = 0; i < starCount; i++) {
+        const angle = (360 / starCount) * i;
+        const distance = 60 + Math.random() * 30; // 거리 줄임
+        const radian = (angle * Math.PI) / 180;
+        const x = Math.cos(radian) * distance;
+        const y = Math.sin(radian) * distance;
+        
+        const star = document.createElement('div');
+        star.className = 'star-particle';
+        star.textContent = '⭐';
+        star.style.left = centerX + 'px';
+        star.style.top = centerY + 'px';
+        star.style.setProperty('--star-x', x + 'px');
+        star.style.setProperty('--star-y', y + 'px');
+        
+        document.body.appendChild(star);
+        setTimeout(() => star.remove(), 1200);
+      }
+    }
+
+    /* 통계 모달 관련 */
+
+    function showStats() {
+      const modal = document.getElementById('statsModal');
+      const content = document.getElementById('statsContent');
+      
+      const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' });
+      const playDaysCount = stats.playDays.size;
+      const avgDailyExp = playDaysCount > 0 ? Math.floor(stats.totalExp / playDaysCount) : 0;
+      const goalPercent = dailyGoal.target > 0 
+        ? Math.min(Math.floor((dailyGoal.completed / dailyGoal.target) * 100), 100)
+        : 0;
+      
+      content.innerHTML = `
+        <div class="stats-section">
+          <div class="stats-section-title">📊 통계</div>
+          <div class="stats-item">
+            <span class="stats-label">총 플레이 일수</span>
+            <span class="stats-value">${playDaysCount}일</span>
+          </div>
+          <div class="stats-item">
+            <span class="stats-label">총 액션 횟수</span>
+            <span class="stats-value">${stats.totalActions}회</span>
+          </div>
+          <div class="stats-item">
+            <span class="stats-label">총 획득 EXP</span>
+            <span class="stats-value">${stats.totalExp}점</span>
+          </div>
+          <div class="stats-item">
+            <span class="stats-label">평균 일일 EXP</span>
+            <span class="stats-value">${avgDailyExp}점</span>
+          </div>
+          <div class="stats-item">
+            <span class="stats-label">현재 레벨</span>
+            <span class="stats-value">LV.${game.level}</span>
+          </div>
+          <div class="stats-item">
+            <span class="stats-label">연속 플레이</span>
+            <span class="stats-value">${stats.consecutiveDays}일</span>
+          </div>
+          <div class="stats-item">
+            <span class="stats-label">첫 플레이</span>
+            <span class="stats-value">${stats.firstPlayDate || '오늘'}</span>
+          </div>
+        </div>
+        
+        <div class="stats-section">
+          <div class="stats-section-title">🎯 일일 목표</div>
+          <div class="stats-item">
+            <span class="stats-label">오늘 완료</span>
+            <span class="stats-value">${dailyGoal.completed}/${dailyGoal.target} (${goalPercent}%)</span>
+          </div>
+          <div class="stats-item">
+            <span class="stats-label">목표 설정</span>
+            <span class="stats-value">
+              <input type="number" id="goalInput" min="1" max="50" value="${dailyGoal.target}" 
+                     style="width: 50px; padding: 4px; font-size: 11px; text-align: center; 
+                            background: rgba(15,56,15,0.8); border: 2px solid #0f380f; 
+                            color: #ffffff; border-radius: 4px;">
+              <button onclick="saveGoal()" style="margin-left: 8px; padding: 4px 8px; 
+                     font-size: 10px; background: #0f380f; color: #9bbc0f; 
+                     border: 2px solid #0f380f; border-radius: 4px; cursor: pointer;">저장</button>
+            </span>
+          </div>
+          ${dailyGoal.achieved ? '<div class="stats-item" style="color: #ffcc00; font-weight: bold;">✨ 오늘 목표 달성!</div>' : ''}
+        </div>
+      `;
+      
+      modal.classList.add('show');
+    }
+
+    /* 목표 저장 */
+    function saveGoal() {
+      const input = document.getElementById('goalInput');
+      if(input) {
+        const newTarget = parseInt(input.value) || 5;
+        if(newTarget >= 1 && newTarget <= 50) {
+          const wasAchieved = dailyGoal.achieved;
+          dailyGoal.target = newTarget;
+          
+          // 목표 달성 상태 재계산
+          if(dailyGoal.completed >= dailyGoal.target) {
+            if(!wasAchieved) {
+              // 새로 달성한 경우에만 효과 표시
+              dailyGoal.achieved = true;
+              showGoalAchievedEffect();
+              log(`🎯 목표 달성! (목표 변경으로 달성)`);
+            } else {
+              dailyGoal.achieved = true;
+            }
+          } else {
+            dailyGoal.achieved = false;
+          }
+          
+          saveDailyGoal();
+          updateGoalUI();
+          log(`🎯 일일 목표가 ${newTarget}개로 변경되었습니다.`);
+        }
+      }
+    }
+
+    /* 목표 달성 효과 */
+    function showGoalAchievedEffect() {
+      // 하루치에 특별 효과
+      hamster.classList.add('levelup');
+      setTimeout(() => {
+        hamster.classList.remove('levelup');
+      }, 1000);
+
+      // 화면 플래시 효과 (레벨업보다 부드럽게)
+      const flash = document.createElement('div');
+      flash.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(255,204,0,0.3) 0%, transparent 70%);
+        pointer-events: none;
+        z-index: 400;
+        animation: fadeOut 0.8s ease-out forwards;
+      `;
+      document.body.appendChild(flash);
+      setTimeout(() => flash.remove(), 800);
+    }
+
+    function closeStats() {
+      const modal = document.getElementById('statsModal');
+      modal.classList.remove('show');
+    }
+
+    /* 모달 외부 클릭 시 닫기 */
+    document.addEventListener('click', function(e) {
+      if(e.target === document.getElementById('statsModal')) closeStats();
+      if(e.target === document.getElementById('logModal')) closeLogModal();
+    });
+
+    /* 키보드 'S' 키로 통계 열기, Escape로 모달 닫기 */
+    document.addEventListener('keydown', function(e) {
+      if(e.key === 's' || e.key === 'S') {
+        const activeElement = document.activeElement;
+        if(activeElement.tagName !== 'INPUT' && activeElement.tagName !== 'TEXTAREA') {
+          showStats();
+        }
+      }
+      if(e.key === 'Escape') {
+        closeStats();
+        closeLogModal();
+      }
+    });
+
+    /* 레벨별 칭호 시스템 */
+    function getTitleByLevel(level) {
+      if(level >= 1000) return "🌌 우주급 성장 마스터";
+      if(level >= 500) return "🌟 전설의 성장왕";
+      if(level >= 300) return "💎 다이아몬드 성장가";
+      if(level >= 200) return "👑 플래티넘 마스터";
+      if(level >= 150) return "🏆 골드 챔피언";
+      if(level >= 100) return "⭐ 골드 성장가";
+      if(level >= 80) return "🔥 열정의 마스터";
+      if(level >= 60) return "💪 습관의 달인";
+      if(level >= 50) return "🎯 목표 달성 전문가";
+      if(level >= 40) return "📚 지식의 수집가";
+      if(level >= 30) return "🎯 목표 달성자";
+      if(level >= 25) return "📊 성장 기록가";
+      if(level >= 20) return "✨ 성장하는 리더";
+      if(level >= 17) return "🏃 꾸준함의 증명자";
+      if(level >= 15) return "💪 노력하는 하루치";
+      if(level >= 12) return "📝 습관 만들기 중";
+      if(level >= 10) return "📈 성장 중인 하루치";
+      if(level >= 7) return "🌿 조금씩 자라는 중";
+      if(level >= 5) return "🌱 새싹 하루치";
+      return "🐹 새내기 하루치";
+    }
+
+    function updateUI() {
+      uiLevel.innerText = game.level;
+      const pct = Math.min(100, (game.exp / game.maxExp) * 100);
+      uiExp.style.width = `${pct}%`;
+      expText.innerText = `${Math.floor(pct)}%`;
+      
+      // 칭호 업데이트
+      const title = getTitleByLevel(game.level);
+      const titleElement = document.getElementById('hamsterTitle');
+      if(titleElement) {
+        titleElement.textContent = title;
+      }
+      
+      // 목표 UI 업데이트
+      updateGoalUI();
+    }
+
+    function addToLogHistory(msg, kind, category, xp) {
+      logHistory.unshift({
+        msg,
+        kind: kind || 'normal',
+        category: category || null,
+        xp: xp != null ? xp : null
+      });
+      if (logHistory.length > 200) logHistory.pop();
+    }
+
+    function log(msg, opts) {
+      opts = opts || {};
+      addToLogHistory(msg, opts.kind || 'normal', opts.category || null, opts.xp != null ? opts.xp : null);
+      const item = document.createElement('div');
+      item.className = 'log-item new' + (opts.category ? ' log-cat-' + opts.category : '');
+      item.innerText = `> ${msg}`;
+      uiLog.prepend(item);
+      if(uiLog.children.length > 20) uiLog.removeChild(uiLog.lastChild);
+    }
+
+    function logLevelUp(msg) {
+      addToLogHistory(msg, 'level-up', '레벨업', null);
+      const item = document.createElement('div');
+      item.className = 'log-item new level-up';
+      item.innerText = `> ${msg}`;
+      uiLog.prepend(item);
+      if(uiLog.children.length > 20) uiLog.removeChild(uiLog.lastChild);
+    }
+
+    function logImportant(msg) {
+      addToLogHistory(msg, 'important', null, null);
+      const item = document.createElement('div');
+      item.className = 'log-item new important';
+      item.innerText = `> ${msg}`;
+      uiLog.prepend(item);
+      if(uiLog.children.length > 20) uiLog.removeChild(uiLog.lastChild);
+    }
+
+    function openLogModal() {
+      const content = document.getElementById('logModalContent');
+      const all = logHistory.length ? logHistory : [
+        { msg: '시스템 가동..', kind: 'normal', category: null, xp: null },
+        { msg: '하루치가 기다려요!', kind: 'normal', category: null, xp: null }
+      ];
+      const taskLogs = all.filter(e => e.category && LOG_CATEGORY_TASK.includes(e.category));
+      const clickLogs = all.filter(e => e.category && LOG_CATEGORY_CLICK.includes(e.category));
+      const otherLogs = all.filter(e => !e.category || (!LOG_CATEGORY_TASK.includes(e.category) && !LOG_CATEGORY_CLICK.includes(e.category)));
+
+      function renderSection(title, entries, sectionClass) {
+        if (entries.length === 0) return '';
+        return `
+          <div class="log-section ${sectionClass}">
+            <div class="log-section-title">${title}</div>
+            ${entries.map(e => {
+              const c = e.kind === 'level-up' ? 'level-up' : e.kind === 'important' ? 'important' : '';
+              const tag = e.category ? `<span class="log-cat-tag">${e.category}</span>` : '';
+              const xpStr = (e.xp != null && e.msg.indexOf('+' + e.xp) === -1) ? ` <span class="log-xp">+${e.xp} XP</span>` : '';
+              return `<div class="log-line ${c}">${tag}> ${e.msg}${xpStr}</div>`;
+            }).join('')}
+          </div>`;
+      }
+
+      content.innerHTML =
+        renderSection('📌 할일 완료 경험치', taskLogs, 'log-section-task') +
+        renderSection('🖱 클릭 경험치 (밥/물/쓰다듬기)', clickLogs, 'log-section-click') +
+        renderSection('📋 기타', otherLogs, 'log-section-other');
+      document.getElementById('logModal').classList.add('show');
+    }
+
+    function closeLogModal() {
+      document.getElementById('logModal').classList.remove('show');
+    }
+
+    init();
+    /* 썸네일(시작 화면) 로드 시 오프닝 곡 자동 재생 (반복) */
+    (function() {
+      var bgm = document.getElementById('openingBgm');
+      if (bgm) {
+        bgm.volume = 0.6;
+        bgm.loop = true;
+        bgm.play().catch(function() {});
+      }
+    })();
+
+    /* 개발자 도구용 함수들 */
+    window.dev = {
+      // 경험치 추가
+      addExp: function(amount) {
+        addExp(amount);
+        console.log(`경험치 ${amount} 추가! 현재: ${game.exp}/${game.maxExp}`);
+      },
+      // 레벨업
+      levelUp: function() {
+        game.exp = game.maxExp;
+        addExp(0);
+        console.log(`레벨업! 현재 레벨: ${game.level}`);
+      },
+      // 레벨 직접 설정
+      setLevel: function(level) {
+        game.level = level;
+        game.exp = 0;
+        updateUI();
+        console.log(`레벨을 ${level}로 설정했습니다.`);
+      },
+      // 경험치 직접 설정
+      setExp: function(exp) {
+        game.exp = exp;
+        updateUI();
+        console.log(`경험치를 ${exp}로 설정했습니다.`);
+      },
+      // 현재 상태 확인
+      status: function() {
+        console.log(`레벨: ${game.level}, 경험치: ${game.exp}/${game.maxExp} (${Math.floor((game.exp/game.maxExp)*100)}%)`);
+      }
+    };
+
+    console.log('개발자 도구 사용법:');
+    console.log('dev.addExp(50) - 경험치 50 추가');
+    console.log('dev.levelUp() - 즉시 레벨업');
+    console.log('dev.setLevel(5) - 레벨을 5로 설정');
+    console.log('dev.setExp(80) - 경험치를 80으로 설정');
+    console.log('dev.status() - 현재 상태 확인');
+  </script>
+</body>
+</html>
