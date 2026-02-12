@@ -2,19 +2,24 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="color-scheme" content="dark" />
-  <title>Hamster Tamagotchi Transparent</title>
+  <meta name="theme-color" content="#0f380f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>하루치 - 햄스터 다마고치 🐹</title>
   <link rel="icon" type="image/png" href="assets/hamster/normal.png">
 
-  <!-- Vercel 링크 공유 시 썸네일 (카톡, SNS 등) - 1200x822로 크게 표시 -->
+  <!-- 링크 공유 시 미리보기 (카톡, SNS 등) -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Hamster Tamagotchi - 하루치" />
-  <meta property="og:description" content="귀여운 햄스터 키우기! 하루치를 돌봐주세요 🐹" />
+  <meta property="og:title" content="하루치 - 햄스터 다마고치 🐹" />
+  <meta property="og:description" content="귀여운 햄스터 하루치를 키워보세요! 밥 주기, 물 주기, 쓰다듬기로 레벨업!" />
   <meta property="og:image" content="/assets/Thumbnail_og.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="822" />
+  <meta property="og:locale" content="ko_KR" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="하루치 - 햄스터 다마고치 🐹" />
   <meta name="twitter:image" content="/assets/Thumbnail_og.png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -70,9 +75,8 @@
       --full-and-sleep-width: 115px;
       --full-and-sleep-height: 115px;
 
-      /* === 로고 위치 (라이브/노션 동일 적용, localStorage 미사용) === */
+      /* === 로고 위치 === */
       /* main_logo: 게임기 상단(검은 막대) 중앙 | logo2: 프레임 화면 안 오른쪽 상단 */
-      /* 라이브 서버에서 원하는 위치로 조정 후 이 값들을 수정하면 노션에서도 동일하게 표시됨 */
       --logo-top: 9%;
       --logo-left: 69%;
       --logo-max-width: 135px;
@@ -193,7 +197,7 @@
       font-family: 'Press Start 2P', 'Noto Sans KR', sans-serif;
     }
 
-    /* 반응형 래퍼 (Notion 임베드용) */
+    /* 반응형 래퍼 */
     .device-wrapper {
       position: fixed;
       inset: 0;
@@ -451,7 +455,7 @@
       pointer-events: none; 
     }
     .layer-frame img.frame-img { width: 100%; display: block; }
-    /* logo2.png: 프레임 화면 안 오른쪽 상단 (HARUCHI) - :root 기본값 = Notion 임베드용 */
+    /* logo2.png: 프레임 화면 안 오른쪽 상단 (HARUCHI) */
     .device-logo {
       position: absolute;
       top: var(--logo-top);
@@ -1235,6 +1239,19 @@
     .game-start-btn:hover {
       transform: translate(-50%, -50%);
     }
+    /* 시작 화면 안내 (첫 터치 시 사라짐) */
+    .start-tap-hint {
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 5;
+      font-size: 12px;
+      color: rgba(155, 188, 15, 0.9);
+      pointer-events: none;
+      transition: opacity 0.4s;
+    }
+    .start-tap-hint.hidden { opacity: 0; }
     /* 썸네일 화면 제작 표시 (썸네일 이미지 안 오른쪽 하단) */
     .credit-start {
       position: absolute;
@@ -1264,8 +1281,8 @@
 </head>
 <body>
 
-  <!-- 오프닝 곡 (시작 화면 로드 시 자동재생, 무한 반복) -->
-  <audio id="openingBgm" autoplay loop preload="auto" playsinline>
+  <!-- 오프닝 곡 (무한 반복, 첫 터치 시 소리 ON) -->
+  <audio id="openingBgm" loop preload="auto" playsinline>
     <source src="./assets/audio/opening.mp3" type="audio/mpeg">
     <source src="./assets/audio/opening.MP3" type="audio/mpeg">
   </audio>
@@ -1274,13 +1291,14 @@
     <source src="./assets/audio/game_bgm.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- 게임 시작 화면 (썸네일 배경) -->
+  <!-- 게임 시작 화면 (썸네일 배경) - 첫 터치 시 오프닝 재생 -->
   <div class="start-screen" id="startScreen">
     <div class="start-screen-bg"></div>
     <div class="start-screen-content">
       <button type="button" class="game-start-btn" id="gameStartBtn" onclick="startGame()">게임 스타트</button>
     </div>
     <div class="credit-start">제작 by bbaekyohan</div>
+    <div class="start-tap-hint">화면을 눌러 시작</div>
   </div>
 
   <div class="device-wrapper" id="deviceWrapper" style="display: none;">
@@ -1381,6 +1399,17 @@
     const hamster = document.getElementById('hamster');
     const uiLevel = document.getElementById('uiLevel');
 
+    /* 첫 터치 시 오프닝 재생 (브라우저: 사용자 제스처일 때만 play 가능) */
+    function unmuteOpening() {
+      var o = document.getElementById('openingBgm');
+      var h = document.querySelector('.start-tap-hint');
+      if (!o) return;
+      o.muted = false;
+      o.volume = 0.6;
+      o.currentTime = 0;
+      o.play().catch(function() {});
+      if (h) h.classList.add('hidden');
+    }
     /* 게임 시작: 오프닝 중지 → 게임 BGM 재생, 화면 전환 */
     function startGame() {
       var opening = document.getElementById('openingBgm');
@@ -1481,7 +1510,7 @@
           lastActionDate: parsed.lastActionDate || null,
           consecutiveDays: parsed.consecutiveDays || 0
         };
-        /* 저장된 총 경험치로 레벨/EXP 복원 (노션 동기화 전에도 물·밥·쓰다듬기 경험치 유지) */
+        /* 저장된 총 경험치로 레벨/EXP 복원 */
         if (stats.totalExp > 0) {
           game.level = Math.floor(stats.totalExp / game.maxExp) + 1;
           game.exp = stats.totalExp % game.maxExp;
@@ -1632,100 +1661,6 @@
       }
     }
 
-    /* Notion XP 실시간 동기화 - 베르셀 링크 임베드에서 노션 경험치 반영 */
-    const GOAL_COUNT_TYPES = ['할일', '루틴', '운동', '독서', '콘텐츠'];
-    const PROCESSED_LOG_IDS_KEY = 'hamsterProcessedNotionLogIds';
-
-    function getProcessedLogIds() {
-      try {
-        const raw = localStorage.getItem(PROCESSED_LOG_IDS_KEY);
-        return raw ? new Set(JSON.parse(raw)) : new Set();
-      } catch (_) { return new Set(); }
-    }
-
-    function saveProcessedLogIds(ids) {
-      const arr = Array.from(ids).slice(-200);
-      localStorage.setItem(PROCESSED_LOG_IDS_KEY, JSON.stringify(arr));
-    }
-
-    async function fetchAndApplyNotionXP() {
-      try {
-        const res = await fetch('/api/game');
-        const data = await res.json();
-        if (!data || typeof data.totalXP !== 'number') return;
-
-        const notionTotal = data.totalXP;
-        const maxExp = data.maxExp || game.maxExp || 100;
-        const currentTotal = (game.level - 1) * game.maxExp + game.exp;
-        const localTotal = stats.totalExp || 0;
-        /* 노션(할일/루틴 등) + 로컬(물/밥/쓰다듬기 등) 경험치 유지: 둘 중 큰 쪽으로 합침 */
-        const total = Math.max(notionTotal, currentTotal, localTotal);
-
-        const newLevel = Math.floor(total / maxExp) + 1;
-        const newExp = total % maxExp;
-        const didLevelUp = newLevel > game.level;
-
-        if (newLevel !== game.level || newExp !== game.exp) {
-          game.level = newLevel;
-          game.exp = newExp;
-          if (total > stats.totalExp) {
-            stats.totalExp = total;
-            saveStats();
-          }
-          updateUI();
-          if (didLevelUp) {
-            logLevelUp(`⭐ LEVEL UP! LV.${game.level} ⭐`);
-            showLevelUpEffect();
-          }
-        }
-
-        /* recentLogs: 새로 처리된 할일/루틴/독서/운동/SNS만 목표 + 시스템 로그에 반영 */
-        const recentLogs = data.recentLogs || [];
-        const processed = getProcessedLogIds();
-        const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' });
-
-        for (const entry of recentLogs) {
-          if (processed.has(entry.id)) continue;
-          processed.add(entry.id);
-
-          const type = entry.type || '';
-          const xp = entry.xp || 0;
-          if (!GOAL_COUNT_TYPES.includes(type)) continue;
-
-          if (dailyGoal.date !== today) {
-            dailyGoal = { date: today, target: dailyGoal.target, completed: 0, achieved: false };
-          }
-          dailyGoal.completed++;
-          saveDailyGoal();
-
-          const typeLabel = type === '콘텐츠' ? 'SNS' : type;
-          log(`[${typeLabel}] 완료 +${xp}XP`, { category: typeLabel, xp: xp });
-          updateGoalUI();
-
-          if (!dailyGoal.achieved && dailyGoal.completed >= dailyGoal.target) {
-            dailyGoal.achieved = true;
-            saveDailyGoal();
-            showGoalAchievedEffect();
-            const bonusExp = Math.floor(xp * 0.5);
-            log(`🎯 목표 달성! 보너스 +${bonusExp} EXP`, { category: '목표보너스', xp: bonusExp });
-            game.exp += bonusExp;
-            stats.totalExp += bonusExp;
-            saveStats();
-            if (game.exp >= game.maxExp) {
-              game.level++;
-              game.exp -= game.maxExp;
-              logLevelUp(`⭐ LEVEL UP! LV.${game.level} ⭐`);
-              showLevelUpEffect();
-            }
-            updateUI();
-          }
-        }
-        saveProcessedLogIds(processed);
-      } catch (e) {
-        /* 네트워크/로컬 환경 등에서 실패 시 무시 */
-      }
-    }
-
     /* 저장된 throw up/stop drink/throw up 2/full_and_sleep 위치·크기 적용 (localStorage) */
     function loadSavedImagePositions() {
       const root = document.documentElement;
@@ -1762,7 +1697,7 @@
           if (o.width != null) root.style.setProperty('--full-and-sleep-width', String(o.width).includes('px') ? o.width : o.width + 'px');
           if (o.height != null) root.style.setProperty('--full-and-sleep-height', String(o.height).includes('px') ? o.height : o.height + 'px');
         }
-        /* 로고 위치: localStorage 사용 안 함. :root 값만 사용 → 라이브/노션 동일하게 표시 */
+        /* 로고 위치: :root CSS 변수 사용 */
       } catch (_) {}
     }
 
@@ -1781,10 +1716,6 @@
           { msg: '하루치가 기다려요!', kind: 'normal' }
         ];
       }
-
-      /* Notion XP 초기 로드 및 30초마다 실시간 갱신 */
-      fetchAndApplyNotionXP();
-      setInterval(fetchAndApplyNotionXP, 30000);
 
       // sad 이미지 랜덤 표시 체크 시작
       startSadCheckTimer();
@@ -3063,54 +2994,33 @@
     }
 
     init();
-    /* 오프닝: 링크 진입 시 바로 자동재생 */
+    /* 오프닝: 터치 시 재생 시작, 무한 반복 (브라우저 정책상 사용자 제스처 필요) */
     (function() {
-      var opening = document.getElementById('openingBgm');
-      if (opening) {
-        opening.volume = 0.6;
-        opening.loop = true;
-        opening.play().catch(function() {});
+      var o = document.getElementById('openingBgm');
+      if (o) {
+        o.volume = 0.6;
+        o.loop = true;
+      }
+      var startScreen = document.getElementById('startScreen');
+      function onFirstTouch() {
+        unmuteOpening();
+        startScreen.removeEventListener('click', onFirstTouch, true);
+        startScreen.removeEventListener('touchstart', onFirstTouch, true);
+      }
+      if (startScreen) {
+        startScreen.addEventListener('click', onFirstTouch, true);
+        startScreen.addEventListener('touchstart', onFirstTouch, { passive: true, capture: true });
       }
     })();
 
-    /* 개발자 도구용 함수들 */
+    /* 개발자 도구 (콘솔에서 dev.xxx 호출 가능) */
     window.dev = {
-      // 경험치 추가
-      addExp: function(amount) {
-        addExp(amount);
-        console.log(`경험치 ${amount} 추가! 현재: ${game.exp}/${game.maxExp}`);
-      },
-      // 레벨업
-      levelUp: function() {
-        game.exp = game.maxExp;
-        addExp(0);
-        console.log(`레벨업! 현재 레벨: ${game.level}`);
-      },
-      // 레벨 직접 설정
-      setLevel: function(level) {
-        game.level = level;
-        game.exp = 0;
-        updateUI();
-        console.log(`레벨을 ${level}로 설정했습니다.`);
-      },
-      // 경험치 직접 설정
-      setExp: function(exp) {
-        game.exp = exp;
-        updateUI();
-        console.log(`경험치를 ${exp}로 설정했습니다.`);
-      },
-      // 현재 상태 확인
-      status: function() {
-        console.log(`레벨: ${game.level}, 경험치: ${game.exp}/${game.maxExp} (${Math.floor((game.exp/game.maxExp)*100)}%)`);
-      }
+      addExp: function(amount) { addExp(amount); },
+      levelUp: function() { game.exp = game.maxExp; addExp(0); },
+      setLevel: function(level) { game.level = level; game.exp = 0; updateUI(); },
+      setExp: function(exp) { game.exp = exp; updateUI(); },
+      status: function() { console.log(`LV.${game.level} EXP:${game.exp}/${game.maxExp}`); }
     };
-
-    console.log('개발자 도구 사용법:');
-    console.log('dev.addExp(50) - 경험치 50 추가');
-    console.log('dev.levelUp() - 즉시 레벨업');
-    console.log('dev.setLevel(5) - 레벨을 5로 설정');
-    console.log('dev.setExp(80) - 경험치를 80으로 설정');
-    console.log('dev.status() - 현재 상태 확인');
   </script>
 </body>
 </html>
