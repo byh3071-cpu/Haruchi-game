@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>오디오 미리보기</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #1a1a1a; color: #9bbc0f; max-width: 400px; margin: 40px auto; }
+    h2 { font-size: 16px; margin-bottom: 20px; }
+    .track { margin-bottom: 24px; padding: 16px; background: #0f380f; border-radius: 8px; }
+    .track label { display: block; margin-bottom: 8px; font-weight: bold; }
+    audio { width: 100%; margin-top: 8px; }
+    .hint { font-size: 12px; color: #8bac0f; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h2>🔊 오디오 미리보기</h2>
+  <p class="hint">브라우저에서 이 파일을 열어 오프닝/게임BGM을 확인하세요.</p>
+  
+  <div class="track">
+    <label>오프닝 곡</label>
+    <audio controls loop src="opening.mp3"></audio>
+  </div>
+  
+  <div class="track">
+    <label>게임 BGM</label>
+    <audio controls loop src="game_bgm.mp3"></audio>
+  </div>
+</body>
+</html>

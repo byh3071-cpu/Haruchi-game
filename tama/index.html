@@ -7,12 +7,12 @@
   <title>Hamster Tamagotchi Transparent</title>
   <link rel="icon" type="image/png" href="assets/hamster/normal.png">
 
-  <!-- Vercel 링크 공유 시 썸네일 (카톡, SNS 등) -->
+  <!-- Vercel 링크 공유 시 썸네일 (카톡, SNS 등) - 1200x822로 크게 표시 -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Hamster Tamagotchi - 하루치" />
   <meta property="og:description" content="귀여운 햄스터 키우기! 하루치를 돌봐주세요 🐹" />
   <meta property="og:image" content="/assets/Thumbnail_og.png" />
-  <meta property="og:image:width" content="1000" />
+  <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="822" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="/assets/Thumbnail_og.png" />
@@ -1264,10 +1264,14 @@
 </head>
 <body>
 
-  <!-- 오프닝 곡 오디오 (시작 화면에서 재생) -->
-  <audio id="openingBgm" loop preload="auto" playsinline>
-    <source src="./assets/audio/opening.MP3" type="audio/mpeg">
+  <!-- 오프닝 곡 (시작 화면 로드 시 자동재생, 무한 반복) -->
+  <audio id="openingBgm" autoplay loop preload="auto" playsinline>
     <source src="./assets/audio/opening.mp3" type="audio/mpeg">
+    <source src="./assets/audio/opening.MP3" type="audio/mpeg">
+  </audio>
+  <!-- 게임 BGM (게임 플레이 시 전용, 무한 반복) -->
+  <audio id="gameBgm" loop preload="auto" playsinline>
+    <source src="./assets/audio/game_bgm.mp3" type="audio/mpeg">
   </audio>
 
   <!-- 게임 시작 화면 (썸네일 배경) -->
@@ -1377,10 +1381,16 @@
     const hamster = document.getElementById('hamster');
     const uiLevel = document.getElementById('uiLevel');
 
-    /* 게임 시작: 시작 화면 숨기고 게임기 표시, 오디오 중지 */
+    /* 게임 시작: 오프닝 중지 → 게임 BGM 재생, 화면 전환 */
     function startGame() {
-      var bgm = document.getElementById('openingBgm');
-      if (bgm) bgm.pause();
+      var opening = document.getElementById('openingBgm');
+      var gameBgm = document.getElementById('gameBgm');
+      if (opening) opening.pause();
+      if (gameBgm) {
+        gameBgm.volume = 0.6;
+        gameBgm.currentTime = 0;
+        gameBgm.play().catch(function() {});
+      }
       var startScreen = document.getElementById('startScreen');
       var deviceWrapper = document.getElementById('deviceWrapper');
       startScreen.classList.add('hidden');
@@ -3053,13 +3063,13 @@
     }
 
     init();
-    /* 썸네일(시작 화면) 로드 시 오프닝 곡 자동 재생 (반복) */
+    /* 오프닝: 링크 진입 시 바로 자동재생 */
     (function() {
-      var bgm = document.getElementById('openingBgm');
-      if (bgm) {
-        bgm.volume = 0.6;
-        bgm.loop = true;
-        bgm.play().catch(function() {});
+      var opening = document.getElementById('openingBgm');
+      if (opening) {
+        opening.volume = 0.6;
+        opening.loop = true;
+        opening.play().catch(function() {});
       }
     })();
 
