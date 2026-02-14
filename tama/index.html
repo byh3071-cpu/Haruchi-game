@@ -1397,6 +1397,9 @@
   </div>
 
   <script>
+    /* === 두 버전 통합: URL에 ?notion=1 있으면 노션 연동 모드 (같은 코드·스타일, XP 동기화만 추가) === */
+    const NOTION_ENABLED = typeof window !== 'undefined' && window.location.search.includes('notion=1');
+
     const hamster = document.getElementById('hamster');
     const uiLevel = document.getElementById('uiLevel');
 
@@ -1506,6 +1509,35 @@
       achieved: false // 오늘 목표 달성 여부
     };
 
+
+    /* 노션 XP 불러오기 (?notion=1 모드 전용) - 악용 방지: 증가분만 적용 */
+    async function fetchAndApplyNotionXP() {
+      if (!NOTION_ENABLED) return;
+      try {
+        const base = window.location.origin;
+        const res = await fetch(base + '/api/game?action=getXp');
+        const data = await res.json();
+        const notionTotal = parseInt(data.totalExp, 10) || 0;
+        if (notionTotal <= 0) return;
+        const delta = Math.max(0, notionTotal - stats.totalExp);
+        if (delta > 0) {
+          stats.totalExp += delta;
+          const prevLevel = game.level;
+          game.level = Math.floor(stats.totalExp / game.maxExp) + 1;
+          game.exp = stats.totalExp % game.maxExp;
+          saveStats();
+          updateUI();
+          if (game.level > prevLevel) {
+            logLevelUp(`⭐ 노션 동기화! LV.${game.level} ⭐`);
+            showLevelUpEffect();
+          } else {
+            log(`📥 노션에서 +${delta} XP 불러옴`, { category: '노션동기화', xp: delta });
+          }
+        }
+      } catch (e) {
+        console.warn('노션 XP 불러오기 실패:', e);
+      }
+    }
 
     /* 통계 초기화 - 로컬 경험치(물/밥/쓰다듬기 등)로 레벨·EXP 복원 */
     function initStats() {
@@ -1715,6 +1747,7 @@
       initStats();
       initDailyGoal();
       updateUI();
+      if (NOTION_ENABLED) fetchAndApplyNotionXP(); /* 노션 모드: XP 불러오기 */
       fitScale();
       window.addEventListener('resize', fitScale);
       loadSavedImagePositions();
@@ -2752,6 +2785,14 @@
         : 0;
       
       content.innerHTML = `
+        ${NOTION_ENABLED ? `
+        <div class="stats-section">
+          <div class="stats-section-title">📌 노션 연동</div>
+          <div class="stats-item">
+            <button onclick="fetchAndApplyNotionXP()" style="padding: 8px 12px; font-size: 11px; background: #0f380f; color: #9bbc0f; border: 2px solid #306230; border-radius: 4px; cursor: pointer;">노션에서 XP 불러오기</button>
+          </div>
+        </div>
+        ` : ''}
         <div class="stats-section">
           <div class="stats-section-title">📊 통계</div>
           <div class="stats-item">
@@ -3004,24 +3045,29 @@
     }
 
     init();
-    /* 오프닝: 터치 시 재생 시작, 무한 반복 (브라우저 정책상 사용자 제스처 필요) */
-    (function() {
-      var o = document.getElementById('openingBgm');
-      if (o) {
-        o.volume = 0.6;
-        o.loop = true;
-      }
-      var startScreen = document.getElementById('startScreen');
-      function onFirstTouch() {
-        unmuteOpening();
-        startScreen.removeEventListener('click', onFirstTouch, true);
-        startScreen.removeEventListener('touchstart', onFirstTouch, true);
-      }
-      if (startScreen) {
-        startScreen.addEventListener('click', onFirstTouch, true);
-        startScreen.addEventListener('touchstart', onFirstTouch, { passive: true, capture: true });
-      }
-    })();
+    /* 노션 임베드: 오프닝 화면 생략, 바로 게임 화면 진입 */
+    if (NOTION_ENABLED) {
+      startGame();
+    } else {
+      /* 게임기 버전: 오프닝 화면 표시, 터치 시 재생 시작 */
+      (function() {
+        var o = document.getElementById('openingBgm');
+        if (o) {
+          o.volume = 0.6;
+          o.loop = true;
+        }
+        var startScreen = document.getElementById('startScreen');
+        function onFirstTouch() {
+          unmuteOpening();
+          startScreen.removeEventListener('click', onFirstTouch, true);
+          startScreen.removeEventListener('touchstart', onFirstTouch, true);
+        }
+        if (startScreen) {
+          startScreen.addEventListener('click', onFirstTouch, true);
+          startScreen.addEventListener('touchstart', onFirstTouch, { passive: true, capture: true });
+        }
+      })();
+    }
 
     /* 개발자 도구 (콘솔에서 dev.xxx 호출 가능) */
     window.dev = {
