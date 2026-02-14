@@ -77,10 +77,10 @@
 
       /* === 로고 위치 === */
       /* main_logo: 게임기 상단(검은 막대) 중앙 | logo2: 프레임 화면 안 오른쪽 상단 */
-      --logo-top: 9%;
-      --logo-left: 69%;
-      --logo-max-width: 135px;
-      --logo-max-height: 135px;
+      --logo-top: 8%;
+      --logo-left: 68%;
+      --logo-max-width: 155px;
+      --logo-max-height: 155px;
       --main-logo-top: 1.5%;
       --main-logo-left: 50%;
       --main-logo-max-width: 130px;
@@ -1252,23 +1252,24 @@
       transition: opacity 0.4s;
     }
     .start-tap-hint.hidden { opacity: 0; }
-    /* 썸네일 화면 제작 표시 (썸네일 이미지 안 오른쪽 하단) */
+    /* 썸네일 화면 제작 표시 - 웹/노션/모바일 동일하게 우측 하단 고정 */
     .credit-start {
       position: absolute;
-      bottom: 0.5%;
-      right: 24.5%;
+      bottom: 12px;
+      right: 12px;
       z-index: 4;
       font-family: 'Press Start 2P', 'Noto Sans KR', sans-serif;
       font-size: 10px;
       color: rgba(155, 188, 15, 0.9);
       text-shadow: 1px 1px 0 #0f380f;
       pointer-events: none;
+      white-space: nowrap;
     }
-    /* 게임 화면 제작 표시 */
+    /* 게임 화면 제작 표시 - 웹/노션/모바일 동일하게 우측 하단 고정 */
     .credit-game {
       position: absolute;
-      bottom: 10px;
-      right: 10px;
+      bottom: 12px;
+      right: 12px;
       z-index: 105;
       font-family: 'Press Start 2P', 'Noto Sans KR', sans-serif;
       font-size: 8px;
@@ -1371,7 +1372,7 @@
 
     <div class="btn-area btn-a" onclick="handleBtn('A')" title="밥주기"></div>
     <div class="btn-area btn-b" onclick="handleBtn('B')" title="엉덩이 흔들기"></div>
-    <div class="btn-area btn-c" onclick="handleBtn('C')" title="화난 모습"></div>
+    <div class="btn-area btn-c" onclick="handleBtn('C')" title="BGM 음소거"></div>
 
     <div class="stats-modal" id="statsModal">
       <div class="stats-panel">
@@ -1427,6 +1428,15 @@
       setTimeout(function() {
         startScreen.style.display = 'none';
       }, 650);
+    }
+    /* C 버튼: BGM 음소거 토글 */
+    function toggleBgmMute() {
+      var g = document.getElementById('gameBgm');
+      if (g) {
+        g.muted = !g.muted;
+        if (g.muted) log("🔇 BGM 음소거");
+        else log("🔊 BGM 재생");
+      }
     }
     const uiExp = document.getElementById('uiExp');
     const expText = document.getElementById('expText');
@@ -1755,7 +1765,7 @@
       } else if(btn === 'B') {
         showButtAction();
       } else if(btn === 'C') {
-        showAngryFaceAction();
+        toggleBgmMute();
       }
     }
 
