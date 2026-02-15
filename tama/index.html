@@ -197,15 +197,27 @@
       font-family: 'Press Start 2P', 'Noto Sans KR', sans-serif;
     }
 
-    /* 노션 임베드: 라이트 모드=투명, 다크 모드=배경 어둡게 */
+    /* 노션 임베드: 라이트 모드=투명/흰색, 다크 모드=배경 어둡게 */
     @media (prefers-color-scheme: light) {
-      html.notion-embed, html.notion-embed body, html.notion-embed .device-wrapper {
+      html.notion-embed { color-scheme: light; }
+      html.notion-embed, html.notion-embed body, html.notion-embed .device-wrapper,
+      html.notion-embed .scale-wrapper, html.notion-embed .device-container {
         background: transparent !important;
+      }
+      html.notion-embed .panel-gap-top, html.notion-embed .panel-gap {
+        background-color: transparent !important;
+      }
+      html.notion-embed .start-screen, html.notion-embed .start-screen-bg {
+        background-color: transparent !important;
       }
     }
     @media (prefers-color-scheme: dark) {
+      html.notion-embed { color-scheme: dark; }
       html.notion-embed, html.notion-embed body, html.notion-embed .device-wrapper {
         background: #191919 !important;
+      }
+      html.notion-embed .panel-gap-top, html.notion-embed .panel-gap {
+        background-color: #191919 !important;
       }
     }
 
