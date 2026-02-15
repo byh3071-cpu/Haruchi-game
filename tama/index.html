@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
-
+  <script>(function(){if(location.search.includes('notion=1'))document.documentElement.classList.add('notion-embed');})();</script>
   <style>
     :root {
       /* [수정 1] 전체 배경 투명화 */
@@ -195,6 +195,18 @@
       /* [수정 2] body 배경 투명화 */
       background-color: transparent !important;
       font-family: 'Press Start 2P', 'Noto Sans KR', sans-serif;
+    }
+
+    /* 노션 임베드: 라이트 모드=투명, 다크 모드=배경 어둡게 */
+    @media (prefers-color-scheme: light) {
+      html.notion-embed, html.notion-embed body, html.notion-embed .device-wrapper {
+        background: transparent !important;
+      }
+    }
+    @media (prefers-color-scheme: dark) {
+      html.notion-embed, html.notion-embed body, html.notion-embed .device-wrapper {
+        background: #191919 !important;
+      }
     }
 
     /* 반응형 래퍼 */
