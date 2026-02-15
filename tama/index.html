@@ -25,7 +25,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
-  <script>(function(){if(location.search.includes('notion=1'))document.documentElement.classList.add('notion-embed');})();</script>
+  <script>
+    (function(){
+      if(!location.search.includes('notion=1'))return;
+      document.documentElement.classList.add('notion-embed');
+      var m=document.querySelector('meta[name="color-scheme"]');
+      if(m)m.content=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+    })();
+  </script>
   <style>
     :root {
       /* [수정 1] 전체 배경 투명화 */
@@ -197,22 +204,30 @@
       font-family: 'Press Start 2P', 'Noto Sans KR', sans-serif;
     }
 
-    /* 노션 임베드: 라이트 모드=투명/흰색, 다크 모드=배경 어둡게 */
+    /* 노션 임베드: 라이트=전부 투명(노션 흰 배경), 다크=어두운 배경(노션에 녹음) */
     @media (prefers-color-scheme: light) {
-      html.notion-embed { color-scheme: light; }
+      html.notion-embed {
+        color-scheme: light;
+        background: transparent !important;
+      }
       html.notion-embed, html.notion-embed body, html.notion-embed .device-wrapper,
       html.notion-embed .scale-wrapper, html.notion-embed .device-container {
         background: transparent !important;
+        background-color: transparent !important;
       }
       html.notion-embed .panel-gap-top, html.notion-embed .panel-gap {
+        background: transparent !important;
         background-color: transparent !important;
       }
       html.notion-embed .start-screen, html.notion-embed .start-screen-bg {
+        background: transparent !important;
         background-color: transparent !important;
       }
     }
     @media (prefers-color-scheme: dark) {
-      html.notion-embed { color-scheme: dark; }
+      html.notion-embed {
+        color-scheme: dark;
+      }
       html.notion-embed, html.notion-embed body, html.notion-embed .device-wrapper {
         background: #191919 !important;
       }
