@@ -1,4 +1,10 @@
 {
   "buildCommand": null,
-  "outputDirectory": "tama"
+  "outputDirectory": "tama",
+  "crons": [
+    {
+      "path": "/api/cron-sync",
+      "schedule": "*/5 * * * *"
+    }
+  ]
 }
