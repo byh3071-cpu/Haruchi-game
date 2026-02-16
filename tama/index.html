@@ -124,7 +124,7 @@
       --water-drop-offset-x: -18px; /* 물방울 X 위치 오프셋 (양수=오른쪽, 음수=왼쪽) - 조정 필요 */
       --water-drop-offset-y: -12px; /* 물방울 Y 위치 오프셋 (양수=아래, 음수=위) - 조정 필요 */
       --water-drop-offset-x-notion: 70px; /* 노션 임베드 X 보정 (오른쪽으로) */
-      --water-drop-offset-y-notion: 25px; /* 노션 임베드 Y 보정 (아래로) */
+      --water-drop-offset-y-notion: 35px; /* 노션 임베드 Y 보정 (아래로) */
 
       /* === 그루밍 애니메이션 위치 조정 === */
       /* 
@@ -3377,9 +3377,8 @@
           saveDailyGoal();
           updateGoalUI();
           updateStatsPopupGoal(); /* 팝업 내 목표 표시 즉시 반영 */
-          log(`🎯 일일 목표가 ${newTarget}개로 
-          변경되었습니다.`);
-        }
+          log(`🎯 일일 목표가 ${newTarget}개로 변경되었습니다.`);
+35        }
       }
     }
 
@@ -3458,6 +3457,7 @@
     }
 
     function updateUI() {
+      if (!uiLevel || !uiExp || !expText) return;
       uiLevel.innerText = game.level;
       const pct = Math.min(100, (game.exp / game.maxExp) * 100);
       uiExp.style.width = `${pct}%`;
@@ -3522,29 +3522,32 @@
     function log(msg, opts) {
       opts = opts || {};
       addToLogHistory(msg, opts.kind || 'normal', opts.category || null, opts.xp != null ? opts.xp : null);
+      if (!uiLog) return;
       const item = document.createElement('div');
       item.className = 'log-item new' + (opts.category ? ' log-cat-' + opts.category : '');
       item.innerText = `> ${msg}`;
       uiLog.prepend(item);
-      if(uiLog.children.length > 20) uiLog.removeChild(uiLog.lastChild);
+      if (uiLog.children.length > 20) uiLog.removeChild(uiLog.lastChild);
     }
 
     function logLevelUp(msg) {
       addToLogHistory(msg, 'level-up', '레벨업', null);
+      if (!uiLog) return;
       const item = document.createElement('div');
       item.className = 'log-item new level-up';
       item.innerText = `> ${msg}`;
       uiLog.prepend(item);
-      if(uiLog.children.length > 20) uiLog.removeChild(uiLog.lastChild);
+      if (uiLog.children.length > 20) uiLog.removeChild(uiLog.lastChild);
     }
 
     function logImportant(msg) {
       addToLogHistory(msg, 'important', null, null);
+      if (!uiLog) return;
       const item = document.createElement('div');
       item.className = 'log-item new important';
       item.innerText = `> ${msg}`;
       uiLog.prepend(item);
-      if(uiLog.children.length > 20) uiLog.removeChild(uiLog.lastChild);
+      if (uiLog.children.length > 20) uiLog.removeChild(uiLog.lastChild);
     }
 
     async function openLogModal() {

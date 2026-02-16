@@ -154,7 +154,8 @@ async function sumXpFromLogDb(notion, dbId, haruchiPageId) {
         });
         for (const p of res.results || []) {
           const props = p.properties || {};
-          const xp = getXpFromProps(props) || parseXpFromTitle(props.title);
+          const titleProp = props.이름 || props.제목 || props.title || Object.values(props).find(x => x?.type === 'title');
+          const xp = getXpFromProps(props) || parseXpFromTitle(titleProp);
           if (xp > 0) sum += xp;
         }
         cursor = res.next_cursor;
