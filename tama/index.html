@@ -121,8 +121,8 @@
        * 이 값들은 물 급수통 클릭 영역의 중앙 하단을 기준으로 계산됩니다.
        * 물 급수통 위치가 변경되면 이 값도 조정이 필요합니다.
        */
-      --water-drop-offset-x: -140px; /* 물방울 X 위치 오프셋 (양수=오른쪽, 음수=왼쪽) - 조정 필요 */
-      --water-drop-offset-y: -100px; /* 물방울 Y 위치 오프셋 (양수=아래, 음수=위) - 조정 필요 */
+      --water-drop-offset-x: -18px; /* 물방울 X 위치 오프셋 (양수=오른쪽, 음수=왼쪽) - 조정 필요 */
+      --water-drop-offset-y: -12px; /* 물방울 Y 위치 오프셋 (양수=아래, 음수=위) - 조정 필요 */
 
       /* === 그루밍 애니메이션 위치 조정 === */
       /* 
@@ -253,6 +253,14 @@
         background: #191919 !important;
         background-color: #191919 !important;
       }
+    }
+
+    /* 노션 임베드: 통계 패널 더 많이 보이도록 */
+    html.notion-embed .stats-panel {
+      max-height: 90vh;
+    }
+    html.notion-embed .stats-section {
+      margin-bottom: 14px;
     }
 
     /* 반응형 래퍼 */
@@ -1070,10 +1078,12 @@
     }
 
     .stats-panel {
+      position: relative;
       background-color: var(--color-ui-bg);
       border: 3px solid var(--color-text);
       border-radius: 10px;
       padding: 20px;
+      padding-top: 40px;
       width: 90%;
       max-width: 400px;
       max-height: 80vh;
@@ -1244,10 +1254,11 @@
 
     .stats-close {
       position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 30px;
-      height: 30px;
+      top: 8px;
+      right: 8px;
+      width: 32px;
+      height: 32px;
+      z-index: 10;
       background: var(--color-text);
       color: var(--color-ui-bg);
       border: none;
@@ -1625,11 +1636,21 @@
 
     /* 로그 히스토리 (팝업용, 최대 200개) - category: 할일/루틴/운동/독서/SNS/목표보너스 | 밥먹기/물마시기/쓰다듬기 | 레벨업 | 기타 */
     let logHistory = [];
-    const LOG_CATEGORY_TASK = ['할일', '루틴', '운동', '독서', '책', 'SNS', '목표보너스'];
+    const LOG_CATEGORY_TASK = ['할일', '루틴', '운동', '독서', '책', 'SNS', '목표보너스', '수동기록', '출석보너스'];
     const LOG_CATEGORY_CLICK = ['밥먹기', '물마시기', '쓰다듬기'];
 
     /* 일일 밥/물 횟수 (10회 이상 시 과다 반응), 밥 먹은 뒤 집 클릭 시 full_and_sleep */
     const DAILY_EAT_DRINK_KEY = 'hamsterDailyEatDrink';
+    const MANUAL_TASK_KEY = 'hamsterManualTaskDaily';
+    const MANUAL_TASK_DAILY_LIMIT = 10;
+    const MANUAL_TASK_XP_CAP = 50;
+    const ATTENDANCE_REWARD_KEY = 'hamsterAttendanceRewardDate';
+    /* 스킨 & 쿠폰 - 응애 하루치 사전예약 한정 해금 */
+    const SKIN_KEY = 'hamsterSkin';
+    const COUPON_FOR_BABY = ['HELLO_BABY_HARUCHI']; /* 사전예약 마스터 키 (메일로 발송) */
+    /* 연속 출석 보상: 매일 10 XP + 마일스톤 (7일 50, 14일 100, 21일 150, 30일 300) */
+    const ATTENDANCE_DAILY_XP = 10;
+    const ATTENDANCE_MILESTONES = { 7: 50, 14: 100, 21: 150, 30: 300 };
     const MAX_EAT_BEFORE_THROWUP = 10;
     const MAX_DRINK_BEFORE_STOP = 10;
     const JUST_ATE_WINDOW_MS = 15000; /* 밥 먹은 뒤 이 시간 안에 집 클릭 시 full_and_sleep */
@@ -1655,6 +1676,66 @@
     }
     function saveDailyEatDrink(obj) {
       localStorage.setItem(DAILY_EAT_DRINK_KEY, JSON.stringify(obj));
+    }
+
+    function getDailyManualTaskCount() {
+      const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' });
+      try {
+        const raw = localStorage.getItem(MANUAL_TASK_KEY);
+        const parsed = raw ? JSON.parse(raw) : null;
+        if (parsed && parsed.date === today) return parsed.count || 0;
+      } catch (_) {}
+      return 0;
+    }
+    function saveDailyManualTaskCount(count) {
+      const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' });
+      localStorage.setItem(MANUAL_TASK_KEY, JSON.stringify({ date: today, count }));
+    }
+
+    /* 스킨 시스템 - 응애 하루치 해금 스킨 */
+    function getHamsterSkin() {
+      try {
+        const s = localStorage.getItem(SKIN_KEY);
+        return (s === 'baby') ? 'baby' : 'normal';
+      } catch (_) { return 'normal'; }
+    }
+    function setHamsterSkin(skin) {
+      localStorage.setItem(SKIN_KEY, skin === 'baby' ? 'baby' : 'normal');
+    }
+    function getBaseHamsterSrc() {
+      return getHamsterSkin() === 'baby'
+        ? './assets/hamster/baby Haruchi.png'
+        : './assets/hamster/normal.png';
+    }
+    function applyCoupon(code) {
+      const raw = String(code || '').trim();
+      const c = raw.toUpperCase();
+      const valid = COUPON_FOR_BABY.some(k => 
+        k.toUpperCase() === c || k === raw
+      );
+      if (valid) {
+        setHamsterSkin('baby');
+        const h = document.getElementById('hamster');
+        if (h && !h.classList.contains('sleeping') && !h.classList.contains('drinking')) {
+          h.src = getBaseHamsterSrc();
+        }
+        return { success: true, msg: '🎉 응애 하루치 스킨이 해금되었어요!' };
+      }
+      return { success: false, msg: '유효하지 않은 쿠폰이에요.' };
+    }
+    function submitCoupon() {
+      const input = document.getElementById('couponInput');
+      const code = input ? input.value.trim() : '';
+      if (!code) {
+        log('📌 쿠폰 번호를 입력해 주세요.', { kind: 'system' });
+        return;
+      }
+      const result = applyCoupon(code);
+      log(result.msg, { kind: result.success ? 'important' : 'system' });
+      if (result.success) {
+        if (input) input.value = '';
+        showStats(false);
+      }
     }
 
     /* [수정] 시작 레벨 1, 경험치 0으로 초기화 */
@@ -1842,6 +1923,38 @@
       }));
     }
 
+    /* 연속 출석 보상 (오늘 1회만) */
+    function applyAttendanceReward() {
+      const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' });
+      try {
+        const last = localStorage.getItem(ATTENDANCE_REWARD_KEY);
+        if (last === today) return;
+      } catch (_) {}
+      if (stats.consecutiveDays < 1) return;
+
+      let xp = ATTENDANCE_DAILY_XP;
+      const bonus = ATTENDANCE_MILESTONES[stats.consecutiveDays];
+      if (bonus) xp += bonus;
+
+      stats.totalExp += xp;
+      game.exp += xp;
+      while (game.exp >= game.maxExp) {
+        game.level++;
+        game.exp -= game.maxExp;
+        logLevelUp(`⭐ LEVEL UP! LV.${game.level} ⭐`);
+        showLevelUpEffect();
+      }
+      saveStats();
+      localStorage.setItem(ATTENDANCE_REWARD_KEY, today);
+
+      const msg = bonus
+        ? `📅 연속 ${stats.consecutiveDays}일 출석! +${xp} XP (보너스 +${bonus})`
+        : `📅 연속 ${stats.consecutiveDays}일 출석! +${xp} XP`;
+      log(msg, { category: '출석보너스', xp });
+      updateUI();
+      updateGoalUI();
+    }
+
     /* 통계 업데이트 (액션 시) - countsTowardGoal: 할일/루틴/독서/책형/운동/SNS만 true, 물·밥·쓰다듬기는 false */
     function updateStats(expGained, countsTowardGoal = false) {
       const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' });
@@ -1867,6 +1980,9 @@
       
       stats.lastActionDate = today;
       saveStats();
+
+      /* 연속 출석 보상: 오늘 첫 액션 시 1회만 (10 XP + 마일스톤) */
+      applyAttendanceReward();
 
       // 일일 목표: 할일/루틴/독서세션/책형/운동/SNS만 카운트 (물·밥·쓰다듬기 제외)
       if(expGained > 0 && countsTowardGoal) {
@@ -1945,6 +2061,8 @@
     function init() {
       initStats();
       initDailyGoal();
+      const h = document.getElementById('hamster');
+      if (h) h.src = getBaseHamsterSrc();
       updateUI();
       if (NOTION_ENABLED) {
         fetchAndApplyNotionXP();
@@ -2070,14 +2188,14 @@
           hamster.src = 'assets/hamster/overfed/stop drink.png';
           hamster.classList.remove('bounce', 'sleeping');
           hamster.onerror = function() {
-            hamster.src = './assets/hamster/normal.png';
+            hamster.src = getBaseHamsterSrc();
             hamster.classList.add('bounce');
             hamster.classList.remove('btn-test-stopdrink');
             game.isBusy = false;
             hamster.onerror = null;
           };
           setTimeout(() => {
-            hamster.src = './assets/hamster/normal.png';
+            hamster.src = getBaseHamsterSrc();
             hamster.classList.add('bounce');
             hamster.classList.remove('btn-test-stopdrink');
             hamster.onerror = null;
@@ -2139,14 +2257,14 @@
           hamster.src = 'assets/hamster/overfed/stop drink.png';
           hamster.classList.remove('bounce', 'sleeping', 'drinking');
           hamster.onerror = function() {
-            hamster.src = './assets/hamster/normal.png';
+            hamster.src = getBaseHamsterSrc();
             hamster.classList.add('bounce');
             hamster.classList.remove('btn-test-stopdrink');
             game.isBusy = false;
             hamster.onerror = null;
           };
           setTimeout(() => {
-            hamster.src = './assets/hamster/normal.png';
+            hamster.src = getBaseHamsterSrc();
             hamster.classList.add('bounce');
             hamster.classList.remove('btn-test-stopdrink');
             hamster.onerror = null;
@@ -2160,7 +2278,7 @@
           hamster.src = 'assets/hamster/overfed/throw up 2.png';
           hamster.classList.remove('bounce', 'sleeping', 'drinking');
           hamster.onerror = function() {
-            hamster.src = './assets/hamster/normal.png';
+            hamster.src = getBaseHamsterSrc();
             hamster.classList.add('bounce');
             hamster.classList.remove('btn-test-throwup2');
             game.isBusy = false;
@@ -2169,7 +2287,7 @@
           daily.drinkCooldownUntil = now + EAT_DRINK_COOLDOWN_MS;
           saveDailyEatDrink(daily);
           setTimeout(() => {
-            hamster.src = './assets/hamster/normal.png';
+            hamster.src = getBaseHamsterSrc();
             hamster.classList.add('bounce');
             hamster.classList.remove('btn-test-throwup2');
             hamster.onerror = null;
@@ -2212,7 +2330,7 @@
 
     /* 이미지 사라짐 방지 */
     function changeAction(imgSrc, duration) {
-      const originalSrc = './assets/hamster/normal.png';
+      const originalSrc = getBaseHamsterSrc();
       hamster.src = imgSrc;
       hamster.classList.remove('bounce', 'sleeping');
       
@@ -2237,7 +2355,7 @@
 
     /* 잠자는 모습 (오른쪽 집 안) - sleepImageSrc 생략 시 sleep.png, 밥 먹고 잠들면 full_and_sleep.png. adjustClass 있으면 해당 클래스로 위치·크기 적용 */
     function changeSleepAction(duration, sleepImageSrc, adjustClass) {
-      const originalSrc = './assets/hamster/normal.png';
+      const originalSrc = getBaseHamsterSrc();
       const sleepImg = sleepImageSrc || './assets/hamster/sleep.png';
       hamster.src = sleepImg;
       hamster.classList.remove('bounce');
@@ -2266,7 +2384,7 @@
 
     /* 물 마시는 모습 (물 급수통 위치로 이동) */
     function changeDrinkAction(imgSrc, duration) {
-      const originalSrc = './assets/hamster/normal.png';
+      const originalSrc = getBaseHamsterSrc();
       
       // 이미지에 따라 다른 크기 클래스 설정
       const isDrinkWater = imgSrc.includes('drinkwater');
@@ -2413,7 +2531,7 @@
       const randomMessage = sadMessages[Math.floor(Math.random() * sadMessages.length)];
       log(randomMessage);
       
-      const originalSrc = './assets/hamster/normal.png';
+      const originalSrc = getBaseHamsterSrc();
       hamster.src = 'assets/hamster/sad.png';
       hamster.classList.remove('bounce', 'sleeping', 'drinking');
       
@@ -2462,7 +2580,7 @@
       const randomMessage = angryMessages[Math.floor(Math.random() * angryMessages.length)];
       log(randomMessage);
       
-      const originalSrc = './assets/hamster/normal.png';
+      const originalSrc = getBaseHamsterSrc();
       hamster.src = 'assets/hamster/back.png';
       hamster.classList.remove('bounce', 'sleeping', 'drinking');
       hamster.classList.add('angry');
@@ -2513,7 +2631,7 @@
       ];
       log(angryMessages[Math.floor(Math.random() * angryMessages.length)]);
       
-      const originalSrc = './assets/hamster/normal.png';
+      const originalSrc = getBaseHamsterSrc();
       hamster.src = './assets/hamster/angry.png';
       hamster.classList.remove('bounce', 'sleeping', 'drinking');
       
@@ -2554,7 +2672,7 @@
       
       log(isWiggle ? '🍑 하루치 엉덩이가 씰룩씰룩~' : '🍑 하루치 토실토실한 엉덩이!');
       
-      const originalSrc = './assets/hamster/normal.png';
+      const originalSrc = getBaseHamsterSrc();
       hamster.src = 'assets/hamster/back.png';
       hamster.classList.remove('bounce', 'sleeping', 'drinking', 'angry');
       hamster.classList.add('butt');
@@ -3066,15 +3184,46 @@
         : 0;
       const cal = getAttendanceCalendarHTML();
       
+      const manualCount = getDailyManualTaskCount();
+      const manualRemain = Math.max(0, MANUAL_TASK_DAILY_LIMIT - manualCount);
       content.innerHTML = `
-        ${NOTION_ENABLED ? `
-        <div class="stats-section">
+        <div class="stats-section" id="manualTaskSection">
+          ${NOTION_ENABLED ? `
           <div class="stats-section-title">📌 노션 연동</div>
           <div class="stats-item">
             <button onclick="fetchAndApplyNotionXP()" style="padding: 8px 12px; font-size: 11px; background: #0f380f; color: #9bbc0f; border: 2px solid #306230; border-radius: 4px; cursor: pointer;">노션에서 XP 불러오기</button>
           </div>
+          <div style="margin: 12px 0 8px; border-top: 1px dashed rgba(15,56,15,0.4); padding-top: 12px;"></div>
+          ` : ''}
+          <div class="stats-section-title">✏ 할 일 직접 기록 <span style="opacity:0.8; font-size:10px;">(오늘 ${manualCount}/${MANUAL_TASK_DAILY_LIMIT}건)</span></div>
+          ${manualRemain > 0 ? `
+          <div class="stats-item" style="flex-wrap: wrap; gap: 6px;">
+            <button type="button" onclick="addManualTask('물 마시기', 10)" style="padding: 6px 10px; font-size: 10px; background: #0f380f; color: #9bbc0f; border: 1px solid #306230; border-radius: 4px; cursor: pointer;">물 10</button>
+            <button type="button" onclick="addManualTask('밥 먹기', 10)" style="padding: 6px 10px; font-size: 10px; background: #0f380f; color: #9bbc0f; border: 1px solid #306230; border-radius: 4px; cursor: pointer;">밥 10</button>
+            <button type="button" onclick="addManualTask('쓰다듬기', 5)" style="padding: 6px 10px; font-size: 10px; background: #0f380f; color: #9bbc0f; border: 1px solid #306230; border-radius: 4px; cursor: pointer;">쓰담 5</button>
+            <button type="button" onclick="addManualTask('운동', 20)" style="padding: 6px 10px; font-size: 10px; background: #0f380f; color: #9bbc0f; border: 1px solid #306230; border-radius: 4px; cursor: pointer;">운동 20</button>
+            <button type="button" onclick="addManualTask('독서', 40)" style="padding: 6px 10px; font-size: 10px; background: #0f380f; color: #9bbc0f; border: 1px solid #306230; border-radius: 4px; cursor: pointer;">독서 40</button>
+          </div>
+          <div class="stats-item" style="flex-wrap: wrap; align-items: center; gap: 6px;">
+            <input type="text" id="manualTaskName" placeholder="할 일 이름" maxlength="30"
+                   onkeydown="if(event.key==='Enter')submitManualTaskCustom()"
+                   style="width: 90px; padding: 6px 8px; font-size: 11px; background: rgba(15,56,15,0.8); border: 2px solid #0f380f; color: #fff; border-radius: 4px;">
+            <select id="manualTaskXp" style="padding: 6px 8px; font-size: 11px; background: rgba(15,56,15,0.8); border: 2px solid #0f380f; color: #fff; border-radius: 4px; width: 60px;">
+              <option value="5">5</option>
+              <option value="10" selected>10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="30">30</option>
+              <option value="40">40</option>
+              <option value="50">50</option>
+            </select>
+            <span style="font-size: 10px; opacity: 0.9;">XP</span>
+            <button type="button" onclick="submitManualTaskCustom()" style="padding: 6px 10px; font-size: 10px; background: #306230; color: #9bbc0f; border: 1px solid #306230; border-radius: 4px; cursor: pointer;">추가</button>
+          </div>
+          ` : `
+          <div class="stats-item" style="color: #8b7355;">오늘 기록 한도(10건)에 도달했습니다. 내일 다시 시도해 주세요.</div>
+          `}
         </div>
-        ` : ''}
         <div class="stats-section">
           <div class="stats-section-title">📊 통계</div>
           <div class="stats-item">
@@ -3109,6 +3258,10 @@
             <span class="stats-label">연속 출석</span>
             <span class="stats-value">${stats.consecutiveDays}일 ${stats.consecutiveDays >= 7 ? '🔥' : ''}</span>
           </div>
+          <div class="stats-item" style="font-size: 10px; opacity: 0.85;">
+            <span class="stats-label">보상</span>
+            <span class="stats-value">매일 10 XP · 7일 +50 · 14일 +100 · 21일 +150 · 30일 +300</span>
+          </div>
           <div class="stats-item">
             <span class="stats-label">이번 달 출석</span>
             <span class="stats-value">${getMonthlyAttendanceCount()}일</span>
@@ -3130,7 +3283,7 @@
           <div class="stats-section-title">🎯 일일 목표</div>
           <div class="stats-item">
             <span class="stats-label">오늘 완료</span>
-            <span class="stats-value">${dailyGoal.completed}/${dailyGoal.target} (${goalPercent}%)</span>
+            <span class="stats-value" id="statsGoalCompleteValue">${dailyGoal.completed}/${dailyGoal.target} (${goalPercent}%)</span>
           </div>
           <div class="stats-item">
             <span class="stats-label">목표 설정</span>
@@ -3144,11 +3297,56 @@
                      border: 2px solid #0f380f; border-radius: 4px; cursor: pointer;">저장</button>
             </span>
           </div>
-          ${dailyGoal.achieved ? '<div class="stats-item" style="color: #ffcc00; font-weight: bold;">✨ 오늘 목표 달성!</div>' : ''}
+          ${dailyGoal.achieved ? '<div class="stats-item" id="statsGoalAchievedMsg" style="color: #ffcc00; font-weight: bold;">✨ 오늘 목표 달성!</div>' : ''}
+        </div>
+
+        <div class="stats-section">
+          <div class="stats-section-title">🎁 쿠폰 입력</div>
+          <div class="stats-item" style="flex-wrap: wrap; align-items: center; gap: 6px;">
+            <input type="text" id="couponInput" placeholder="사전예약 쿠폰 입력" maxlength="30"
+                   onkeydown="if(event.key==='Enter')submitCoupon()"
+                   style="flex: 1; min-width: 120px; padding: 6px 10px; font-size: 11px; 
+                          background: rgba(15,56,15,0.8); border: 2px solid #0f380f; 
+                          color: #fff; border-radius: 4px;">
+            <button type="button" onclick="submitCoupon()"
+                    style="padding: 6px 12px; font-size: 11px; background: #306230; color: #9bbc0f; 
+                           border: 2px solid #306230; border-radius: 4px; cursor: pointer;">등록</button>
+          </div>
+          <div class="stats-item" style="font-size: 10px; opacity: 0.85;">
+            ${getHamsterSkin() === 'baby' 
+              ? '🐹 응애 하루치 스킨 적용 중!' 
+              : '사전예약 쿠폰으로 응애 하루치 스킨을 해금하세요!'}
+          </div>
         </div>
       `;
       
       modal.classList.add('show');
+    }
+
+    /* 팝업 내 목표 표시 즉시 반영 (저장 후 호출) */
+    function updateStatsPopupGoal() {
+      const el = document.getElementById('statsGoalCompleteValue');
+      if (el) {
+        const percent = dailyGoal.target > 0 
+          ? Math.min(Math.floor((dailyGoal.completed / dailyGoal.target) * 100), 100)
+          : 0;
+        el.textContent = `${dailyGoal.completed}/${dailyGoal.target} (${percent}%)`;
+      }
+      let achievedDiv = document.getElementById('statsGoalAchievedMsg');
+      if (dailyGoal.achieved || dailyGoal.completed >= dailyGoal.target) {
+        if (!achievedDiv) {
+          achievedDiv = document.createElement('div');
+          achievedDiv.id = 'statsGoalAchievedMsg';
+          achievedDiv.className = 'stats-item';
+          achievedDiv.style.cssText = 'color: #ffcc00; font-weight: bold;';
+          achievedDiv.textContent = '✨ 오늘 목표 달성!';
+          const goalSection = document.getElementById('statsContent')?.querySelector('.stats-section');
+          const lastItem = goalSection?.querySelector('.stats-item:last-of-type');
+          if (lastItem) lastItem.after(achievedDiv);
+        }
+      } else if (achievedDiv) {
+        achievedDiv.remove();
+      }
     }
 
     /* 목표 저장 */
@@ -3176,7 +3374,9 @@
           
           saveDailyGoal();
           updateGoalUI();
-          log(`🎯 일일 목표가 ${newTarget}개로 변경되었습니다.`);
+          updateStatsPopupGoal(); /* 팝업 내 목표 표시 즉시 반영 */
+          log(`🎯 일일 목표가 ${newTarget}개로 
+          변경되었습니다.`);
         }
       }
     }
@@ -3282,6 +3482,39 @@
         date: date != null ? date : now
       });
       if (logHistory.length > 200) logHistory.pop();
+    }
+
+    /* 수동 할 일 기록 - XP 상한·일일 10건 제한 */
+    function addManualTask(name, xp) {
+      const count = getDailyManualTaskCount();
+      if (count >= MANUAL_TASK_DAILY_LIMIT) {
+        log('📌 오늘 수동 기록 한도(10건)에 도달했습니다.', { kind: 'system' });
+        showStats(false);
+        return;
+      }
+      const capped = Math.min(Math.max(5, Math.floor(xp) || 10), MANUAL_TASK_XP_CAP);
+      const displayName = (name || '할 일').trim() || '할 일';
+      addToLogHistory(`✏ ${displayName} +${capped} XP`, 'normal', '수동기록', capped);
+      game.exp += capped;
+      while (game.exp >= game.maxExp) {
+        game.level++;
+        game.exp -= game.maxExp;
+        logLevelUp(`⭐ LEVEL UP! LV.${game.level} ⭐`);
+        showLevelUpEffect();
+      }
+      saveStats();
+      updateStats(capped, true);
+      saveDailyManualTaskCount(count + 1);
+      updateUI();
+      showStats(false);
+    }
+    function submitManualTaskCustom() {
+      const input = document.getElementById('manualTaskName');
+      const select = document.getElementById('manualTaskXp');
+      const name = (input && input.value.trim()) || '할 일';
+      const xp = (select && parseInt(select.value, 10)) || 10;
+      addManualTask(name, xp);
+      if (input) input.value = '';
     }
 
     function log(msg, opts) {
