@@ -26,6 +26,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
   <script>
+    /* === 기본/프로 버전 구분 (배포 URL 기준) ===
+     * - basic (1000원): haruchi.vercel.app 등
+     * - pro (5000원): haruchipro.vercel.app, haruchi-pro.vercel.app 등 hostname에 pro 포함
+     * - 로컬 테스트: ?tier=pro 로 프로 기능 확인 */
+    window.APP_TIER = (function(){
+      if (typeof location === 'undefined') return 'basic';
+      if (location.search.includes('tier=pro')) return 'pro';
+      var h = location.hostname || '';
+      if (h.includes('haruchipro') || h.includes('-pro') || h.includes('.pro.')) return 'pro';
+      return 'basic';
+    })();
+    window.IS_PRO = window.APP_TIER === 'pro';
+
     (function(){
       var isNotion=(location.search.includes('notion=1'))||(window.self!==window.top);
       if(!isNotion)return;
@@ -221,10 +234,14 @@
       background: #000 !important;
       background-color: #000 !important;
     }
-    /* start-screen-bg는 제외: 썸네일(Thumbnail.png)이 노션 임베드에서도 보이도록 함 */
     html.notion-embed .start-screen {
       background: transparent !important;
       background-color: transparent !important;
+    }
+    /* 노션 임베드: 썸네일 이미지 로드 안 함 (바로 게임 화면으로 진입) */
+    html.notion-embed .start-screen-bg {
+      background-image: none !important;
+      background: transparent !important;
     }
     @media (prefers-color-scheme: dark) {
       html.notion-embed { color-scheme: dark; }
@@ -729,6 +746,21 @@
       padding-bottom: 4px;
       border-bottom: 2px solid var(--exp-bar-bg);
     }
+    .log-date {
+      font-size: 8px;
+      color: rgba(255,255,255,0.6);
+      margin-right: 6px;
+    }
+    .log-refresh-wrap { margin-bottom: 10px; text-align: right; }
+    .log-refresh-btn {
+      padding: 4px 10px;
+      font-size: 10px;
+      background: var(--color-text);
+      color: var(--color-ui-bg);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
     .log-cat-tag {
       display: inline-block;
       font-size: 8px;
@@ -1127,6 +1159,89 @@
       font-weight: bold;
     }
 
+    /* 출석 체크 캘린더 */
+    .attendance-calendar-wrap {
+      margin-top: 8px;
+    }
+    .attendance-calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .attendance-calendar-title {
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--color-text);
+    }
+    .attendance-calendar-nav {
+      display: flex;
+      gap: 4px;
+    }
+    .attendance-calendar-nav button {
+      padding: 2px 8px;
+      font-size: 10px;
+      background: var(--color-text);
+      color: var(--color-ui-bg);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .attendance-calendar-nav button:hover {
+      background: #ffffff;
+      color: var(--color-text);
+    }
+    .attendance-calendar-nav button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .attendance-calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+      margin-bottom: 4px;
+      font-size: 9px;
+      color: rgba(255,255,255,0.8);
+      text-align: center;
+    }
+    .attendance-calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+    }
+    .attendance-day {
+      aspect-ratio: 1;
+      min-width: 20px;
+      border-radius: 4px;
+      background: rgba(15, 56, 15, 0.25);
+      border: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: rgba(255,255,255,0.4);
+    }
+    .attendance-day.empty {
+      background: transparent;
+      visibility: hidden;
+    }
+    /* 출석한 날: exp-bar-bg 배경 + color-bg 숫자 (팔레트 내 강조) */
+    .attendance-day.checked {
+      background: var(--exp-bar-bg);
+      color: var(--color-bg);
+      font-weight: bold;
+      border-color: var(--color-text);
+      box-shadow: inset 0 0 0 1px rgba(155, 188, 15, 0.4);
+    }
+    /* 오늘 + 출석: 금색 테두리로 더욱 강조 */
+    .attendance-day.checked.today {
+      border: 2px solid #e6b800;
+      box-shadow: inset 0 0 0 1px rgba(155, 188, 15, 0.5), 0 0 6px rgba(230, 184, 0, 0.4);
+    }
+    .attendance-day.today {
+      border: 2px solid #e6b800;
+    }
+
     .stats-close {
       position: absolute;
       top: 10px;
@@ -1280,7 +1395,7 @@
     .game-start-btn:hover {
       transform: translate(-50%, -50%);
     }
-    /* 시작 화면 안내 (첫 터치 시 사라짐) */
+    /* 시작 화면 안내 (첫 터치 시 사라짐) - 완전 투명(비표시), 드래그 시 선택 방지 */
     .start-tap-hint {
       position: absolute;
       bottom: 10%;
@@ -1288,9 +1403,17 @@
       transform: translateX(-50%);
       z-index: 5;
       font-size: 12px;
-      color: rgba(155, 188, 15, 0.9);
+      color: transparent !important;
+      text-shadow: none !important;
+      -webkit-text-stroke: 0 transparent !important;
+      opacity: 0 !important;
       pointer-events: none;
       transition: opacity 0.4s;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
     .start-tap-hint.hidden { opacity: 0; }
     /* 썸네일 화면 제작 표시 - 웹/노션/모바일 동일하게 우측 하단 고정 */
@@ -1319,9 +1442,12 @@
       pointer-events: none;
     }
     
+    /* 프로 버전 전용 스타일 (IS_PRO일 때 적용) */
+    body.app-tier-pro .credit-game::after { content: ' PRO'; opacity: 0.8; }
+    body.app-tier-pro .credit-start::after { content: ' PRO'; opacity: 0.8; }
   </style>
 </head>
-<body>
+<body id="haruchiBody">
 
   <!-- 오프닝 곡 (무한 반복, 첫 터치 시 소리 ON) -->
   <audio id="openingBgm" loop preload="auto" playsinline>
@@ -1438,8 +1564,19 @@
   </div>
 
   <script>
-    /* === 두 버전 통합: URL에 ?notion=1 있으면 노션 연동 모드 (같은 코드·스타일, XP 동기화만 추가) === */
-    const NOTION_ENABLED = typeof window !== 'undefined' && window.location.search.includes('notion=1');
+    /* 프로/기본 버전: body에 클래스 추가 (프로 전용 CSS/JS 분기용) */
+    if (window.IS_PRO) document.body?.classList.add('app-tier-pro');
+
+    /* ========== 노션 연동 로직 (전부 여기서 관리) ==========
+     * [감지] head의 즉시실행: ?notion=1 또는 iframe 임베드 시 html.notion-embed 추가
+     * [스타일] html.notion-embed: 배경 투명, 패널 여백 검정, 썸네일 미로딩
+     * [진입] 노션 모드: startGame() 즉시 호출 → 오프닝 생략, 바로 게임
+     * [XP] fetchAndApplyNotionXP(): /api/game?action=getXp 호출 → delta만 적용
+     * [API] api/game.js: 노션 API 연동 (하루치 페이지 Rollup/XP로그 DB 합산)
+     * [동기화] notion-sync/index.js: 소스 DB 완료 항목 → XP 로그 생성 (cron 실행)
+     * 환경변수: NOTION_SETUP.md 참고
+     * ======================================================== */
+    const NOTION_ENABLED = typeof window !== 'undefined' && document.documentElement.classList.contains('notion-embed');
 
     const hamster = document.getElementById('hamster');
     const uiLevel = document.getElementById('uiLevel');
@@ -1488,7 +1625,7 @@
 
     /* 로그 히스토리 (팝업용, 최대 200개) - category: 할일/루틴/운동/독서/SNS/목표보너스 | 밥먹기/물마시기/쓰다듬기 | 레벨업 | 기타 */
     let logHistory = [];
-    const LOG_CATEGORY_TASK = ['할일', '루틴', '운동', '독서', 'SNS', '목표보너스'];
+    const LOG_CATEGORY_TASK = ['할일', '루틴', '운동', '독서', '책', 'SNS', '목표보너스'];
     const LOG_CATEGORY_CLICK = ['밥먹기', '물마시기', '쓰다듬기'];
 
     /* 일일 밥/물 횟수 (10회 이상 시 과다 반응), 밥 먹은 뒤 집 클릭 시 full_and_sleep */
@@ -1577,6 +1714,27 @@
         }
       } catch (e) {
         console.warn('노션 XP 불러오기 실패:', e);
+      }
+    }
+
+    /* 노션 완료 로그 불러오기 - 시스템 로그에 할일/루틴/운동/독서/SNS 완료 기록 표시 */
+    async function fetchAndMergeNotionLogs() {
+      if (!NOTION_ENABLED) return;
+      try {
+        const base = window.location.origin;
+        const res = await fetch(base + '/api/game?action=getLogs');
+        const data = await res.json();
+        const logs = data.logs || [];
+        const seen = new Set(logHistory.map(e => `${e.msg}|${e.date || ''}`));
+        for (const l of logs) {
+          const msg = l.xp > 0 ? `${l.title} +${l.xp} XP` : l.title;
+          const key = `${msg}|${l.date || ''}`;
+          if (seen.has(key)) continue;
+          seen.add(key);
+          addToLogHistory(msg, 'normal', l.type, l.xp, l.date);
+        }
+      } catch (e) {
+        console.warn('노션 로그 불러오기 실패:', e);
       }
     }
 
@@ -1788,7 +1946,11 @@
       initStats();
       initDailyGoal();
       updateUI();
-      if (NOTION_ENABLED) fetchAndApplyNotionXP(); /* 노션 모드: XP 불러오기 */
+      if (NOTION_ENABLED) {
+        fetchAndApplyNotionXP();
+        fetchAndMergeNotionLogs(); /* 노션 완료 로그 → 시스템 로그 */
+        setInterval(fetchAndMergeNotionLogs, 60000); /* 60초마다 새 완료 로그 갱신 */
+      }
       fitScale();
       window.addEventListener('resize', fitScale);
       loadSavedImagePositions();
@@ -1796,8 +1958,8 @@
       /* 초기 로그 히스토리 (팝업용) */
       if (logHistory.length === 0) {
         logHistory = [
-          { msg: '시스템 가동..', kind: 'normal' },
-          { msg: '하루치가 기다려요!', kind: 'normal' }
+          { msg: '시스템 가동..', kind: 'normal', category: null, xp: null, date: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', dateStyle: 'short', timeStyle: 'short' }) },
+          { msg: '하루치가 기다려요!', kind: 'normal', category: null, xp: null, date: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', dateStyle: 'short', timeStyle: 'short' }) }
         ];
       }
 
@@ -2814,9 +2976,87 @@
 
     /* 통계 모달 관련 */
 
-    function showStats() {
+    /* 출석 캘린더 보는 달 (전역) */
+    let attendanceViewYear = new Date().getFullYear();
+    let attendanceViewMonth = new Date().getMonth();
+
+    /* 이번 달 출석 일수 */
+    function getMonthlyAttendanceCount(year, month) {
+      if (!year) year = new Date().getFullYear();
+      if (month === undefined) month = new Date().getMonth();
+      let count = 0;
+      stats.playDays.forEach(d => {
+        const [y, m] = d.split('-').map(Number);
+        if (y === year && m === month + 1) count++;
+      });
+      return count;
+    }
+
+    /* 출석 캘린더 - 월별 달력 형태 (일~토) */
+    function getAttendanceCalendarHTML(year, month) {
+      if (!year) year = attendanceViewYear;
+      if (month === undefined) month = attendanceViewMonth;
+      const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' });
+      const monthNames = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+      const weekdays = ['일','월','화','수','목','금','토'];
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const startWeekday = firstDay.getDay();
+      const daysInMonth = lastDay.getDate();
+      const viewMonthCount = getMonthlyAttendanceCount(year, month);
+
+      let weekdaysHtml = weekdays.map(w => `<span>${w}</span>`).join('');
+      let cellsHtml = '';
+      const emptyCells = startWeekday;
+      for (let i = 0; i < emptyCells; i++) {
+        cellsHtml += '<div class="attendance-day empty"></div>';
+      }
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const checked = stats.playDays.has(dateStr);
+        const isToday = dateStr === today;
+        cellsHtml += `<div class="attendance-day ${checked ? 'checked' : ''} ${isToday ? 'today' : ''}" title="${dateStr} ${checked ? '출석' : '미출석'}">${d}</div>`;
+      }
+      return {
+        title: `${year}년 ${monthNames[month]}`,
+        weekdays: weekdaysHtml,
+        cells: cellsHtml,
+        count: viewMonthCount
+      };
+    }
+
+    function changeAttendanceMonth(delta) {
+      const now = new Date();
+      const maxYear = now.getFullYear();
+      const maxMonth = now.getMonth();
+      attendanceViewMonth += delta;
+      if (attendanceViewMonth > 11) {
+        attendanceViewMonth = 0;
+        attendanceViewYear++;
+      } else if (attendanceViewMonth < 0) {
+        attendanceViewMonth = 11;
+        attendanceViewYear--;
+      }
+      if (attendanceViewYear > maxYear || (attendanceViewYear === maxYear && attendanceViewMonth > maxMonth)) {
+        attendanceViewYear = maxYear;
+        attendanceViewMonth = maxMonth;
+      }
+      showStats(false);
+    }
+
+    function canGoNextMonth() {
+      const now = new Date();
+      return attendanceViewYear < now.getFullYear() || (attendanceViewYear === now.getFullYear() && attendanceViewMonth < now.getMonth());
+    }
+
+    function showStats(resetCalendarToCurrent) {
       const modal = document.getElementById('statsModal');
       const content = document.getElementById('statsContent');
+      if (resetCalendarToCurrent !== false) {
+        const now = new Date();
+        attendanceViewYear = now.getFullYear();
+        attendanceViewMonth = now.getMonth();
+      }
       
       const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' });
       const playDaysCount = stats.playDays.size;
@@ -2824,6 +3064,7 @@
       const goalPercent = dailyGoal.target > 0 
         ? Math.min(Math.floor((dailyGoal.completed / dailyGoal.target) * 100), 100)
         : 0;
+      const cal = getAttendanceCalendarHTML();
       
       content.innerHTML = `
         ${NOTION_ENABLED ? `
@@ -2857,12 +3098,31 @@
             <span class="stats-value">LV.${game.level}</span>
           </div>
           <div class="stats-item">
-            <span class="stats-label">연속 플레이</span>
-            <span class="stats-value">${stats.consecutiveDays}일</span>
-          </div>
-          <div class="stats-item">
             <span class="stats-label">첫 플레이</span>
             <span class="stats-value">${stats.firstPlayDate || '오늘'}</span>
+          </div>
+        </div>
+
+        <div class="stats-section">
+          <div class="stats-section-title">📅 출석 체크</div>
+          <div class="stats-item">
+            <span class="stats-label">연속 출석</span>
+            <span class="stats-value">${stats.consecutiveDays}일 ${stats.consecutiveDays >= 7 ? '🔥' : ''}</span>
+          </div>
+          <div class="stats-item">
+            <span class="stats-label">이번 달 출석</span>
+            <span class="stats-value">${getMonthlyAttendanceCount()}일</span>
+          </div>
+          <div class="attendance-calendar-wrap">
+            <div class="attendance-calendar-header">
+              <span class="attendance-calendar-title">${cal.title} (${cal.count}일 출석)</span>
+              <div class="attendance-calendar-nav">
+                <button type="button" onclick="changeAttendanceMonth(-1)">◀ 이전</button>
+                <button type="button" onclick="changeAttendanceMonth(1)" ${!canGoNextMonth() ? 'disabled' : ''}>다음 ▶</button>
+              </div>
+            </div>
+            <div class="attendance-calendar-weekdays">${cal.weekdays}</div>
+            <div class="attendance-calendar">${cal.cells}</div>
           </div>
         </div>
         
@@ -3012,12 +3272,14 @@
       updateGoalUI();
     }
 
-    function addToLogHistory(msg, kind, category, xp) {
+    function addToLogHistory(msg, kind, category, xp, date) {
+      const now = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', dateStyle: 'short', timeStyle: 'short' });
       logHistory.unshift({
         msg,
         kind: kind || 'normal',
         category: category || null,
-        xp: xp != null ? xp : null
+        xp: xp != null ? xp : null,
+        date: date != null ? date : now
       });
       if (logHistory.length > 200) logHistory.pop();
     }
@@ -3050,11 +3312,12 @@
       if(uiLog.children.length > 20) uiLog.removeChild(uiLog.lastChild);
     }
 
-    function openLogModal() {
+    async function openLogModal() {
+      if (NOTION_ENABLED) await fetchAndMergeNotionLogs(); /* 열 때마다 최신 노션 완료 로그 반영 */
       const content = document.getElementById('logModalContent');
       const all = logHistory.length ? logHistory : [
-        { msg: '시스템 가동..', kind: 'normal', category: null, xp: null },
-        { msg: '하루치가 기다려요!', kind: 'normal', category: null, xp: null }
+        { msg: '시스템 가동..', kind: 'normal', category: null, xp: null, date: null },
+        { msg: '하루치가 기다려요!', kind: 'normal', category: null, xp: null, date: null }
       ];
       const taskLogs = all.filter(e => e.category && LOG_CATEGORY_TASK.includes(e.category));
       const clickLogs = all.filter(e => e.category && LOG_CATEGORY_CLICK.includes(e.category));
@@ -3069,13 +3332,15 @@
               const c = e.kind === 'level-up' ? 'level-up' : e.kind === 'important' ? 'important' : '';
               const tag = e.category ? `<span class="log-cat-tag">${e.category}</span>` : '';
               const xpStr = (e.xp != null && e.msg.indexOf('+' + e.xp) === -1) ? ` <span class="log-xp">+${e.xp} XP</span>` : '';
-              return `<div class="log-line ${c}">${tag}> ${e.msg}${xpStr}</div>`;
+              const dateStr = e.date ? `<span class="log-date">${e.date}</span>` : '';
+              return `<div class="log-line ${c}">${dateStr} ${tag}> ${e.msg}${xpStr}</div>`;
             }).join('')}
           </div>`;
       }
 
       content.innerHTML =
-        renderSection('📌 할일 완료 경험치', taskLogs, 'log-section-task') +
+        (NOTION_ENABLED ? `<div class="log-refresh-wrap"><button onclick="openLogModal()" class="log-refresh-btn">🔄 새로고침</button></div>` : '') +
+        renderSection('📌 할일 완료 경험치 (할일/루틴/운동/독서/책/SNS)', taskLogs, 'log-section-task') +
         renderSection('🖱 클릭 경험치 (밥/물/쓰다듬기)', clickLogs, 'log-section-click') +
         renderSection('📋 기타', otherLogs, 'log-section-other');
       document.getElementById('logModal').classList.add('show');
