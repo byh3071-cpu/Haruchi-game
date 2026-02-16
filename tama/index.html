@@ -3488,7 +3488,7 @@
       }
       const capped = Math.min(Math.max(5, Math.floor(xp) || 10), MANUAL_TASK_XP_CAP);
       const displayName = (name || '할 일').trim() || '할 일';
-      addToLogHistory(`✏ ${displayName} +${capped} XP`, 'normal', '수동기록', capped);
+      log(`✏ ${displayName} +${capped} XP`, { category: '수동기록', xp: capped });
       game.exp += capped;
       while (game.exp >= game.maxExp) {
         game.level++;
