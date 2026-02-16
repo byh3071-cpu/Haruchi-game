@@ -1146,41 +1146,12 @@
     .stats-section-title {
       font-size: 13px;
       font-weight: bold;
-      color: #8bac0f;
+      color: #0f380f;
       margin-bottom: 12px;
       padding-bottom: 8px;
       border-bottom: 2px solid rgba(15, 56, 15, 0.5);
       text-transform: uppercase;
       letter-spacing: 1px;
-    }
-
-    .stats-notion-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
-    }
-    .stats-notion-row .stats-section-title {
-      flex-shrink: 0;
-    }
-    .stats-notion-btn {
-      padding: 6px 12px;
-      font-size: 11px;
-      background: #0f380f;
-      color: #9bbc0f;
-      border: 2px solid #306230;
-      border-radius: 4px;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .stats-notion-btn:hover {
-      background: #306230;
-    }
-    .stats-divider {
-      margin: 8px 0 12px;
-      border-top: 1px dashed rgba(15, 56, 15, 0.4);
     }
 
     @keyframes fadeOut {
@@ -2097,6 +2068,7 @@
         fetchAndApplyNotionXP();
         fetchAndMergeNotionLogs(); /* 노션 완료 로그 → 시스템 로그 */
         setInterval(fetchAndMergeNotionLogs, 60000); /* 60초마다 새 완료 로그 갱신 */
+        setInterval(fetchAndApplyNotionXP, 60000); /* 60초마다 XP 자동 갱신 */
       }
       fitScale();
       window.addEventListener('resize', fitScale);
@@ -3217,13 +3189,6 @@
       const manualRemain = Math.max(0, MANUAL_TASK_DAILY_LIMIT - manualCount);
       content.innerHTML = `
         <div class="stats-section" id="manualTaskSection">
-          ${NOTION_ENABLED ? `
-          <div class="stats-notion-row">
-            <span class="stats-section-title" style="margin-bottom:0; border:none; padding:0;">📌 노션 연동</span>
-            <button onclick="fetchAndApplyNotionXP()" class="stats-notion-btn">노션에서 XP 불러오기</button>
-          </div>
-          <div class="stats-divider"></div>
-          ` : ''}
           <div class="stats-section-title">✏ 할 일 직접 기록 <span style="opacity:0.8; font-size:10px;">(오늘 ${manualCount}/${MANUAL_TASK_DAILY_LIMIT}건)</span></div>
           ${manualRemain > 0 ? `
           <div class="stats-item" style="flex-wrap: wrap; gap: 6px;">
