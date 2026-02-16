@@ -123,7 +123,8 @@
        */
       --water-drop-offset-x: -18px; /* 물방울 X 위치 오프셋 (양수=오른쪽, 음수=왼쪽) - 조정 필요 */
       --water-drop-offset-y: -12px; /* 물방울 Y 위치 오프셋 (양수=아래, 음수=위) - 조정 필요 */
-      --water-drop-offset-x-notion: 28px; /* 노션 임베드 전용 X 보정 (왼쪽 치우침 시 이 값↑) */
+      --water-drop-offset-x-notion: 55px; /* 노션 임베드 X 보정 (오른쪽으로) */
+      --water-drop-offset-y-notion: 18px; /* 노션 임베드 Y 보정 (아래로) */
 
       /* === 그루밍 애니메이션 위치 조정 === */
       /* 
@@ -2457,8 +2458,10 @@
       let startX = baseX + offsetX;
       let startY = baseY + offsetY;
       if (document.documentElement.classList.contains('notion-embed')) {
-        const notionOffset = parseFloat(rootStyles.getPropertyValue('--water-drop-offset-x-notion')) || 28;
-        startX += notionOffset;
+        const notionX = parseFloat(rootStyles.getPropertyValue('--water-drop-offset-x-notion')) || 55;
+        const notionY = parseFloat(rootStyles.getPropertyValue('--water-drop-offset-y-notion')) || 18;
+        startX += notionX;
+        startY += notionY;
       }
       
       // 물 마시는 동안 여러 개의 물방울 생성
