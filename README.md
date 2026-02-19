@@ -47,14 +47,13 @@
 
 ```
 Haruchi game/
-├── tama/                 # 게임 메인
-│   ├── index.html        # 게임 엔트리
-│   ├── assets/           # 이미지, 오디오
-│   │   ├── hamster/      # 햄스터 스프라이트
-│   │   ├── scene/        # 배경·프레임
-│   │   ├── audio/        # 오프닝, BGM
-│   │   └── ...
-│   └── thumbnail_resize.html  # OG 썸네일 생성
+├── tama/
+│   ├── index.html          # HTML 구조 (진입점)
+│   ├── css/               # 스타일 (styles.css)   
+│   ├── js/                # 게임 로직 (game.js)
+│   └── assets/            # 이미지, 오디오 리소스
+├── REFACTORING_GUIDE.md    # 코드 구조 설명서
+├── NOTION_TEMPLATE_GUIDE.md # 노션 임베드 가이드
 ├── vercel.json           # 배포 설정
 ├── 배포및공유.md         # 배포·운영 가이드
 └── README.md             # 프로젝트 소개 (본 문서)

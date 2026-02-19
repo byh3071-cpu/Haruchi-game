@@ -1,0 +1,95 @@
+<svg width="400" height="120" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .pixel { shape-rendering: crispEdges; }
+      .c1 { fill: #0f380f; } /* Darkest green */
+      .c2 { fill: #306230; } /* Dark green */
+      .c3 { fill: #8bac0f; } /* Light green */
+      .c4 { fill: #9bbc0f; } /* Lightest green */
+    </style>
+  </defs>
+
+  <!-- Background (Optional, currently transparent) -->
+  <!-- <rect width="100%" height="100%" class="c4" /> -->
+
+  <!-- H -->
+  <rect x="20" y="20" width="10" height="80" class="c1 pixel" />
+  <rect x="60" y="20" width="10" height="80" class="c1 pixel" />
+  <rect x="30" y="55" width="30" height="10" class="c1 pixel" />
+  
+  <!-- A -->
+  <rect x="90" y="30" width="10" height="70" class="c1 pixel" />
+  <rect x="100" y="20" width="20" height="10" class="c1 pixel" />
+  <rect x="120" y="30" width="10" height="70" class="c1 pixel" />
+  <rect x="100" y="55" width="20" height="10" class="c1 pixel" />
+  
+  <!-- R -->
+  <rect x="150" y="20" width="10" height="80" class="c1 pixel" />
+  <rect x="160" y="20" width="20" height="10" class="c1 pixel" />
+  <rect x="180" y="30" width="10" height="25" class="c1 pixel" />
+  <rect x="160" y="55" width="20" height="10" class="c1 pixel" />
+  <rect x="170" y="65" width="10" height="10" class="c1 pixel" />
+  <rect x="180" y="75" width="10" height="25" class="c1 pixel" />
+  
+  <!-- U -->
+  <rect x="210" y="20" width="10" height="70" class="c1 pixel" />
+  <rect x="220" y="90" width="20" height="10" class="c1 pixel" />
+  <rect x="240" y="20" width="10" height="70" class="c1 pixel" />
+  
+  <!-- C -->
+  <rect x="280" y="30" width="10" height="60" class="c1 pixel" />
+  <rect x="290" y="20" width="20" height="10" class="c1 pixel" />
+  <rect x="290" y="90" width="20" height="10" class="c1 pixel" />
+  <rect x="310" y="30" width="10" height="10" class="c1 pixel" /> <!-- Top Serif -->
+  <rect x="310" y="80" width="10" height="10" class="c1 pixel" /> <!-- Bottom Serif -->
+  
+  <!-- H -->
+  <rect x="340" y="20" width="10" height="80" class="c1 pixel" />
+  <rect x="380" y="20" width="10" height="80" class="c1 pixel" />
+  <rect x="350" y="55" width="30" height="10" class="c1 pixel" />
+
+  <!-- I -->
+  <rect x="410" y="20" width="10" height="80" class="c1 pixel" />
+
+  <!-- Shadow effect (lighter green offset) -->
+  <g transform="translate(4,4)" style="opacity: 0.3">
+    <!-- H -->
+    <rect x="20" y="20" width="10" height="80" class="c3 pixel" />
+    <rect x="60" y="20" width="10" height="80" class="c3 pixel" />
+    <rect x="30" y="55" width="30" height="10" class="c3 pixel" />
+    
+    <!-- A -->
+    <rect x="90" y="30" width="10" height="70" class="c3 pixel" />
+    <rect x="100" y="20" width="20" height="10" class="c3 pixel" />
+    <rect x="120" y="30" width="10" height="70" class="c3 pixel" />
+    <rect x="100" y="55" width="20" height="10" class="c3 pixel" />
+    
+    <!-- R -->
+    <rect x="150" y="20" width="10" height="80" class="c3 pixel" />
+    <rect x="160" y="20" width="20" height="10" class="c3 pixel" />
+    <rect x="180" y="30" width="10" height="25" class="c3 pixel" />
+    <rect x="160" y="55" width="20" height="10" class="c3 pixel" />
+    <rect x="170" y="65" width="10" height="10" class="c3 pixel" />
+    <rect x="180" y="75" width="10" height="25" class="c3 pixel" />
+    
+    <!-- U -->
+    <rect x="210" y="20" width="10" height="70" class="c3 pixel" />
+    <rect x="220" y="90" width="20" height="10" class="c3 pixel" />
+    <rect x="240" y="20" width="10" height="70" class="c3 pixel" />
+    
+    <!-- C -->
+    <rect x="280" y="30" width="10" height="60" class="c3 pixel" />
+    <rect x="290" y="20" width="20" height="10" class="c3 pixel" />
+    <rect x="290" y="90" width="20" height="10" class="c3 pixel" />
+    <rect x="310" y="30" width="10" height="10" class="c3 pixel" />
+    <rect x="310" y="80" width="10" height="10" class="c3 pixel" />
+    
+    <!-- H -->
+    <rect x="340" y="20" width="10" height="80" class="c3 pixel" />
+    <rect x="380" y="20" width="10" height="80" class="c3 pixel" />
+    <rect x="350" y="55" width="30" height="10" class="c3 pixel" />
+
+    <!-- I -->
+    <rect x="410" y="20" width="10" height="80" class="c3 pixel" />
+  </g>
+</svg>

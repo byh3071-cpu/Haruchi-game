@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>하루치 노션 임베드 테스트</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+      font-size: 24px;
+    }
+    .controls {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .control-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: #555;
+    }
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    button {
+      background: #0f380f;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 10px;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #1a5a1a;
+    }
+    .embed-container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      min-height: 800px;
+    }
+    iframe {
+      width: 100%;
+      height: 800px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: white;
+      display: block;
+    }
+    .info {
+      background: #e3f2fd;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      border-left: 4px solid #2196f3;
+    }
+    .info h3 {
+      margin-bottom: 10px;
+      color: #1976d2;
+    }
+    .info ul {
+      margin-left: 20px;
+      color: #555;
+    }
+    .info li {
+      margin-bottom: 5px;
+    }
+    .theme-toggle {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .theme-btn {
+      flex: 1;
+      padding: 8px;
+      background: #f0f0f0;
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .theme-btn.active {
+      background: #0f380f;
+      color: white;
+      border-color: #0f380f;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🐹 하루치 노션 임베드 모드 테스트</h1>
+    
+    <div class="info">
+      <h3>📌 사용 방법</h3>
+      <ul>
+        <li>이 페이지는 로컬 개발 환경에서 노션 임베드 모드를 테스트하기 위한 도구입니다.</li>
+        <li>아래 설정을 변경하여 다양한 모드를 테스트할 수 있습니다.</li>
+        <li>직접 URL로 접속하려면: <code>tama/index.html?notion=1&tier=pro</code></li>
+      </ul>
+    </div>
+
+    <div class="controls">
+      <div class="control-group">
+        <label>게임 URL (로컬 경로)</label>
+        <input type="text" id="gameUrl" value="./index.html" placeholder="./index.html">
+      </div>
+      
+      <div class="control-group">
+        <label>테마 모드</label>
+        <div class="theme-toggle">
+          <button class="theme-btn active" data-theme="light">라이트 모드</button>
+          <button class="theme-btn" data-theme="dark">다크 모드</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label>버전</label>
+        <select id="tier">
+          <option value="basic">기본 버전</option>
+          <option value="pro" selected>Pro 버전</option>
+        </select>
+      </div>
+
+      <button onclick="updateEmbed()">🔄 업데이트</button>
+      <button onclick="openDirect()">🔗 직접 열기</button>
+    </div>
+
+    <div class="embed-container">
+      <iframe id="gameFrame" src="" frameborder="0"></iframe>
+    </div>
+  </div>
+
+  <script>
+    let currentTheme = 'light';
+
+    // 테마 버튼 클릭
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentTheme = this.dataset.theme;
+        updateEmbed();
+      });
+    });
+
+    // 임베드 업데이트
+    function updateEmbed() {
+      const gameUrl = document.getElementById('gameUrl').value;
+      const tier = document.getElementById('tier').value;
+      
+      // URL 구성
+      let url = gameUrl;
+      const params = new URLSearchParams();
+      params.set('notion', '1');
+      if (tier === 'pro') {
+        params.set('tier', 'pro');
+      }
+      
+      // 테마에 따라 배경색 변경
+      const embedContainer = document.querySelector('.embed-container');
+      if (currentTheme === 'dark') {
+        document.body.style.background = '#191919';
+        if (embedContainer) embedContainer.style.background = '#191919';
+      } else {
+        document.body.style.background = '#f5f5f5';
+        if (embedContainer) embedContainer.style.background = 'white';
+      }
+      
+      url += (url.includes('?') ? '&' : '?') + params.toString();
+      document.getElementById('gameFrame').src = url;
+    }
+
+    // 직접 열기
+    function openDirect() {
+      const gameUrl = document.getElementById('gameUrl').value;
+      const tier = document.getElementById('tier').value;
+      
+      let url = gameUrl;
+      const params = new URLSearchParams();
+      params.set('notion', '1');
+      if (tier === 'pro') {
+        params.set('tier', 'pro');
+      }
+      
+      url += (url.includes('?') ? '&' : '?') + params.toString();
+      window.open(url, '_blank');
+    }
+
+    // 초기 로드
+    updateEmbed();
+  </script>
+</body>
+</html>
