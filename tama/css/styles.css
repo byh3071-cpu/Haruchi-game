@@ -18,10 +18,10 @@
       --panel-y: 408px;
       --panel-w: 390px;
       --panel-h: 135px;
-      
+
       /* === 오른쪽 시스템 로그 패널 위치/크기 === */
       --log-panel-padding-top: 10px;
-      --log-panel-padding-left:10px;
+      --log-panel-padding-left: 10px;
       --log-panel-padding-right: 0px;
       --log-panel-padding-bottom: 0px;
 
@@ -64,51 +64,6 @@
       --main-logo-max-width: 130px;
       --main-logo-max-height: 130px;
 
-      /* === A, B, C, D 버튼 위치 === */
-      --btn-size: 65px;
-      --btn-bottom: 61px;
-      --btn-b-bottom: 39px;
-      --btn-a-left: 186px;
-      --btn-b-left: 303px;
-      --btn-c-left: 420px;
-      --btn-d-left: 0px; /* 기본 스킨에서는 숨김 */
-      --btn-d-bottom: 61px;
-    }
-
-    /* ===== 스킨별 UI 위치/크기 조정 ===== */
-    /* 각 스킨별로 필요시 아래 변수들을 오버라이드하여 위치/크기 조정 가능 */
-    
-    /* 기본 스킨 (classic) - 원래 설정 복원 */
-    body[data-frame-theme="classic"] {
-      /* === 하단 패널 위치/크기 === */
-      --panel-x: 142px;
-      --panel-y: 408px;
-      --panel-w: 390px; /* 패널 시각적 크기 (그대로 유지) */
-      --panel-h: 135px;
-      
-      /* === 통계 패널 클릭 영역 제한 === */
-      --panel-left-click-width: 180px; /* 통계 패널 클릭 가능한 영역 너비 (A 버튼 186px 이전까지) */
-      --panel-left-click-height: 100%; /* 통계 패널 클릭 가능한 영역 높이 */
-      
-      /* === 시스템 로그 패널 클릭 영역 제한 === */
-      --panel-right-click-width: 120px; /* 시스템 로그 패널 클릭 가능한 영역 너비 (C 버튼 420px 이전까지) */
-      --panel-right-click-height: auto; /* 시스템 로그 패널 클릭 가능한 영역 높이 (로그 콘텐츠에 맞춤) */
-      
-      /* === 로그 콘텐츠 표시 영역 === */
-      --log-content-max-height: 80px; /* 로그 콘텐츠 최대 높이 (4줄 정도) */
-      
-      /* === 클릭하면 전체 로그 보기 영역 위치/크기 === */
-      --log-click-area-width: 180px; /* 클릭 가능한 영역 너비 */
-      --log-click-area-height: auto; /* 클릭 가능한 영역 높이 (로그 콘텐츠에 맞춤) */
-      --log-click-area-offset-x: 0px; /* 클릭 영역 X 오프셋 */
-      --log-click-area-offset-y: 0px; /* 클릭 영역 Y 오프셋 */
-      
-      /* === 빨간색 버튼 영역 표시 크기 === */
-      --log-debug-display-width: 100%; /* 빨간색 표시 너비 (100% = 클릭 영역과 동일) */
-      --log-debug-display-height: 100%; /* 빨간색 표시 높이 (100% = 클릭 영역과 동일) */
-      --log-debug-display-offset-x: 0px; /* 빨간색 표시 X 오프셋 */
-      --log-debug-display-offset-y: 0px; /* 빨간색 표시 Y 오프셋 */
-      
       /* === 버튼 위치/크기 (A, B, C만, D 버튼 없음) === */
       --btn-size: 65px;
       --btn-bottom: 61px;
@@ -116,9 +71,76 @@
       --btn-a-left: 186px;
       --btn-b-left: 303px;
       --btn-c-left: 420px;
-      --btn-d-left: 0px; /* D 버튼 숨김 */
+      --btn-d-left: 0px;
+      /* 기본 스킨에서는 숨김 */
       --btn-d-bottom: 61px;
-      
+
+      /* === 게임 스타트 버튼 위치/크기 기본값 (전체 스킨 공통) === */
+      --start-btn-top: 8.8%;
+      --start-btn-left: 50%;
+      --start-btn-width: 320px;
+      --start-btn-height: 88px;
+    }
+
+    /* ===== 스킨별 UI 위치/크기 조정 ===== */
+    /* 각 스킨별로 필요시 아래 변수들을 오버라이드하여 위치/크기 조정 가능 */
+
+    /* 기본 스킨 (classic) - 원래 설정 복원 */
+    body[data-frame-theme="classic"] {
+      /* === 하단 패널 위치/크기 === */
+      --panel-x: 142px;
+      --panel-y: 408px;
+      --panel-w: 390px;
+      /* 패널 시각적 크기 (그대로 유지) */
+      --panel-h: 135px;
+
+      /* === 통계 패널 클릭 영역 제한 === */
+      --panel-left-click-width: 180px;
+      /* 통계 패널 클릭 가능한 영역 너비 (A 버튼 186px 이전까지) */
+      --panel-left-click-height: 100%;
+      /* 통계 패널 클릭 가능한 영역 높이 */
+
+      /* === 시스템 로그 패널 클릭 영역 제한 === */
+      --panel-right-click-width: 120px;
+      /* 시스템 로그 패널 클릭 가능한 영역 너비 (C 버튼 420px 이전까지) */
+      --panel-right-click-height: auto;
+      /* 시스템 로그 패널 클릭 가능한 영역 높이 (로그 콘텐츠에 맞춤) */
+
+      /* === 로그 콘텐츠 표시 영역 === */
+      --log-content-max-height: 80px;
+      /* 로그 콘텐츠 최대 높이 (4줄 정도) */
+
+      /* === 클릭하면 전체 로그 보기 영역 위치/크기 === */
+      --log-click-area-width: 180px;
+      /* 클릭 가능한 영역 너비 */
+      --log-click-area-height: auto;
+      /* 클릭 가능한 영역 높이 (로그 콘텐츠에 맞춤) */
+      --log-click-area-offset-x: 0px;
+      /* 클릭 영역 X 오프셋 */
+      --log-click-area-offset-y: 0px;
+      /* 클릭 영역 Y 오프셋 */
+
+      /* === 빨간색 버튼 영역 표시 크기 === */
+      --log-debug-display-width: 100%;
+      /* 빨간색 표시 너비 (100% = 클릭 영역과 동일) */
+      --log-debug-display-height: 100%;
+      /* 빨간색 표시 높이 (100% = 클릭 영역과 동일) */
+      --log-debug-display-offset-x: 0px;
+      /* 빨간색 표시 X 오프셋 */
+      --log-debug-display-offset-y: 0px;
+      /* 빨간색 표시 Y 오프셋 */
+
+      /* === 버튼 위치/크기 (A, B, C만, D 버튼 없음) === */
+      --btn-size: 65px;
+      --btn-bottom: 61px;
+      --btn-b-bottom: 39px;
+      --btn-a-left: 186px;
+      --btn-b-left: 303px;
+      --btn-c-left: 420px;
+      --btn-d-left: 0px;
+      /* D 버튼 숨김 */
+      --btn-d-bottom: 61px;
+
       /* === 그루밍 애니메이션 위치 (기본값) === */
       --grooming-top: 75%;
       --grooming-left: 50%;
@@ -134,7 +156,7 @@
       --grooming-row-3-x-offset: 0px;
       --grooming-clip-top: 20px;
       --grooming-animation-speed: 120ms;
-      
+
       /* === B 버튼 이미지 위치 (back.png) === */
       --back-left: 54%;
       --back-top: 68%;
@@ -142,7 +164,7 @@
       --back-height: 245px;
       --back-offset-x: 0px;
       --back-offset-y: 0px;
-      
+
       /* === 말풍선 위치 === */
       --angry-bubble-right: 62px;
       --angry-bubble-top: 56%;
@@ -160,48 +182,52 @@
       --feedback-bubble-top: 22%;
       --feedback-bubble-offset-x: 0px;
       --feedback-bubble-offset-y: 0px;
-      
+
       /* === 워터드랍 위치 === */
       --water-drop-offset-x: 2px;
       --water-drop-offset-y: 1px;
     }
-    
+
     /* 블랙 스킨 */
     body[data-frame-theme="black"] {
       /* === 화면/패널 위치 === */
-      --screen-top-x: 141px; 
-      --screen-top-y: 90px; 
-      --screen-top-w: 390px; 
+      --screen-top-x: 141px;
+      --screen-top-y: 90px;
+      --screen-top-w: 390px;
       --screen-top-h: 255px;
-      --panel-x: 150px; 
-      --panel-y: 398px; 
-      --panel-w: 395px; 
-      --panel-h: 152px; 
-      
+      --panel-x: 150px;
+      --panel-y: 398px;
+      --panel-w: 395px;
+      --panel-h: 152px;
+
       /* === 버튼 위치/크기 (ㄱ,ㄴ,ㄷ,ㄹ) === */
       --btn-size: 54px;
       --btn-bottom: 58px;
       --btn-b-bottom: 58px;
       --btn-c-bottom: 60px;
       --btn-d-bottom: 58px;
-      --btn-a-left: 195px;  /* ㄱ 버튼 */
-      --btn-b-left:275px;  /* ㄴ 버튼 */
-      --btn-c-left: 350px;  /* ㄷ 버튼 */
-      --btn-d-left: 430px;  /* ㄹ 버튼 (블랙 스킨 이미지 기준 추정 위치) */
-       
-      
+      --btn-a-left: 195px;
+      /* ㄱ 버튼 */
+      --btn-b-left: 275px;
+      /* ㄴ 버튼 */
+      --btn-c-left: 350px;
+      /* ㄷ 버튼 */
+      --btn-d-left: 430px;
+      /* ㄹ 버튼 (블랙 스킨 이미지 기준 추정 위치) */
+
+
       /* === 로고 위치 === */
-      --logo-top: 6%; 
-      --logo-left: 68%; 
-      --main-logo-top: 1%; 
+      --logo-top: 6%;
+      --logo-left: 68%;
+      --main-logo-top: 1%;
       --main-logo-left: 50%;
-      
+
       /* === 시스템 로그 패널 위치 === */
       --log-panel-padding-top: 14px;
       --log-panel-padding-left: 10px;
       --log-panel-padding-right: 10px;
       --log-panel-padding-bottom: 0px;
-      
+
       /* === 말풍선 위치/크기 === */
       --angry-bubble-right: 62px;
       --angry-bubble-top: 56%;
@@ -228,21 +254,21 @@
       --feedback-bubble-font-size: 12px;
       --feedback-bubble-padding-x: 16px;
       --feedback-bubble-padding-y: 10px;
-      
+
       /* === 애니메이션 위치/크기 === */
       --grooming-top: 60%;
       --grooming-left: 50%;
       --grooming-offset-x: 0px;
       --grooming-offset-y: 0px;
-      
+
       /* === 그루밍 애니메이션 속도 조정 === */
       --grooming-animation-speed: 120ms;
       /* 블랙 스킨 전용 속도 (기본 42ms보다 느리게 설정) */
-      
+
       --water-drop-offset-x: 18px;
       --water-drop-offset-y: 12px;
     }
-    
+
     /* 화이트 스킨 */
     body[data-frame-theme="white"] {
       /* === 화면/패널 위치 === */
@@ -254,29 +280,33 @@
       /* --panel-y: 408px; */
       /* --panel-w: 390px; */
       /* --panel-h: 135px; */
-      
+
       /* === 버튼 위치/크기 (ㄱ,ㄴ,ㄷ,ㄹ) === */
       /* --btn-size: 65px; */
       /* --btn-bottom: 61px; */
       /* --btn-b-bottom: 39px; */
-      /* --btn-a-left: 186px; */  /* ㄱ 버튼 */
-      /* --btn-b-left: 303px; */  /* ㄴ 버튼 */
-      /* --btn-c-left: 420px; */  /* ㄷ 버튼 */
-      /* --btn-d-left: 537px; */  /* ㄹ 버튼 */
+      /* --btn-a-left: 186px; */
+      /* ㄱ 버튼 */
+      /* --btn-b-left: 303px; */
+      /* ㄴ 버튼 */
+      /* --btn-c-left: 420px; */
+      /* ㄷ 버튼 */
+      /* --btn-d-left: 537px; */
+      /* ㄹ 버튼 */
       /* --btn-d-bottom: 61px; */
-      
+
       /* === 로고 위치 === */
       /* --logo-top: 8%; */
       /* --logo-left: 68%; */
       /* --main-logo-top: 1.5%; */
       /* --main-logo-left: 50%; */
-      
+
       /* === 시스템 로그 패널 위치 === */
       /* --log-panel-padding-top: 10px; */
       /* --log-panel-padding-left: 20px; */
       /* --log-panel-padding-right: 0px; */
       /* --log-panel-padding-bottom: 0px; */
-      
+
       /* === 말풍선 위치/크기 === */
       /* --angry-bubble-right: 62px; */
       /* --angry-bubble-top: 56%; */
@@ -286,37 +316,45 @@
       /* --butt-bubble-top: 56%; */
       /* --feedback-bubble-left: 50%; */
       /* --feedback-bubble-top: 22%; */
-      
+
       /* === 애니메이션 위치/크기 === */
       /* --grooming-top: 68%; */
       /* --grooming-left: 50%; */
       /* --water-drop-offset-x: -18px; */
       /* --water-drop-offset-y: -12px; */
     }
-    
+
     /* 하루치 스킨 1 */
     body[data-frame-theme="haruchi1"] {
       /* === 버튼 위치/크기 (ㄱ,ㄴ,ㄷ,ㄹ) === */
       /* --btn-size: 65px; */
       /* --btn-bottom: 61px; */
       /* --btn-b-bottom: 39px; */
-      /* --btn-a-left: 186px; */  /* ㄱ 버튼 */
-      /* --btn-b-left: 303px; */  /* ㄴ 버튼 */
-      /* --btn-c-left: 420px; */  /* ㄷ 버튼 */
-      /* --btn-d-left: 537px; */  /* ㄹ 버튼 */
+      /* --btn-a-left: 186px; */
+      /* ㄱ 버튼 */
+      /* --btn-b-left: 303px; */
+      /* ㄴ 버튼 */
+      /* --btn-c-left: 420px; */
+      /* ㄷ 버튼 */
+      /* --btn-d-left: 537px; */
+      /* ㄹ 버튼 */
       /* --btn-d-bottom: 61px; */
     }
-    
+
     /* 하루치 스킨 2 */
     body[data-frame-theme="haruchi2"] {
       /* === 버튼 위치/크기 (A,B,C,D) === */
       /* --btn-size: 65px; */
       /* --btn-bottom: 61px; */
       /* --btn-b-bottom: 39px; */
-      /* --btn-a-left: 186px; */  /* A 버튼 */
-      /* --btn-b-left: 303px; */  /* B 버튼 */
-      /* --btn-c-left: 420px; */  /* C 버튼 */
-      /* --btn-d-left: 537px; */  /* D 버튼 */
+      /* --btn-a-left: 186px; */
+      /* A 버튼 */
+      /* --btn-b-left: 303px; */
+      /* B 버튼 */
+      /* --btn-c-left: 420px; */
+      /* C 버튼 */
+      /* --btn-d-left: 537px; */
+      /* D 버튼 */
       /* --btn-d-bottom: 61px; */
 
       /* === 물방울 위치 조정 === */
@@ -435,7 +473,7 @@
       /* X 미세 조정 (양수=오른쪽, 음수=왼쪽) */
       --angry-bubble-offset-y: 0px;
       /* Y 미세 조정 (양수=아래, 음수=위) */
-      
+
       /* === 물 마시는 말풍선 위치/크기 === */
       --drink-bubble-left: 53%;
       --drink-bubble-top: 28%;
@@ -444,7 +482,7 @@
       --drink-bubble-font-size: 14px;
       --drink-bubble-padding-x: 14px;
       --drink-bubble-padding-y: 8px;
-      
+
       /* === 뒤태 말풍선 위치/크기 === */
       --butt-bubble-right: 62px;
       --butt-bubble-top: 56%;
@@ -453,7 +491,7 @@
       --butt-bubble-font-size: 14px;
       --butt-bubble-padding-x: 14px;
       --butt-bubble-padding-y: 8px;
-      
+
       /* === 피드백 말풍선 위치/크기 === */
       --feedback-bubble-left: 50%;
       --feedback-bubble-top: 22%;
@@ -464,10 +502,10 @@
       --feedback-bubble-padding-y: 10px;
 
       /* === 게임 스타트 버튼 위치/크기 조절 === */
-      --start-btn-top: 91.3%;
+      --start-btn-top: 50.8%;
       --start-btn-left: 50%;
-      --start-btn-width: 555px;
-      --start-btn-height: 175px;
+      --start-btn-width: 320px;
+      --start-btn-height: 72px;
     }
 
     * {
@@ -865,7 +903,7 @@
     .frame-settings-panel.is-open {
       display: block;
     }
-    
+
     /* 노션 임베드 모드에서는 위치 조정 */
     html.notion-embed .frame-settings-panel {
       top: 10px;
@@ -931,7 +969,7 @@
       overflow: hidden;
       pointer-events: auto;
     }
-    
+
     /* 노션 임베드 모드에서는 위치 조정 */
     html.notion-embed .grooming-adjust-panel {
       top: 10px;
@@ -1095,7 +1133,7 @@
       border-right: 2px dashed rgba(15, 56, 15, 0.5);
       position: relative;
     }
-    
+
     /* 패널 콘텐츠 클릭 가능 영역 */
     .panel-content-clickable {
       position: relative;
@@ -1106,29 +1144,29 @@
       justify-content: center;
       align-items: center;
     }
-    
+
     /* 기본 스킨에서 통계 패널 클릭 영역 제한 및 디버그 표시 */
     body[data-frame-theme="classic"] .panel-left .panel-content-clickable,
     body:not([data-frame-theme]) .panel-left .panel-content-clickable {
-      --panel-left-click-width: 180px; /* 클릭 가능한 영역 너비 */
-      --panel-left-click-height: 100%; /* 클릭 가능한 영역 높이 */
+      --panel-left-click-width: 180px;
+      /* 클릭 가능한 영역 너비 */
+      --panel-left-click-height: 100%;
+      /* 클릭 가능한 영역 높이 */
       max-width: var(--panel-left-click-width, 180px);
     }
-    
-    /* 통계 패널 클릭 가능한 영역 표시 (투명 빨간색) */
+
+    /* 통계 패널 빨간 점선 영역 표시 제거 */
     body[data-frame-theme="classic"] .panel-left .panel-content-clickable::before,
     body:not([data-frame-theme]) .panel-left .panel-content-clickable::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-      background: rgba(255, 0, 0, 0.2) !important;
-      border: 2px dashed rgba(255, 0, 0, 0.6) !important;
-      box-shadow: 0 0 0 1px rgba(255, 0, 0, 0.4) inset;
-      pointer-events: none; /* 클릭은 통과 */
+      content: none !important;
+      display: none !important;
+    }
+
+    /* 통계 패널 디버그 영역 표시 완전 비활성화 */
+    body.app-tier-pro[data-frame-theme="classic"] .panel-left .panel-content-clickable::before,
+    body.app-tier-pro:not([data-frame-theme]) .panel-left .panel-content-clickable::before {
+      content: none !important;
+      display: none !important;
     }
 
     .stat-row {
@@ -1284,11 +1322,12 @@
       overflow: hidden;
       position: relative;
     }
-    
+
     /* 기본 스킨에서 시스템 로그 패널 클릭 영역 제한 및 디버그 표시 */
     body[data-frame-theme="classic"] .panel-right .panel-content-clickable,
     body:not([data-frame-theme]) .panel-right .panel-content-clickable {
-      --panel-right-click-width: 120px; /* 클릭 가능한 영역 너비 (C 버튼 420px 이전까지) */
+      --panel-right-click-width: 120px;
+      /* 클릭 가능한 영역 너비 (C 버튼 420px 이전까지) */
       position: relative;
       display: flex;
       flex-direction: column;
@@ -1296,9 +1335,10 @@
       align-items: flex-start;
       width: 100%;
       height: 100%;
-      pointer-events: none; /* 기본적으로 클릭 비활성화 */
+      pointer-events: none;
+      /* 기본적으로 클릭 비활성화 */
     }
-    
+
     /* 시스템 로그 패널 - 로그 콘텐츠 영역만 클릭 가능 */
     body[data-frame-theme="classic"] .panel-right .log-content,
     body:not([data-frame-theme]) .panel-right .log-content {
@@ -1308,28 +1348,29 @@
       width: var(--log-click-area-width, 80px);
       margin-left: var(--log-click-area-offset-x, 0px);
       margin-top: var(--log-click-area-offset-y, 0px);
-      pointer-events: auto; /* 로그 콘텐츠만 클릭 가능 */
+      pointer-events: auto;
+      /* 로그 콘텐츠만 클릭 가능 */
       cursor: pointer;
-      flex: 1; /* 원래대로 복원 - 4줄씩 보이도록 */
+      flex: 1;
+      /* 원래대로 복원 - 4줄씩 보이도록 */
       height: auto;
-      max-height: var(--log-content-max-height, 80px); /* 4줄 정도 (11px * 1.5 * 4 + padding) */
+      max-height: var(--log-content-max-height, 80px);
+      /* 4줄 정도 (11px * 1.5 * 4 + padding) */
       overflow-y: auto;
     }
-    
-    /* 시스템 로그 패널 클릭 가능한 영역 표시 (투명 빨간색) - 실제 로그 항목 영역만 */
+
+    /* 시스템 로그 패널 빨간 점선 영역 표시 제거 */
     body[data-frame-theme="classic"] .panel-right .log-content::before,
     body:not([data-frame-theme]) .panel-right .log-content::before {
-      content: '';
-      position: absolute;
-      left: var(--log-debug-display-offset-x, 0px);
-      top: var(--log-debug-display-offset-y, 0px);
-      width: var(--log-debug-display-width, 100%);
-      height: var(--log-debug-display-height, 100%); /* 로그 콘텐츠 높이에 맞춤 (제한된 높이) */
-      z-index: -1;
-      background: rgba(255, 0, 0, 0.2) !important;
-      border: 2px dashed rgba(255, 0, 0, 0.6) !important;
-      box-shadow: 0 0 0 1px rgba(255, 0, 0, 0.4) inset;
-      pointer-events: none; /* 클릭은 통과 */
+      content: none !important;
+      display: none !important;
+    }
+
+    /* 시스템 로그 디버그 영역 표시 완전 비활성화 */
+    body.app-tier-pro[data-frame-theme="classic"] .panel-right .log-content::before,
+    body.app-tier-pro:not([data-frame-theme]) .panel-right .log-content::before {
+      content: none !important;
+      display: none !important;
     }
 
     .log-title {
@@ -1357,7 +1398,7 @@
       gap: 2px;
       padding-top: 0;
     }
-    
+
 
     .log-content::-webkit-scrollbar {
       display: none;
@@ -1801,7 +1842,7 @@
       border-radius: 50%;
       background: transparent;
     }
-    
+
     /* 기본 스킨(classic)에서는 버튼 영역 디버그 표시 숨김 */
     body[data-frame-theme="classic"] .btn-area,
     body:not([data-frame-theme]) .btn-area {
@@ -1809,27 +1850,27 @@
       border: none !important;
       box-shadow: none !important;
     }
-    
+
     body[data-frame-theme="classic"] .btn-area::after,
     body:not([data-frame-theme]) .btn-area::after {
       content: none !important;
       display: none !important;
     }
-    
-    /* 버튼 영역 테스트 표시 - 블랙, 하루치1, 하루치2, 화이트 스킨에서만 표시 */
-    body[data-frame-theme="black"] .btn-area,
-    body[data-frame-theme="haruchi1"] .btn-area,
-    body[data-frame-theme="haruchi2"] .btn-area,
-    body[data-frame-theme="white"] .btn-area {
+
+    /* 버튼 영역 테스트 표시 - 프로 버전 + 지정 스킨에서만 표시 */
+    body.app-tier-pro[data-frame-theme="black"] .btn-area,
+    body.app-tier-pro[data-frame-theme="haruchi1"] .btn-area,
+    body.app-tier-pro[data-frame-theme="haruchi2"] .btn-area,
+    body.app-tier-pro[data-frame-theme="white"] .btn-area {
       background: rgba(255, 0, 0, 0.3) !important;
       border: 2px dashed rgba(255, 0, 0, 0.8) !important;
       box-shadow: 0 0 0 1px rgba(255, 0, 0, 0.5) inset;
     }
-    
-    body[data-frame-theme="black"] .btn-area::after,
-    body[data-frame-theme="haruchi1"] .btn-area::after,
-    body[data-frame-theme="haruchi2"] .btn-area::after,
-    body[data-frame-theme="white"] .btn-area::after {
+
+    body.app-tier-pro[data-frame-theme="black"] .btn-area::after,
+    body.app-tier-pro[data-frame-theme="haruchi1"] .btn-area::after,
+    body.app-tier-pro[data-frame-theme="haruchi2"] .btn-area::after,
+    body.app-tier-pro[data-frame-theme="white"] .btn-area::after {
       content: attr(title);
       position: absolute;
       top: -20px;
@@ -1844,17 +1885,15 @@
       z-index: 201;
       pointer-events: none;
     }
-    
-    /* 디버그 모드도 지원 (?debug=1 파라미터) */
-    body[data-debug-buttons="1"] .btn-area,
-    html:has([data-debug-buttons="1"]) .btn-area {
+
+    /* 디버그 모드도 프로 버전에서만 지원 (?debug=1 파라미터) */
+    body.app-tier-pro[data-debug-buttons="1"] .btn-area {
       background: rgba(255, 0, 0, 0.3) !important;
       border: 2px dashed rgba(255, 0, 0, 0.8) !important;
       box-shadow: 0 0 0 1px rgba(255, 0, 0, 0.5) inset;
     }
-    
-    body[data-debug-buttons="1"] .btn-area::after,
-    html:has([data-debug-buttons="1"]) .btn-area::after {
+
+    body.app-tier-pro[data-debug-buttons="1"] .btn-area::after {
       content: attr(title);
       position: absolute;
       top: -20px;
@@ -1886,9 +1925,10 @@
     .btn-d {
       left: var(--btn-d-left);
       bottom: var(--btn-d-bottom);
-      display: none; /* 기본적으로 숨김 */
+      display: none;
+      /* 기본적으로 숨김 */
     }
-    
+
     /* 기본 스킨(classic)에서는 D 버튼 완전히 숨김 */
     body[data-frame-theme="classic"] .btn-d,
     body:not([data-frame-theme]) .btn-d {
@@ -1896,7 +1936,7 @@
       visibility: hidden !important;
       pointer-events: none !important;
     }
-    
+
     /* 블랙/화이트/하루치1/2에서는 D 버튼 표시 */
     body[data-frame-theme="black"] .btn-d,
     body[data-frame-theme="white"] .btn-d,
@@ -2385,6 +2425,13 @@
       transition: opacity 0.6s ease-out;
     }
 
+    /* [깜빡임 방지] 노션 모드일 때 즉시 숨김 */
+    html.notion-auto-start .start-screen {
+      display: none !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
     .start-screen.hidden {
       opacity: 0;
       pointer-events: none;
@@ -2393,38 +2440,40 @@
     .start-screen-bg {
       position: absolute;
       inset: 0;
-      /* Thumbnail 이미지가 없어도 검은 화면이 되지 않도록 fallback 제공 */
-      background:
-        url('../assets/Thumbnail.png') center center / contain no-repeat,
-        url('../assets/scene/bg.png') center center / cover no-repeat,
-        #111;
+      /* 오프닝 전용 화면: 게임 배경(bg)은 표시하지 않음 */
+      background: url('../assets/Thumbnail.png') center center no-repeat;
+      background-size: contain;
     }
 
     .start-screen-content {
       position: absolute;
-      inset: 0;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: min(100vw, calc(100vh * 1200 / 822));
+      height: min(100vh, calc(100vw * 822 / 1200));
       z-index: 2;
     }
 
-    /* 게임 스타트 버튼 (위치/크기 CSS 변수로 조절, 투명 영역) */
+    /* 게임 스타트 버튼 (위치/크기 CSS 변수로 조절) */
     .game-start-btn {
       position: absolute;
-      top: var(--start-btn-top);
-      left: var(--start-btn-left);
-      transform: translate(-50%, -50%);
+      top: var(--start-btn-top) !important;
+      left: var(--start-btn-left) !important;
+      transform: translateX(-50%);
       width: var(--start-btn-width);
       height: var(--start-btn-height);
       padding: 0;
       font-family: 'Press Start 2P', cursive;
-      font-size: 18px;
-      color: #0f380f;
-      background: rgba(155, 188, 15, 0.92);
-      border: 3px solid #0f380f;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 0, 0, 0.28);
+      border: 2px dashed rgba(255, 0, 0, 0.8);
       border-radius: 10px;
       cursor: pointer;
       text-shadow: none;
-      box-shadow: 0 6px 0 rgba(15, 56, 15, 0.55);
-      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+      box-shadow: 0 0 0 1px rgba(255, 0, 0, 0.45) inset;
+      transition: none;
       z-index: 3;
       display: flex;
       align-items: center;
@@ -2432,9 +2481,8 @@
     }
 
     .game-start-btn:hover {
-      transform: translate(-50%, -50%) translateY(-2px);
-      box-shadow: 0 8px 0 rgba(15, 56, 15, 0.55);
-      filter: brightness(1.03);
+      transform: translateX(-50%);
+      filter: none;
     }
 
     /* 시작 화면 안내 (첫 터치 시 사라짐) - 완전 투명(비표시), 드래그 시 선택 방지 */
@@ -2487,6 +2535,13 @@
       color: rgba(155, 188, 15, 0.85);
       text-shadow: 1px 1px 0 #0f380f;
       pointer-events: none;
+      display: none;
+      /* 오프닝 중에는 숨김 */
+    }
+
+    /* 오프닝이 닫힌 뒤에만 게임 화면 제작 문구 표시 */
+    body.opening-closed .credit-game {
+      display: block;
     }
 
     /* 프로 버전 전용 스타일 (IS_PRO일 때 적용) */

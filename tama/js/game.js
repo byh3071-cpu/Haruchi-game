@@ -201,6 +201,7 @@
       var deviceWrapper = document.getElementById('deviceWrapper');
       startScreen.classList.add('hidden');
       deviceWrapper.style.display = 'flex';
+      document.body.classList.add('opening-closed');
       setTimeout(function () {
         startScreen.style.display = 'none';
       }, 650);
@@ -2230,11 +2231,14 @@
     }
 
     init();
-    /* 노션 임베드(?notion=1)에서만 오프닝 화면 생략 */
-    const SKIP_OPENING_FOR_NOTION = location.search.includes('notion=1');
+    /* 노션 임베드(?notion=1)에서만 오프닝 화면 생략
+       단, 로컬 개발(Live Server)에서는 오프닝 위치 조정 테스트를 위해 자동 스킵하지 않음 */
+    const isLocalDevHost = /^(localhost|127\.0\.0\.1)$/i.test(location.hostname || '');
+    const SKIP_OPENING_FOR_NOTION = location.search.includes('notion=1') && !isLocalDevHost;
     if (SKIP_OPENING_FOR_NOTION) {
       startGame();
     } else {
+      document.body.classList.remove('opening-closed');
       /* 게임기 버전: 오프닝 화면 표시, 터치 시 재생 시작 */
       (function () {
         var o = document.getElementById('openingBgm');

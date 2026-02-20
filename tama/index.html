@@ -28,11 +28,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+KR:wght@400;700&display=swap"
     rel="stylesheet">
   <script>
-    /* === 2026-02-20 Update for Vercel Sync === */
-    /* === 기본/프로 버전 구분 (배포 URL 기준) ===
-     * - basic (1000원): haruchi.vercel.app 등
-     * - pro (5000원): haruchipro.vercel.app, haruchi-pro.vercel.app 등 hostname에 pro 포함
-     * - 로컬 테스트: ?tier=pro 로 프로 기능 확인 */
+    /* === 2026-02-20 Update v3 (UI & Notion Sync) === */
     window.APP_TIER = (function () {
       if (typeof location === 'undefined') return 'basic';
       if (location.search.includes('tier=pro')) return 'pro';
@@ -49,12 +45,13 @@
       }
     })();
 
+    /* [중요] 노션 임베드 깜빡임 방지 커스텀 헤드 스크립트 */
     (function () {
       var isNotion = (location.search.includes('notion=1')) || (window.self !== window.top);
-      if (!isNotion) return;
-      document.documentElement.classList.add('notion-embed');
-      var m = document.querySelector('meta[name="color-scheme"]');
-      if (m) m.content = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      if (isNotion) {
+        document.documentElement.classList.add('notion-auto-start');
+        document.documentElement.classList.add('notion-embed');
+      }
     })();
   </script>
   <link rel="stylesheet" href="css/styles.css">
@@ -279,7 +276,7 @@
 
   <!-- Vercel Speed Insights: 웹사이트 성능 모니터링 -->
   <script>
-    window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+    window.si = window.si || function () { (window.siq = window.siq || []).push(arguments);;
   </script>
   <script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
