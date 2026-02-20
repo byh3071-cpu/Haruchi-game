@@ -2230,8 +2230,9 @@
     }
 
     init();
-    /* 노션 임베드: 오프닝 화면 생략, 바로 게임 화면 진입 */
-    if (NOTION_ENABLED) {
+    /* 노션 임베드(?notion=1)에서만 오프닝 화면 생략 */
+    const SKIP_OPENING_FOR_NOTION = location.search.includes('notion=1');
+    if (SKIP_OPENING_FOR_NOTION) {
       startGame();
     } else {
       /* 게임기 버전: 오프닝 화면 표시, 터치 시 재생 시작 */
