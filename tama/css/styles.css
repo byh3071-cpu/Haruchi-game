@@ -2395,8 +2395,8 @@
       inset: 0;
       /* Thumbnail 이미지가 없어도 검은 화면이 되지 않도록 fallback 제공 */
       background:
-        url('./assets/Thumbnail.png') center center / contain no-repeat,
-        url('./assets/scene/bg.png') center center / cover no-repeat,
+        url('../assets/Thumbnail.png') center center / contain no-repeat,
+        url('../assets/scene/bg.png') center center / cover no-repeat,
         #111;
     }
 
