@@ -29,6 +29,7 @@
         return DEFAULT_FRAME_THEME;
       }
     })();
+    let frameSkinPickerInitialized = false;
 
     /* 스킨별 버튼 이름 매핑 */
     const BUTTON_LABELS = {
@@ -92,10 +93,23 @@
 
     // DOM 로드 완료 후 초기화
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initFrameImage);
+      document.addEventListener('DOMContentLoaded', function () {
+        initFrameImage();
+        initFrameSkinPicker();
+      });
     } else {
       // 이미 로드됨
-      setTimeout(initFrameImage, 0);
+      setTimeout(function () {
+        initFrameImage();
+        initFrameSkinPicker();
+      }, 0);
+    }
+
+    function toggleFrameSettingsPanel(event) {
+      const panel = document.getElementById('frameSettingsPanel');
+      if (!panel) return;
+      if (event) event.stopPropagation();
+      panel.classList.toggle('is-open');
     }
 
     /* 프레임 스킨 선택 패널 초기화 (오른쪽 상단 하루치 로고 클릭) */
@@ -103,6 +117,10 @@
       const panel = document.getElementById('frameSettingsPanel');
       const logo = document.getElementById('deviceLogo');
       if (!panel || !logo) return;
+      if (frameSkinPickerInitialized) {
+        applyFrameTheme(currentFrameTheme);
+        return;
+      }
 
       // 패널 내 버튼 클릭 → 스킨 변경 (data-frame-theme 속성이 있는 버튼만)
       panel.addEventListener('click', function (e) {
@@ -128,6 +146,7 @@
         const isInside = panel.contains(e.target) || logo.contains(e.target);
         if (!isInside) panel.classList.remove('is-open');
       });
+      frameSkinPickerInitialized = true;
 
       // 초기 테마 적용
       applyFrameTheme(currentFrameTheme);

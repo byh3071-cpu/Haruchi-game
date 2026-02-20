@@ -28,6 +28,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+KR:wght@400;700&display=swap"
     rel="stylesheet">
   <script>
+    /* === 2026-02-20 Update for Vercel Sync === */
     /* === 기본/프로 버전 구분 (배포 URL 기준) ===
      * - basic (1000원): haruchi.vercel.app 등
      * - pro (5000원): haruchipro.vercel.app, haruchi-pro.vercel.app 등 hostname에 pro 포함
@@ -42,7 +43,7 @@
     window.IS_PRO = window.APP_TIER === 'pro';
 
     /* 디버그 모드 감지 (?debug=1 파라미터) */
-    (function(){
+    (function () {
       if (location.search.includes('debug=1')) {
         document.body.setAttribute('data-debug-buttons', '1');
       }
@@ -150,7 +151,7 @@
 
         <div class="layer-frame">
           <img src="" class="frame-img" id="frameImg" alt="Frame">
-          <img src="./assets/logo2.png" class="device-logo" alt="Logo" id="deviceLogo">
+          <img src="./assets/logo2.png" class="device-logo" alt="Logo" id="deviceLogo" onclick="toggleFrameSettingsPanel(event)">
           <img src="./assets/main_logo.png" class="main-logo" alt="Main Logo">
         </div>
 
@@ -161,7 +162,7 @@
 
       </div>
     </div>
-    
+
     <!-- 프레임 스킨 설정 패널 (프레임 밖에 배치) -->
     <div class="frame-settings-panel" id="frameSettingsPanel">
       <div class="frame-skin-picker-label">FRAME SKIN</div>
@@ -173,7 +174,8 @@
         <button type="button" class="frame-skin-btn" data-frame-theme="haruchi2">하루치 2</button>
       </div>
       <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.2);">
-        <button type="button" class="frame-skin-btn" onclick="openGroomingAdjustPanel(event)" style="width: 100%;">그루밍 조정</button>
+        <button type="button" class="frame-skin-btn" onclick="openGroomingAdjustPanel(event)" style="width: 100%;">그루밍
+          조정</button>
       </div>
     </div>
 
@@ -186,52 +188,62 @@
       <div class="grooming-adjust-content">
         <div class="grooming-adjust-section">
           <label>위치 (Top %)</label>
-          <input type="range" id="groomingTop" min="0" max="100" step="1" value="68" oninput="updateGroomingValue('top', this.value)">
+          <input type="range" id="groomingTop" min="0" max="100" step="1" value="68"
+            oninput="updateGroomingValue('top', this.value)">
           <span id="groomingTopValue">68%</span>
         </div>
         <div class="grooming-adjust-section">
           <label>위치 (Left %)</label>
-          <input type="range" id="groomingLeft" min="0" max="100" step="1" value="50" oninput="updateGroomingValue('left', this.value)">
+          <input type="range" id="groomingLeft" min="0" max="100" step="1" value="50"
+            oninput="updateGroomingValue('left', this.value)">
           <span id="groomingLeftValue">50%</span>
         </div>
         <div class="grooming-adjust-section">
           <label>X 오프셋 (px)</label>
-          <input type="range" id="groomingOffsetX" min="-100" max="100" step="1" value="0" oninput="updateGroomingValue('offsetX', this.value)">
+          <input type="range" id="groomingOffsetX" min="-100" max="100" step="1" value="0"
+            oninput="updateGroomingValue('offsetX', this.value)">
           <span id="groomingOffsetXValue">0px</span>
         </div>
         <div class="grooming-adjust-section">
           <label>Y 오프셋 (px)</label>
-          <input type="range" id="groomingOffsetY" min="-100" max="100" step="1" value="-30" oninput="updateGroomingValue('offsetY', this.value)">
+          <input type="range" id="groomingOffsetY" min="-100" max="100" step="1" value="-30"
+            oninput="updateGroomingValue('offsetY', this.value)">
           <span id="groomingOffsetYValue">-30px</span>
         </div>
         <div class="grooming-adjust-section">
           <label>행 0 Y 오프셋 (px)</label>
-          <input type="range" id="groomingRow0Y" min="-50" max="50" step="1" value="0" oninput="updateGroomingRowOffset(0, 'y', this.value)">
+          <input type="range" id="groomingRow0Y" min="-50" max="50" step="1" value="0"
+            oninput="updateGroomingRowOffset(0, 'y', this.value)">
           <span id="groomingRow0YValue">0px</span>
         </div>
         <div class="grooming-adjust-section">
           <label>행 1 Y 오프셋 (px)</label>
-          <input type="range" id="groomingRow1Y" min="-50" max="50" step="1" value="0" oninput="updateGroomingRowOffset(1, 'y', this.value)">
+          <input type="range" id="groomingRow1Y" min="-50" max="50" step="1" value="0"
+            oninput="updateGroomingRowOffset(1, 'y', this.value)">
           <span id="groomingRow1YValue">0px</span>
         </div>
         <div class="grooming-adjust-section">
           <label>행 2 Y 오프셋 (px)</label>
-          <input type="range" id="groomingRow2Y" min="-50" max="50" step="1" value="0" oninput="updateGroomingRowOffset(2, 'y', this.value)">
+          <input type="range" id="groomingRow2Y" min="-50" max="50" step="1" value="0"
+            oninput="updateGroomingRowOffset(2, 'y', this.value)">
           <span id="groomingRow2YValue">0px</span>
         </div>
         <div class="grooming-adjust-section">
           <label>행 3 Y 오프셋 (px)</label>
-          <input type="range" id="groomingRow3Y" min="-50" max="50" step="1" value="0" oninput="updateGroomingRowOffset(3, 'y', this.value)">
+          <input type="range" id="groomingRow3Y" min="-50" max="50" step="1" value="0"
+            oninput="updateGroomingRowOffset(3, 'y', this.value)">
           <span id="groomingRow3YValue">0px</span>
         </div>
         <div class="grooming-adjust-section">
           <label>클립 Top (px)</label>
-          <input type="range" id="groomingClipTop" min="0" max="100" step="1" value="28" oninput="updateGroomingValue('clipTop', this.value)">
+          <input type="range" id="groomingClipTop" min="0" max="100" step="1" value="28"
+            oninput="updateGroomingValue('clipTop', this.value)">
           <span id="groomingClipTopValue">28px</span>
         </div>
         <div class="grooming-adjust-section">
           <label>애니메이션 속도 (ms)</label>
-          <input type="range" id="groomingSpeed" min="20" max="300" step="10" value="150" oninput="updateGroomingValue('speed', this.value)">
+          <input type="range" id="groomingSpeed" min="20" max="300" step="10" value="150"
+            oninput="updateGroomingValue('speed', this.value)">
           <span id="groomingSpeedValue">150ms</span>
         </div>
         <div class="grooming-adjust-buttons">
@@ -242,25 +254,25 @@
     </div>
 
     <div class="stats-modal" id="statsModal">
-          <div class="stats-panel">
-            <button class="stats-close" onclick="closeStats()">×</button>
-            <div class="stats-title">📊 STATISTICS</div>
-            <div id="statsContent">
-            </div>
-          </div>
+      <div class="stats-panel">
+        <button class="stats-close" onclick="closeStats()">×</button>
+        <div class="stats-title">📊 STATISTICS</div>
+        <div id="statsContent">
         </div>
-
-        <div class="stats-modal" id="logModal">
-          <div class="stats-panel log-modal-panel">
-            <button class="stats-close" onclick="closeLogModal()">×</button>
-            <div class="stats-title">📋 SYSTEM LOG</div>
-            <div class="log-modal-content" id="logModalContent"></div>
-          </div>
-        </div>
-
       </div>
     </div>
-    <div class="credit-game">제작 by bbaekyohan</div>
+
+    <div class="stats-modal" id="logModal">
+      <div class="stats-panel log-modal-panel">
+        <button class="stats-close" onclick="closeLogModal()">×</button>
+        <div class="stats-title">📋 SYSTEM LOG</div>
+        <div class="log-modal-content" id="logModalContent"></div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="credit-game">제작 by bbaekyohan</div>
 
   <script src="js/game.js"></script>
 
