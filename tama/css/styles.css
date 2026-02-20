@@ -882,6 +882,8 @@
 
     /* 프레임 스킨 선택용 작은 패널 (프레임 밖, 오른쪽 상단 하루치 로고 클릭 시 열림) */
     .frame-settings-panel {
+      display: none;
+      /* 기본적으로 숨김 */
       position: fixed;
       /* 프레임 오른쪽 위, 프레임 밖에 배치 */
       top: 20px;
@@ -895,7 +897,6 @@
       border: 2px solid rgba(255, 255, 255, 0.3);
       font-size: 9px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-      display: none;
       z-index: 200;
       pointer-events: auto;
     }
@@ -905,6 +906,11 @@
     }
 
     /* 노션 임베드 모드에서는 위치 조정 */
+    /* 프로 버전에서만 패널 표시 */
+    body.app-tier-pro .frame-settings-panel {
+      display: block;
+    }
+
     html.notion-embed .frame-settings-panel {
       top: 10px;
       right: 10px;
@@ -950,6 +956,8 @@
 
     /* 그루밍 애니메이션 조정 패널 */
     .grooming-adjust-panel {
+      display: none;
+      /* 기본적으로 숨김 */
       position: fixed;
       /* 프레임 왼쪽 위, 프레임 밖에 배치 */
       top: 20px;
@@ -964,7 +972,6 @@
       border: 2px solid rgba(255, 255, 255, 0.3);
       font-size: 12px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
-      display: none;
       z-index: 300;
       overflow: hidden;
       pointer-events: auto;
@@ -1100,10 +1107,16 @@
       max-width: var(--logo-max-width);
       max-height: var(--logo-max-height);
       object-fit: contain;
-      z-index: 151;
+      z-index: 100;
       image-rendering: pixelated;
       pointer-events: auto;
+      cursor: default;
+      /* 기본은 화살표 */
+    }
+
+    body.app-tier-pro .device-logo {
       cursor: pointer;
+      /* 프로 버전만 손가락 */
     }
 
     /* main_logo: 게임기 상단(검은 막대) 중앙 (YH) */
