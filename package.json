@@ -1,0 +1,11 @@
+{
+    "name": "hamster-damagochi",
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "build": "echo 'No build step'"
+    },
+    "dependencies": {
+        "@notionhq/client": "^2.2.15"
+    }
+}
