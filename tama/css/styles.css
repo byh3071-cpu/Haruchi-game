@@ -22,7 +22,7 @@
       /* === 오른쪽 시스템 로그 패널 위치/크기 === */
       --log-panel-padding-top: 10px;
       --log-panel-padding-left: 10px;
-      --log-panel-padding-right: 0px;
+      --log-panel-padding-right: 20px;
       --log-panel-padding-bottom: 0px;
 
       /* [테마] 게임보이 그린 */
@@ -75,11 +75,20 @@
       /* 기본 스킨에서는 숨김 */
       --btn-d-bottom: 61px;
 
-      /* === 게임 스타트 버튼 위치/크기 기본값 (전체 스킨 공통) === */
-      --start-btn-top: 85%;
-      --start-btn-left: 50%;
       --start-btn-width: 340px;
       --start-btn-height: 104px;
+
+      /* === 잠자는 모습 위치/크기 기본값 === */
+      --sleep-left: 89%;
+      --sleep-top: 65%;
+      --sleep-width: 120px;
+      --sleep-height: 120px;
+
+      /* === 물 급수통 클릭 영역 기본값 === */
+      --water-bottle-right: 196px;
+      --water-bottle-bottom: 146px;
+      --water-bottle-width: 42px;
+      --water-bottle-height: 118px;
     }
 
     /* ===== 스킨별 UI 위치/크기 조정 ===== */
@@ -184,8 +193,8 @@
       --feedback-bubble-offset-y: 0px;
 
       /* === 워터드랍 위치 === */
-      --water-drop-offset-x: 2px;
-      --water-drop-offset-y: 1px;
+      --water-drop-offset-x: -5px;
+      --water-drop-offset-y: -30px;
     }
 
     /* 블랙 스킨 */
@@ -196,9 +205,36 @@
       --screen-top-w: 390px;
       --screen-top-h: 255px;
       --panel-x: 150px;
-      --panel-y: 398px;
+      --panel-y: 400px;
       --panel-w: 395px;
-      --panel-h: 152px;
+      --panel-h: 150px;
+
+      /* === 왼쪽 통계 패널 위치 === */
+      --stat-panel-padding-top: 0px;
+      --stat-panel-padding-bottom: 10px;
+
+      --log-panel-padding-right: 20px;
+      --log-panel-padding-bottom: 2px;
+
+      /* === 잠자는 모습 위치/크기 === */
+      --sleep-left: 83%;
+      --sleep-top: 65%;
+      --sleep-width: 120px;
+      --sleep-height: 120px;
+
+      /* === 물 급수통 클릭 영역 === */
+      --water-bottle-right: 196px;
+      --water-bottle-bottom: 146px;
+      --water-bottle-width: 42px;
+      --water-bottle-height: 118px;
+
+      /* === B 버튼 애니메이션 (뒤태) 위치/크기 === */
+      --back-left: 54%;
+      --back-top: 68%;
+      --back-width: 245px;
+      --back-height: 245px;
+      --back-offset-x: 0px;
+      --back-offset-y: 0px;
 
       /* === 버튼 위치/크기 (ㄱ,ㄴ,ㄷ,ㄹ) === */
       --btn-size: 54px;
@@ -222,11 +258,8 @@
       --main-logo-top: 1%;
       --main-logo-left: 50%;
 
-      /* === 시스템 로그 패널 위치 === */
-      --log-panel-padding-top: 14px;
-      --log-panel-padding-left: 10px;
-      --log-panel-padding-right: 10px;
-      --log-panel-padding-bottom: 0px;
+      /* 전역 설정 오버라이드: 로그를 더 왼쪽으로 */
+      --log-panel-padding-left: 8px;
 
       /* === 말풍선 위치/크기 === */
       --angry-bubble-right: 62px;
@@ -265,67 +298,123 @@
       --grooming-animation-speed: 120ms;
       /* 블랙 스킨 전용 속도 (기본 42ms보다 느리게 설정) */
 
-      --water-drop-offset-x: 18px;
-      --water-drop-offset-y: 12px;
+      --water-drop-offset-x: 1px;
+      --water-drop-offset-y: 10px;
     }
 
     /* 화이트 스킨 */
     body[data-frame-theme="white"] {
       /* === 화면/패널 위치 === */
-      /* --screen-top-x: 142px; */
-      /* --screen-top-y: 90px; */
-      /* --screen-top-w: 390px; */
-      /* --screen-top-h: 280px; */
-      /* --panel-x: 142px; */
-      /* --panel-y: 408px; */
-      /* --panel-w: 390px; */
-      /* --panel-h: 135px; */
+      --screen-top-x: 141px;
+      --screen-top-y: 90px;
+      --screen-top-w: 390px;
+      --screen-top-h: 255px;
+      --panel-x: 148px;
+      --panel-y: 400px;
+      --panel-w: 400px;
+      --panel-h: 180px;
+
+      /* === 왼쪽 통계 패널 위치 === */
+      --stat-panel-padding-top: 0px;
+      --stat-panel-padding-bottom: 32px;
+      /* 값을 키울수록 내용이 위로 올라갑니다 */
+
+      --start-btn-top: 10px;
+      --start-btn-left: 50%;
+
+      --log-panel-padding-top: 14.5px;
+      --log-panel-padding-left: 10px;
+      --log-panel-padding-right: 20px;
+      --log-panel-padding-bottom: 10px;
+
+      /* === 잠자는 모습 위치/크기 === */
+      --sleep-left: 83%;
+      --sleep-top: 65%;
+      --sleep-width: 120px;
+      --sleep-height: 120px;
+
+      /* === 물 급수통 클릭 영역 === */
+      --water-bottle-right: 194px;
+      --water-bottle-bottom: 138px;
+      --water-bottle-width: 42px;
+      --water-bottle-height: 110px;
+
+      /* === B 버튼 애니메이션 (뒤태) 위치/크기 === */
+      --back-left: 54%;
+      --back-top: 68%;
+      --back-width: 245px;
+      --back-height: 245px;
+      --back-offset-x: 0px;
+      --back-offset-y: 0px;
 
       /* === 버튼 위치/크기 (ㄱ,ㄴ,ㄷ,ㄹ) === */
-      /* --btn-size: 65px; */
-      /* --btn-bottom: 61px; */
-      /* --btn-b-bottom: 39px; */
-      /* --btn-a-left: 186px; */
+      --btn-size: 54px;
+      --btn-bottom: 58px;
+      --btn-b-bottom: 58px;
+      --btn-c-bottom: 60px;
+      --btn-d-bottom: 58px;
+      --btn-a-left: 195px;
       /* ㄱ 버튼 */
-      /* --btn-b-left: 303px; */
+      --btn-b-left: 275px;
       /* ㄴ 버튼 */
-      /* --btn-c-left: 420px; */
+      --btn-c-left: 350px;
       /* ㄷ 버튼 */
-      /* --btn-d-left: 537px; */
+      --btn-d-left: 430px;
       /* ㄹ 버튼 */
-      /* --btn-d-bottom: 61px; */
+
 
       /* === 로고 위치 === */
-      /* --logo-top: 8%; */
-      /* --logo-left: 68%; */
-      /* --main-logo-top: 1.5%; */
-      /* --main-logo-left: 50%; */
+      --logo-top: 6%;
+      --logo-left: 68%;
+      --main-logo-top: 1%;
+      --main-logo-left: 50%;
 
-      /* === 시스템 로그 패널 위치 === */
-      /* --log-panel-padding-top: 10px; */
-      /* --log-panel-padding-left: 20px; */
-      /* --log-panel-padding-right: 0px; */
-      /* --log-panel-padding-bottom: 0px; */
+      /* 전역 설정 오버라이드: 로그를 더 왼쪽으로 */
+      --log-panel-padding-left: 8px;
 
       /* === 말풍선 위치/크기 === */
-      /* --angry-bubble-right: 62px; */
-      /* --angry-bubble-top: 56%; */
-      /* --drink-bubble-left: 53%; */
-      /* --drink-bubble-top: 28%; */
-      /* --butt-bubble-right: 62px; */
-      /* --butt-bubble-top: 56%; */
-      /* --feedback-bubble-left: 50%; */
-      /* --feedback-bubble-top: 22%; */
+      --angry-bubble-right: 62px;
+      --angry-bubble-top: 56%;
+      --angry-bubble-offset-x: 0px;
+      --angry-bubble-offset-y: 0px;
+      --drink-bubble-left: 53%;
+      --drink-bubble-top: 28%;
+      --drink-bubble-offset-x: 0px;
+      --drink-bubble-offset-y: 0px;
+      --drink-bubble-font-size: 14px;
+      --drink-bubble-padding-x: 14px;
+      --drink-bubble-padding-y: 8px;
+      --butt-bubble-right: 62px;
+      --butt-bubble-top: 56%;
+      --butt-bubble-offset-x: 0px;
+      --butt-bubble-offset-y: 0px;
+      --butt-bubble-font-size: 14px;
+      --butt-bubble-padding-x: 14px;
+      --butt-bubble-padding-y: 8px;
+      --feedback-bubble-left: 50%;
+      --feedback-bubble-top: 22%;
+      --feedback-bubble-offset-x: 0px;
+      --feedback-bubble-offset-y: 0px;
+      --feedback-bubble-font-size: 12px;
+      --feedback-bubble-padding-x: 16px;
+      --feedback-bubble-padding-y: 10px;
 
       /* === 애니메이션 위치/크기 === */
-      /* --grooming-top: 68%; */
-      /* --grooming-left: 50%; */
-      /* --water-drop-offset-x: -18px; */
-      /* --water-drop-offset-y: -12px; */
+      --grooming-top: 60%;
+      --grooming-left: 50%;
+      --grooming-offset-x: 0px;
+      --grooming-offset-y: 0px;
+
+      /* === 그루밍 애니메이션 속도 조정 === */
+      --grooming-animation-speed: 120ms;
+
+      --water-drop-offset-x: -10px;
+      --water-drop-offset-y: 2px;
     }
 
     /* 하루치 스킨 1 */
     body[data-frame-theme="haruchi1"] {
+      --log-panel-padding-left: 5px;
       /* === 버튼 위치/크기 (ㄱ,ㄴ,ㄷ,ㄹ) === */
       /* --btn-size: 65px; */
       /* --btn-bottom: 61px; */
@@ -343,6 +432,7 @@
 
     /* 하루치 스킨 2 */
     body[data-frame-theme="haruchi2"] {
+      --log-panel-padding-left: 5px;
       /* === 버튼 위치/크기 (A,B,C,D) === */
       /* --btn-size: 65px; */
       /* --btn-bottom: 61px; */
@@ -673,16 +763,11 @@
      */
     .water-bottle-click-area {
       position: absolute;
-      right: 196px;
-      /* 오른쪽에 배치 (그릇과 집 사이) - 물 급수통 위치에 맞춰 조정 */
-      bottom: 146px;
-      /* 아래에서 90px 위 - 물 급수통 높이에 맞춰 조정 */
-      width: 42px;
-      /* 물 급수통 크기에 맞춰 조정 */
-      height: 118px;
-      /* 물 급수통 높이에 맞춰 조정 */
+      right: var(--water-bottle-right);
+      bottom: var(--water-bottle-bottom);
+      width: var(--water-bottle-width);
+      height: var(--water-bottle-height);
       z-index: 25;
-      /* 하루치(z-index: 20)보다 높게 설정 */
       cursor: pointer;
       background: transparent;
     }
@@ -1141,8 +1226,8 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding-top: 0;
-      padding-bottom: 15px;
+      padding-top: var(--stat-panel-padding-top);
+      padding-bottom: var(--stat-panel-padding-bottom);
       border-right: 2px dashed rgba(15, 56, 15, 0.5);
       position: relative;
     }
@@ -1978,13 +2063,10 @@
 
     /* 잠자는 모습 (오른쪽 집 안) */
     .hamster.sleeping {
-      left: 89% !important;
-      /* 살짝 오른쪽으로 */
-      top: 65% !important;
-      /* 살짝 위로 */
-      width: 120px !important;
-      /* 크기 살짝 줄이기 */
-      height: 120px !important;
+      left: var(--sleep-left) !important;
+      top: var(--sleep-top) !important;
+      width: var(--sleep-width) !important;
+      height: var(--sleep-height) !important;
       transform: translate(-50%, -50%);
       animation: sleepBreath 2s infinite ease-in-out;
     }
@@ -2563,4 +2645,21 @@
     body.app-tier-pro .credit-start::after {
       content: ' PRO';
       opacity: 0.8;
+    }
+
+    /* 프로 버전에서 메인 게임 화면의 크레딧 숨기기 */
+    body.app-tier-pro.opening-closed .credit-game {
+      display: none !important;
+    }
+
+    /* 통계 패널 내 크레딧 스타일 */
+    .stats-credit {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.2);
+      text-align: center;
+      font-size: 10px;
+      color: rgba(155, 188, 15, 0.9);
+      text-shadow: 1px 1px 0 #0f380f;
+      font-family: 'Press Start 2P', 'Noto Sans KR', sans-serif;
     }

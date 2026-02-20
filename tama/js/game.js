@@ -1969,6 +1969,11 @@ function showStats(resetCalendarToCurrent) {
       : '사전예약 쿠폰으로 응애 하루치 스킨을 해금하세요!'}
           </div>
         </div>
+        ${window.IS_PRO ? `
+        <div class="stats-credit">
+          제작 by bbaekyohan PRO
+        </div>
+        ` : ''}
       `;
 
   modal.classList.add('show');
