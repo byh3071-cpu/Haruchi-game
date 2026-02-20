@@ -2231,10 +2231,10 @@
     }
 
     init();
-    /* 노션 임베드(?notion=1)에서만 오프닝 화면 생략
+    /* 노션 임베드 또는 iframe에서만 오프닝 화면 생략
        단, 로컬 개발(Live Server)에서는 오프닝 위치 조정 테스트를 위해 자동 스킵하지 않음 */
     const isLocalDevHost = /^(localhost|127\.0\.0\.1)$/i.test(location.hostname || '');
-    const SKIP_OPENING_FOR_NOTION = location.search.includes('notion=1') && !isLocalDevHost;
+    const SKIP_OPENING_FOR_NOTION = NOTION_ENABLED && !isLocalDevHost;
     if (SKIP_OPENING_FOR_NOTION) {
       startGame();
     } else {
