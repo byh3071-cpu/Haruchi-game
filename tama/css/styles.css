@@ -2393,8 +2393,11 @@
     .start-screen-bg {
       position: absolute;
       inset: 0;
-      background: url('./assets/Thumbnail.png') center center no-repeat;
-      background-size: contain;
+      /* Thumbnail 이미지가 없어도 검은 화면이 되지 않도록 fallback 제공 */
+      background:
+        url('./assets/Thumbnail.png') center center / contain no-repeat,
+        url('./assets/scene/bg.png') center center / cover no-repeat,
+        #111;
     }
 
     .start-screen-content {
@@ -2413,15 +2416,15 @@
       height: var(--start-btn-height);
       padding: 0;
       font-family: 'Press Start 2P', cursive;
-      font-size: 14px;
-      color: transparent;
-      background: transparent;
-      border: none;
-      border-radius: 0;
+      font-size: 18px;
+      color: #0f380f;
+      background: rgba(155, 188, 15, 0.92);
+      border: 3px solid #0f380f;
+      border-radius: 10px;
       cursor: pointer;
       text-shadow: none;
-      box-shadow: none;
-      transition: none;
+      box-shadow: 0 6px 0 rgba(15, 56, 15, 0.55);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
       z-index: 3;
       display: flex;
       align-items: center;
@@ -2429,7 +2432,9 @@
     }
 
     .game-start-btn:hover {
-      transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%) translateY(-2px);
+      box-shadow: 0 8px 0 rgba(15, 56, 15, 0.55);
+      filter: brightness(1.03);
     }
 
     /* 시작 화면 안내 (첫 터치 시 사라짐) - 완전 투명(비표시), 드래그 시 선택 방지 */
