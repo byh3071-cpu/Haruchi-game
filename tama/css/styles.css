@@ -76,10 +76,10 @@
       --btn-d-bottom: 61px;
 
       /* === 게임 스타트 버튼 위치/크기 기본값 (전체 스킨 공통) === */
-      --start-btn-top: 15%;
+      --start-btn-top: 85%;
       --start-btn-left: 50%;
-      --start-btn-width: 320px;
-      --start-btn-height: 88px;
+      --start-btn-width: 340px;
+      --start-btn-height: 104px;
     }
 
     /* ===== 스킨별 UI 위치/크기 조정 ===== */
@@ -2464,20 +2464,17 @@
       width: var(--start-btn-width);
       height: var(--start-btn-height);
       padding: 0;
-      font-family: 'Press Start 2P', cursive;
-      font-size: 14px;
-      color: rgba(255, 255, 255, 0.9);
-      background: rgba(255, 0, 0, 0.28);
-      border: 2px dashed rgba(255, 0, 0, 0.8);
-      border-radius: 10px;
       cursor: pointer;
-      text-shadow: none;
-      box-shadow: 0 0 0 1px rgba(255, 0, 0, 0.45) inset;
-      transition: none;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      color: transparent;
       z-index: 3;
       display: flex;
       align-items: center;
       justify-content: center;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .game-start-btn:hover {
