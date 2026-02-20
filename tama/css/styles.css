@@ -76,7 +76,7 @@
       --btn-d-bottom: 61px;
 
       /* === 게임 스타트 버튼 위치/크기 기본값 (전체 스킨 공통) === */
-      --start-btn-top: 8.8%;
+      --start-btn-top: 15%;
       --start-btn-left: 50%;
       --start-btn-width: 320px;
       --start-btn-height: 88px;
