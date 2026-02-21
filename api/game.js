@@ -22,6 +22,8 @@ export default async function handler(req, res) {
   }
 
   const action = (req.query && req.query.action) || 'getXp';
+  const ownerSession = hasOwnerSession(req);
+  const includeDebug = ownerSession && String(req.query?.debug || '') === '1';
   if (!isOwnerAuthorized(req)) {
     if (action === 'getLogs') return res.status(200).json({ logs: [] });
     if (action === 'getXp') return res.status(200).json({ totalExp: 0, source: 'owner_auth_required' });
@@ -67,7 +69,12 @@ export default async function handler(req, res) {
       return res.status(200).json({ logs });
     } catch (err) {
       console.error('Notion 로그 조회 실패:', err.message);
-      return res.status(200).json({ logs: [] });
+      return res.status(200).json({
+        logs: [],
+        source: 'error',
+        error: err.code || 'unknown',
+        ...(includeDebug ? { debug: getNotionErrorMeta(err) } : {}),
+      });
     }
   }
 
@@ -129,6 +136,7 @@ export default async function handler(req, res) {
         totalExp: 0,
         source: 'error',
         error: err.code || 'unknown',
+        ...(includeDebug ? { debug: getNotionErrorMeta(err) } : {}),
       });
     }
   }
@@ -139,10 +147,28 @@ export default async function handler(req, res) {
 function isOwnerAuthorized(req) {
   const ownerKey = process.env.OWNER_ACCESS_KEY;
   if (!ownerKey) return true;
+  return hasOwnerSession(req);
+}
+
+function hasOwnerSession(req) {
+  const ownerKey = process.env.OWNER_ACCESS_KEY;
+  if (!ownerKey) return false;
   const cookie = String(req.headers?.cookie || '');
   const match = cookie.match(/(?:^|;\s*)haruchi_owner=([^;]+)/);
   if (!match) return false;
   return decodeURIComponent(match[1]) === ownerKey;
+}
+
+function getNotionErrorMeta(err) {
+  const body = err?.body && typeof err.body === 'object' ? err.body : null;
+  return {
+    code: err?.code || null,
+    status: err?.status || null,
+    message: err?.message || null,
+    requestId: err?.request_id || err?.headers?.['x-request-id'] || null,
+    bodyCode: body?.code || null,
+    bodyMessage: body?.message || null,
+  };
 }
 
 /** XP 로그 DB에서 하루치와 연결된 XP 합산 (Rollup 없을 때 폴백) */
