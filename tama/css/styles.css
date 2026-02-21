@@ -60,6 +60,10 @@
       --logo-left: 68%;
       --logo-max-width: 155px;
       --logo-max-height: 155px;
+      --logo-click-offset-x: 0px;
+      --logo-click-offset-y: 50px;
+      --logo-click-width: 110px;
+      --logo-click-height: 40px;
       --main-logo-top: 1.5%;
       --main-logo-left: 50%;
       --main-logo-max-width: 130px;
@@ -125,6 +129,8 @@
       --panel-w: 390px;
       /* 패널 시각적 크기 (그대로 유지) */
       --panel-h: 135px;
+      --classic-panel-offset-x: 0px;
+      --classic-panel-offset-y: -10px;
 
       /* === 통계 패널 클릭 영역 제한 === */
       --panel-left-click-width: 180px;
@@ -151,6 +157,8 @@
       /* 클릭 영역 X 오프셋 */
       --log-click-area-offset-y: 0px;
       /* 클릭 영역 Y 오프셋 */
+      --classic-log-offset-x: 0px;
+      --classic-log-offset-y: 0px;
 
       /* === 빨간색 버튼 영역 표시 크기 === */
       --log-debug-display-width: 100%;
@@ -341,7 +349,7 @@
       --water-bottle-height: 112px;
 
       /* 햄스터 마시기 위치 (값↑=왼쪽, 음수=아래) */
-      --drink-right:66px;
+      --drink-right: 66px;
       --drink-bottom: -15px;
 
       /* 물방울 오프셋 (물병 입구에 맞춤) */
@@ -354,9 +362,9 @@
       --screen-top-w: 390px;
       --screen-top-h: 255px;
       --panel-x: 148px;
-      --panel-y: 400px;
+      --panel-y: 395px;
       --panel-w: 400px;
-      --panel-h: 170px;
+      --panel-h: 180px;
 
       /* === 왼쪽 통계 패널 위치 === */
       --stat-panel-padding-top: 0px;
@@ -448,21 +456,21 @@
 
     /* 하루치 스킨 1 */
     body[data-frame-theme="haruchi1"] {
-            /* === 화면/패널 위치 === */
-            --screen-top-x: 150px;
-            --screen-top-y: 105px;
-            --screen-top-w: 390px;
-            --screen-top-h: 225px;
-            --panel-x: 170px;
-            --panel-y: 400px;
-            --panel-w: 410px;
-            --panel-h: 145px;
+      /* === 화면/패널 위치 === */
+      --screen-top-x: 150px;
+      --screen-top-y: 105px;
+      --screen-top-w: 390px;
+      --screen-top-h: 225px;
+      --panel-x: 170px;
+      --panel-y: 400px;
+      --panel-w: 410px;
+      --panel-h: 145px;
 
-                  /* === 왼쪽 통계 패널 위치 === */
+      /* === 왼쪽 통계 패널 위치 === */
 
       --stat-panel-padding-top: 15px;
       --stat-panel-padding-bottom: 30px;
-      
+
       /* 값을 키울수록 내용이 위로 올라갑니다 */
 
       --log-panel-padding-top: 4px;
@@ -473,7 +481,7 @@
       /* === 하루치 스킨 1: 로고 위치 === */
       --logo-top: 9.5%;
       --logo-left: 66.5%;
-      --logo-width: 140px;
+      --logo-width: 112px;
       --main-logo-top: 1.5%;
       --main-logo-left: 50%;
 
@@ -514,7 +522,7 @@
       /* === 하루치 스킨 1: 물마시기 모션/워터드랍 === */
       --drink-right: 76.6px;
       --drink-bottom: -28px;
-      --drink-water-right-offset: 35px;
+      --drink-water-right-offset: 26px;
       --drink-water-bottom-offset: 25px;
       --water-drop-offset-x: 2px;
       --water-drop-offset-y: 15px;
@@ -567,166 +575,89 @@
 
     /* 하루치 스킨 2 */
     body[data-frame-theme="haruchi2"] {
-      --log-panel-padding-left: 5px;
-      /* white 스킨 조정값 복붙 */
-      --water-bottle-right: 196px;
-      --water-bottle-bottom: 136px;
-      --water-bottle-width: 44px;
-      --water-bottle-height: 112px;
-      --drink-right: 66px;
-      --drink-bottom: -15px;
-      --water-drop-offset-x: -8px;
-      --water-drop-offset-y: 0px;
-      /* === 버튼 위치/크기 (A,B,C,D) === */
-      /* --btn-size: 65px; */
-      /* --btn-bottom: 61px; */
-      /* --btn-b-bottom: 39px; */
-      /* --btn-a-left: 186px; */
-      /* A 버튼 */
-      /* --btn-b-left: 303px; */
-      /* B 버튼 */
-      /* --btn-c-left: 420px; */
-      /* C 버튼 */
-      /* --btn-d-left: 537px; */
-      /* D 버튼 */
-      /* --btn-d-bottom: 61px; */
+      /* === 화면/패널 위치 === */
+      --screen-top-x: 150px;
+      --screen-top-y: 105px;
+      --screen-top-w: 390px;
+      --screen-top-h: 225px;
+      --panel-x: 170px;
+      --panel-y: 400px;
+      --panel-w: 410px;
+      --panel-h: 145px;
 
-      /* === 물방울 위치 조정 === */
-      /* 
-       * 현재 물방울 떨어지는 최적 위치 (물 급수통에 어울리는 위치)
-       * 이 값들은 물 급수통 클릭 영역의 중앙 하단을 기준으로 계산됩니다.
-       * 물 급수통 위치가 변경되면 이 값도 조정이 필요합니다.
-       */
-      --water-drop-offset-x: -18px;
-      /* 물방울 X 위치 오프셋 (양수=오른쪽, 음수=왼쪽) - 조정 필요 */
-      --water-drop-offset-y: -12px;
-      /* 물방울 Y 위치 오프셋 (양수=아래, 음수=위) - 조정 필요 */
-      --water-drop-offset-x-notion: 70px;
-      /* 노션 임베드 X 보정 (오른쪽으로) */
-      --water-drop-offset-y-notion: 35px;
-      /* 노션 임베드 Y 보정 (아래로) */
+      /* === 왼쪽 통계 패널 위치 === */
+      --stat-panel-padding-top: 15px;
+      --stat-panel-padding-bottom: 30px;
 
-      /* === 그루밍 애니메이션 위치 조정 === */
-      /* 
-       * 그루밍 애니메이션이 표시될 고정 위치를 설정합니다.
-       * 기본값은 햄스터 이미지와 동일한 위치(68%, 50%)입니다.
-       * 위치를 변경하려면 아래 값들을 조정하세요.
-       */
-      --grooming-top: 68%;
-      /* 그루밍 애니메이션 상단 위치 (% 또는 px) - 조정 가능 */
-      --grooming-left: 50%;
-      /* 그루밍 애니메이션 좌측 위치 (% 또는 px) - 조정 가능 */
-      --grooming-offset-x: 0px;
-      /* 그루밍 X 위치 미세 조정 (양수=오른쪽, 음수=왼쪽) - 조정 가능 */
-      --grooming-offset-y: -30px;
-      /* 그루밍 Y 위치 미세 조정 (양수=아래, 음수=위) - 조정 가능 */
+      --log-panel-padding-top: 4px;
+      --log-panel-padding-right: 75px;
+      --log-panel-padding-bottom: 10px;
+      --log-panel-padding-left: 8px;
 
-      /* === 각 프레임(행)별 Y 위치 개별 조정 === */
-      /* 
-       * 스프라이트 시트 구조 (4x4 그리드, 총 16프레임):
-       * 
-       * [맨 위 줄 - 행 0]  프레임 0  |  프레임 1  |  프레임 2  |  프레임 3
-       * [두 번째 줄 - 행 1]  프레임 4  |  프레임 5  |  프레임 6  |  프레임 7
-       * [세 번째 줄 - 행 2]  프레임 8  |  프레임 9  |  프레임 10 |  프레임 11
-       * [네 번째 줄 - 행 3]  프레임 12 |  프레임 13 |  프레임 14 |  프레임 15
-       * 
-       * 각 행마다 위치가 다를 경우 개별적으로 조정 가능합니다.
-       * 애니메이션을 재생하면서 어떤 줄이 위/아래로 움직이는지 확인하고 조정하세요.
-       */
-      --grooming-row-0-y-offset: -16px;
-      /* 맨 위 줄 (행 0, 프레임 0-3) Y 오프셋 (양수=아래, 음수=위) */
-      --grooming-row-1-y-offset: 9px;
-      /* 두 번째 줄 (행 1, 프레임 4-7) Y 오프셋 (양수=아래, 음수=위) */
-      --grooming-row-2-y-offset: -2px;
-      /* 세 번째 줄 (행 2, 프레임 8-11) Y 오프셋 (양수=아래, 음수=위) */
-      --grooming-row-3-y-offset: 8px;
-      /* 네 번째 줄 (행 3, 프레임 12-15) Y 오프셋 (양수=아래, 음수=위) */
+      /* === 하루치 스킨 2: 로고 위치 (하루치1과 동일) === */
+      --logo-top: 9.5%;
+      --logo-left: 66.5%;
+      --logo-width: 112px;
+      --main-logo-top: 3.5%;
+      --main-logo-left: 50%;
 
-      /* 각 행별 X 오프셋 (왼쪽/오른쪽 조정) */
-      --grooming-row-0-x-offset: 0px;
-      /* 맨 위 줄 (행 0, 프레임 0-3) X 오프셋 (양수=오른쪽, 음수=왼쪽) */
-      --grooming-row-1-x-offset: 0px;
-      /* 두 번째 줄 (행 1, 프레임 4-7) X 오프셋 (양수=오른쪽, 음수=왼쪽) */
-      --grooming-row-2-x-offset: 0px;
-      /* 세 번째 줄 (행 2, 프레임 8-11) X 오프셋 (양수=오른쪽, 음수=왼쪽) */
-      --grooming-row-3-x-offset: 0px;
-      /* 네 번째 줄 (행 3, 프레임 12-15) X 오프셋 (양수=오른쪽, 음수=왼쪽) */
+      /* === 하루치 스킨 2: 잠자는 모션 위치 (하루치1과 동일) === */
+      --sleep-left: 76%;
+      --sleep-top: 66%;
+      --sleep-width: 118px;
+      --sleep-height: 118px;
 
-      /* === 위쪽 이미지 잘라내기 조정 === */
-      /* 각 행의 오프셋을 조정한 후 위쪽에서 다른 햄스터 이미지가 보이면 이 값을 증가시키세요 */
-      --grooming-clip-top: 28px;
-      /* 위쪽에서 잘라낼 픽셀 수 (값이 클수록 더 많이 잘림) - 조정 가능 */
+      /* === 하루치 스킨 2: 밥+잠(풀앤슬립) 모션 위치 (하루치1과 동일) === */
+      --full-and-sleep-left: 76%;
+      --full-and-sleep-top: 66%;
+      --full-and-sleep-width: 112px;
+      --full-and-sleep-height: 112px;
 
-      /* === 그루밍 애니메이션 속도 조정 === */
-      /* 프레임당 밀리초 (값이 클수록 느림, 작을수록 빠름) */
-      /* 권장값: 100-150ms (자연스러운 속도), 80ms (빠른 속도), 200ms (느린 속도) */
-      --grooming-animation-speed: 42ms;
-      /* 그루밍 애니메이션 기본 속도 - 조정 가능 */
+      /* === 하루치 스킨 2: 기본 노멀 상태 위치 (하루치1과 동일) === */
+      --normal-left: 48%;
+      --normal-top: 68%;
+      --normal-width: 280px;
+      --normal-height: 280px;
 
-      /* === 그루밍 애니메이션 자연스러움 조정 === */
-      /* 프레임 홀드: 특정 프레임을 여러 번 반복하여 더 오래 보여주기 (자연스러운 느낌) */
-      /* 값이 클수록 해당 프레임을 더 오래 보여줌 (예: 2 = 2배 오래, 3 = 3배 오래) */
-      --grooming-frame-hold: 3;
-      /* 프레임 홀드 배수 (1 = 기본, 2 = 2배, 3 = 3배) - 조정 가능 */
+      /* === 하루치 스킨 2: 밥/잠/물 버튼(클릭영역) (하루치1과 동일) === */
+      --house-click-right: 37px;
+      --house-click-top: 70px;
+      --house-click-width: 68px;
+      --house-click-height: 94px;
+      --bowl-click-right: 115px;
+      --bowl-click-bottom: 75px;
+      --bowl-click-width: 45px;
+      --bowl-click-height: 36px;
 
-      /* === 그루밍 애니메이션 반복 횟수 === */
-      /* 전체 애니메이션을 몇 번 반복할지 설정 (1 = 1번만 재생, 2 = 2번 반복, 3 = 3번 반복) */
-      --grooming-repeat-count: 2;
-      /* 애니메이션 반복 횟수 (1 = 기본, 2 = 2배 시간, 3 = 3배 시간) - 조정 가능 */
+      /* === 하루치 스킨 2: 물 버튼(급수통) 클릭영역 (하루치1과 동일) === */
+      --water-bottle-right: 208px;
+      --water-bottle-bottom: 116px;
+      --water-bottle-width: 38px;
+      --water-bottle-height: 95px;
 
-      /* 프레임별 가변 속도: 특정 프레임에만 다른 속도 적용 (0 = 기본 속도 사용, 양수 = 해당 프레임만 이 속도로) */
-      /* 예: --grooming-frame-0-speed: 150ms; (프레임 0만 150ms로 재생) */
-      /* 각 프레임(0-15)별로 개별 속도 설정 가능 (설정하지 않으면 기본 속도 사용) */
-      --grooming-frame-0-speed: 30ms;
-      /* 시작 프레임을 조금 느리게 */
-      --grooming-frame-8-speed: 30ms;
-      /* 중간 프레임 속도 */
-      --grooming-frame-15-speed: 30ms;
-      /* 끝 프레임을 조금 느리게 */
+      /* === 하루치 스킨 2: 물마시기 모션/워터드랍 (하루치1과 동일) === */
+      --drink-right: 76.6px;
+      --drink-bottom: -28px;
+      --drink-water-right-offset: 35px;
+      --drink-water-bottom-offset: 30px;
+      --water-drop-offset-x: 2px;
+      --water-drop-offset-y: 15px;
 
-      /* === back.png (화난/삐진 모습) 위치·크기 조정 === */
-      --back-left: 54%;
-      /* 기본 위치 (% 또는 px) - 조정 가능 */
-      --back-top: 68%;
-      /* 기본 위치 (% 또는 px) - 조정 가능 */
-      --back-width: 245px;
-      /* back.png 크기 - 조정 가능 */
-      --back-height: 245px;
-      /* back.png 크기 - 조정 가능 */
-      --back-offset-x: 0px;
-      /* X 미세 조정 (양수=오른쪽, 음수=왼쪽) */
-      --back-offset-y: 0px;
-      /* Y 미세 조정 (양수=아래, 음수=위) */
-
-      /* === 화난 말풍선 위치 조정 === */
-      --angry-bubble-right: 62px;
-      /* 오른쪽에서의 거리 (값이 클수록 왼쪽으로) */
-      --angry-bubble-top: 56%;
-      /* 세로 위치 (% 또는 px) */
-      --angry-bubble-offset-x: 0px;
-      /* X 미세 조정 (양수=오른쪽, 음수=왼쪽) */
-      --angry-bubble-offset-y: 0px;
-      /* Y 미세 조정 (양수=아래, 음수=위) */
-
-      /* === 물 마시는 말풍선 위치/크기 === */
-      --drink-bubble-left: 53%;
-      --drink-bubble-top: 28%;
+      /* === 하루치 스킨 2: 물/ㄴ 버튼 말풍선 (하루치1과 동일) === */
+      --drink-bubble-left: 50%;
+      --drink-bubble-top: 25%;
       --drink-bubble-offset-x: 0px;
       --drink-bubble-offset-y: 0px;
       --drink-bubble-font-size: 14px;
       --drink-bubble-padding-x: 14px;
       --drink-bubble-padding-y: 8px;
-
-      /* === 뒤태 말풍선 위치/크기 === */
-      --butt-bubble-right: 62px;
-      --butt-bubble-top: 56%;
+      --butt-bubble-right: 66px;
+      --butt-bubble-top: 55%;
       --butt-bubble-offset-x: 0px;
       --butt-bubble-offset-y: 0px;
       --butt-bubble-font-size: 14px;
       --butt-bubble-padding-x: 14px;
       --butt-bubble-padding-y: 8px;
-
-      /* === 피드백 말풍선 위치/크기 === */
       --feedback-bubble-left: 50%;
       --feedback-bubble-top: 22%;
       --feedback-bubble-offset-x: 0px;
@@ -734,6 +665,24 @@
       --feedback-bubble-font-size: 12px;
       --feedback-bubble-padding-x: 16px;
       --feedback-bubble-padding-y: 10px;
+
+      /* === ㄴ 버튼(둥실둥실/back) 모션 위치 (하루치1과 동일) === */
+      --back-left: 55%;
+      --back-top: 67%;
+      --back-width: 232px;
+      --back-height: 232px;
+      --back-offset-x: 0px;
+      --back-offset-y: 0px;
+
+      /* === 버튼 위치/크기 (ㄱ,ㄴ,ㄷ,ㄹ) (하루치1과 동일) === */
+      --btn-size: 57px;
+      --btn-bottom: 57px;
+      --btn-b-bottom: 57px;
+      --btn-a-left: 192px;
+      --btn-b-left: 268px;
+      --btn-c-left: 346px;
+      --btn-d-left: 426px;
+      --btn-d-bottom: 57px;
 
     }
 
@@ -1085,6 +1034,11 @@
       align-items: stretch;
     }
 
+    body[data-frame-theme="classic"] .screen-bottom,
+    body:not([data-frame-theme]) .screen-bottom {
+      transform: translate(var(--classic-panel-offset-x, 0px), var(--classic-panel-offset-y, 0px));
+    }
+
     /* === 레이어 3: 프레임 === */
     .layer-frame {
       position: absolute;
@@ -1110,8 +1064,8 @@
       /* 프레임 오른쪽 위, 프레임 밖에 배치 */
       top: 20px;
       right: 20px;
-      min-width: 140px;
-      max-width: 170px;
+      min-width: 155px;
+      max-width: 180px;
       padding: 8px 10px;
       background: rgba(0, 0, 0, 0.9);
       color: #f5f5f5;
@@ -1176,6 +1130,34 @@
       border-color: #cde09a;
       background: #cde09a;
       color: #0f380f;
+    }
+
+    /* 다국어 언어 선택 버튼 */
+    .lang-btn {
+      flex: 1 1 30%;
+      min-width: 0;
+      padding: 3px 4px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #f5f5f5;
+      font-size: 10px;
+    }
+
+    .lang-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .lang-btn.is-active {
+      border-color: #cde09a;
+      background: #cde09a;
+      color: #0f380f;
+      font-weight: bold;
     }
 
     /* 그루밍 애니메이션 조정 패널 */
@@ -1339,9 +1321,26 @@
       /* 기본은 화살표 */
     }
 
-    body.app-tier-pro .device-logo {
+    .logo-click-area {
+      position: absolute;
+      top: var(--logo-top);
+      left: var(--logo-left);
+      transform: translateX(-50%) translate(var(--logo-click-offset-x, 0px), var(--logo-click-offset-y, 0px));
+      width: var(--logo-click-width, 112px);
+      height: var(--logo-click-height, 48px);
+      z-index: 101;
+      pointer-events: none;
+      cursor: default;
+      background: transparent;
+    }
+
+    body.app-tier-pro .logo-click-area {
+      pointer-events: auto;
       cursor: pointer;
-      /* 프로 버전만 손가락 */
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      border-radius: 0;
     }
 
     /* main_logo: 게임기 상단(검은 막대) 중앙 (YH) */
@@ -1577,6 +1576,11 @@
       /* 기본적으로 클릭 비활성화 */
     }
 
+    body[data-frame-theme="classic"] .panel-right,
+    body:not([data-frame-theme]) .panel-right {
+      transform: translate(var(--classic-log-offset-x, 0px), var(--classic-log-offset-y, 0px));
+    }
+
     /* 시스템 로그 패널 - 로그 콘텐츠 영역만 클릭 가능 */
     body[data-frame-theme="classic"] .panel-right .log-content,
     body:not([data-frame-theme]) .panel-right .log-content {
@@ -1635,6 +1639,12 @@
       justify-content: flex-start;
       gap: 2px;
       padding-top: 0;
+    }
+
+    /* 하루치 1/2: 시스템 로그 제목은 유지하고 본문(1~5줄)만 위로 이동 */
+    body[data-frame-theme="haruchi1"] .panel-right .log-content,
+    body[data-frame-theme="haruchi2"] .panel-right .log-content {
+      transform: translateY(-4px);
     }
 
 
@@ -1736,6 +1746,12 @@
       color: #2d3d1f;
       font-weight: bold;
       animation: flash 0.5s;
+    }
+
+    /* 하루치 1/2: "벌컥벌컥! 물을 마시는 중..." 로그만 살짝 위로 */
+    body[data-frame-theme="haruchi1"] .panel-right .log-item.log-drink-gulp,
+    body[data-frame-theme="haruchi2"] .panel-right .log-item.log-drink-gulp {
+      transform: translateY(-2px);
     }
 
     /* 중요 메시지 */
@@ -2095,33 +2111,10 @@
       display: none !important;
     }
 
-    /* 버튼 영역 테스트 표시 - 프로 버전 + 지정 스킨에서만 표시 */
-    body.app-tier-pro[data-frame-theme="black"] .btn-area,
-    body.app-tier-pro[data-frame-theme="haruchi1"] .btn-area,
-    body.app-tier-pro[data-frame-theme="haruchi2"] .btn-area,
-    body.app-tier-pro[data-frame-theme="white"] .btn-area {
-      background: rgba(255, 0, 0, 0.3) !important;
-      border: 2px dashed rgba(255, 0, 0, 0.8) !important;
-      box-shadow: 0 0 0 1px rgba(255, 0, 0, 0.5) inset;
-    }
-
-    body.app-tier-pro[data-frame-theme="black"] .btn-area::after,
-    body.app-tier-pro[data-frame-theme="haruchi1"] .btn-area::after,
-    body.app-tier-pro[data-frame-theme="haruchi2"] .btn-area::after,
-    body.app-tier-pro[data-frame-theme="white"] .btn-area::after {
-      content: attr(title);
-      position: absolute;
-      top: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.8);
-      color: #fff;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 10px;
-      white-space: nowrap;
-      z-index: 201;
-      pointer-events: none;
+    /* 프로 기본 플레이에서는 버튼 디버그/라벨(ABCD) 표시 제거 */
+    body.app-tier-pro .btn-area::after {
+      content: none !important;
+      display: none !important;
     }
 
     /* 디버그 모드도 프로 버전에서만 지원 (?debug=1 파라미터) */
@@ -2132,19 +2125,8 @@
     }
 
     body.app-tier-pro[data-debug-buttons="1"] .btn-area::after {
-      content: attr(title);
-      position: absolute;
-      top: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.8);
-      color: #fff;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 10px;
-      white-space: nowrap;
-      z-index: 201;
-      pointer-events: none;
+      content: none !important;
+      display: none !important;
     }
 
     .btn-a {

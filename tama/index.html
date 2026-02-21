@@ -89,13 +89,16 @@
           <img src="./assets/scene/bg.png" class="bg-image" alt="배경">
           <img src="./assets/hamster/normal.png" class="hamster bounce" id="hamster" alt="하루치">
           <div class="grooming-overlay" id="groomingOverlay"></div>
-          <div class="hamster-click-area" onclick="handleHamsterClick()" title="클릭: 쓰다듬기"></div>
+          <div class="hamster-click-area" onclick="handleHamsterClick()" title="클릭: 쓰다듬기" data-i18n-title="tooltip_pet">
+          </div>
 
-          <div class="house-click-area" onclick="handleHouseClick()" title="클릭: 잠자기"></div>
+          <div class="house-click-area" onclick="handleHouseClick()" title="클릭: 잠자기" data-i18n-title="tooltip_sleep">
+          </div>
 
-          <div class="bowl-click-area" onclick="handleBowlClick()" title="클릭: 먹이주기"></div>
+          <div class="bowl-click-area" onclick="handleBowlClick()" title="클릭: 먹이주기" data-i18n-title="tooltip_eat"></div>
 
-          <div class="water-bottle-click-area" onclick="handleWaterBottleClick()" title="클릭: 물 마시기"></div>
+          <div class="water-bottle-click-area" onclick="handleWaterBottleClick()" title="클릭: 물 마시기"
+            data-i18n-title="tooltip_water"></div>
 
           <div class="angry-speech-bubble" id="angrySpeechBubble">빠직!</div>
           <div class="drink-speech-bubble" id="drinkSpeechBubble">챱챱챱...</div>
@@ -107,14 +110,15 @@
 
         <div class="screen-bottom">
           <div class="panel-left">
-            <div class="panel-content-clickable" ondblclick="showStats()" style="cursor: pointer;" title="더블클릭: 통계">
+            <div class="panel-content-clickable" ondblclick="showStats()" style="cursor: pointer;" title="더블클릭: 통계"
+              data-i18n-title="tooltip_stats">
               <div class="stat-row">
-                <span>LV.</span>
+                <span data-i18n="level">LV.</span>
                 <span class="val-level" id="uiLevel">1</span>
               </div>
 
               <div class="stat-row">
-                <span>EXP</span>
+                <span data-i18n="exp">EXP</span>
                 <span id="expText">0%</span>
               </div>
 
@@ -123,7 +127,7 @@
               </div>
 
               <div class="goal-row">
-                <span class="goal-label">목표</span>
+                <span class="goal-label" data-i18n="goal">목표</span>
                 <span>
                   <span class="goal-progress" id="goalProgress">0/5</span>
                   <span class="goal-percent" id="goalPercent">0%</span>
@@ -136,11 +140,12 @@
             </div>
           </div>
           <div class="panel-right">
-            <div class="panel-content-clickable log-panel-clickable">
-              <div class="log-title">SYSTEM LOG</div>
-              <div class="log-content" id="uiLog" onclick="openLogModal()" title="클릭하면 전체 로그 보기">
-                <div>> 시스템 가동..</div>
-                <div>> 하루치가 기다려요!</div>
+            <div class="panel-content-clickable log-panel-clickable" onclick="openLogModal()" title="클릭하면 전체 로그 보기"
+              data-i18n-title="tooltip_log">
+              <div class="log-title" data-i18n="system_log_title">SYSTEM LOG</div>
+              <div class="log-content" id="uiLog">
+                <div>> <span data-i18n="log_init">시스템 가동..</span></div>
+                <div>> <span data-i18n="log_waiting">하루치가 기다려요!</span></div>
               </div>
             </div>
           </div>
@@ -151,6 +156,7 @@
           <img src="./assets/logo2.png" class="device-logo" id="deviceLogo">
           <img src="./assets/main_logo.png" class="main-logo" alt="Main Logo">
         </div>
+        <div class="logo-click-area" id="logoClickArea" title="스킨 설정"></div>
 
         <div class="btn-area btn-a" onclick="handleBtn('A')" title="A"></div>
         <div class="btn-area btn-b" onclick="handleBtn('B')" title="B"></div>
@@ -162,17 +168,25 @@
 
     <!-- 프레임 스킨 설정 패널 (프레임 밖에 배치) -->
     <div class="frame-settings-panel" id="frameSettingsPanel">
-      <div class="frame-skin-picker-label">FRAME SKIN</div>
+      <div class="frame-skin-picker-label" data-i18n="lang_settings">LANGUAGE & SKIN</div>
       <div class="frame-skin-btn-row">
-        <button type="button" class="frame-skin-btn" data-frame-theme="classic">기본</button>
-        <button type="button" class="frame-skin-btn" data-frame-theme="black">블랙</button>
-        <button type="button" class="frame-skin-btn" data-frame-theme="white">화이트</button>
-        <button type="button" class="frame-skin-btn" data-frame-theme="haruchi1">하루치 1</button>
-        <button type="button" class="frame-skin-btn" data-frame-theme="haruchi2">하루치 2</button>
+        <button type="button" class="lang-btn" data-lang="ko">한국어</button>
+        <button type="button" class="lang-btn" data-lang="en">English</button>
+        <button type="button" class="lang-btn" data-lang="zh">中文</button>
+      </div>
+      <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.2);"></div>
+      <div class="frame-skin-btn-row">
+        <button type="button" class="frame-skin-btn" data-frame-theme="classic" data-i18n="skin_classic">기본</button>
+        <button type="button" class="frame-skin-btn" data-frame-theme="black" data-i18n="skin_black">블랙</button>
+        <button type="button" class="frame-skin-btn" data-frame-theme="white" data-i18n="skin_white">화이트</button>
+        <button type="button" class="frame-skin-btn" data-frame-theme="haruchi1" data-i18n="skin_haruchi1">하루치
+          1</button>
+        <button type="button" class="frame-skin-btn" data-frame-theme="haruchi2" data-i18n="skin_haruchi2">하루치
+          2</button>
       </div>
       <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.2);">
-        <button type="button" class="frame-skin-btn" onclick="openGroomingAdjustPanel(event)" style="width: 100%;">그루밍
-          조정</button>
+        <button type="button" class="frame-skin-btn" onclick="openGroomingAdjustPanel(event)" style="width: 100%;"
+          data-i18n="grooming_adjust">그루밍 조정</button>
       </div>
     </div>
 
@@ -253,7 +267,7 @@
     <div class="stats-modal" id="statsModal">
       <div class="stats-panel">
         <button class="stats-close" onclick="closeStats()">×</button>
-        <div class="stats-title">📊 STATISTICS</div>
+        <div class="stats-title" data-i18n="statistics_title">📊 STATISTICS</div>
         <div id="statsContent">
         </div>
       </div>
@@ -262,14 +276,14 @@
     <div class="stats-modal" id="logModal">
       <div class="stats-panel log-modal-panel">
         <button class="stats-close" onclick="closeLogModal()">×</button>
-        <div class="stats-title">📋 SYSTEM LOG</div>
+        <div class="stats-title" data-i18n="system_log_title">📋 SYSTEM LOG</div>
         <div class="log-modal-content" id="logModalContent"></div>
       </div>
     </div>
 
   </div>
   </div>
-  <div class="credit-game">제작 by bbaekyohan</div>
+  <div class="credit-game" data-i18n="credit">제작 by bbaekyohan</div>
 
   <script src="js/game.js"></script>
 

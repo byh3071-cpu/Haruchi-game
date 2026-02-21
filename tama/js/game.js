@@ -1,3 +1,5 @@
+/* exported toggleFrameSettingsPanel, submitCoupon, handleBtn, handleHamsterClick, handleHouseClick, handleBowlClick, handleWaterBottleClick, showThrowUp2NearWaterBottle, showAngryFaceAction, changeAttendanceMonth, saveGoal, submitManualTaskCustom, logImportant, closeGroomingAdjustPanel, updateGroomingValue, updateGroomingRowOffset, resetGroomingValues */
+/* eslint-disable no-unused-vars */
 /* 프로/기본 버전: body에 클래스 추가 (프로 전용 CSS/JS 분기용) */
 if (window.IS_PRO) document.body?.classList.add('app-tier-pro');
 
@@ -6,11 +8,255 @@ if (window.IS_PRO) document.body?.classList.add('app-tier-pro');
 function getAssetPath(relativePath) {
   try {
     return new URL(relativePath, window.location.href).href;
-  } catch (e) {
-    // URL 생성 실패 시 상대 경로 반환
+  } catch {
     const base = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
     return base + relativePath.replace(/^\.\//, '');
   }
+}
+
+/* 다국어 번역 사전 (i18n Dictionary) */
+const i18n = {
+  ko: {
+    lang_settings: "LANGUAGE & SKIN",
+    grooming_adjust: "그루밍 조정",
+    level: "레벨",
+    exp: "경험치",
+    sleep: "잠자기",
+    eat: "밥먹기",
+    play: "놀기",
+    clean: "운동",
+    go: "가기",
+    statistics_title: "📊 STATISTICS",
+    system_log_title: "📋 SYSTEM LOG",
+    credit: "제작 by bbaekyohan",
+    goal: "목표",
+    tooltip_pet: "클릭: 쓰다듬기",
+    tooltip_sleep: "클릭: 잠자기",
+    tooltip_eat: "클릭: 먹이주기",
+    tooltip_water: "클릭: 물 마시기",
+    tooltip_stats: "더블클릭: 통계",
+    tooltip_log: "클릭하면 전체 로그 보기",
+    tooltip_settings: "설정 (Settings)",
+    skin_classic: "기본",
+    skin_black: "블랙",
+    skin_white: "화이트",
+    skin_haruchi1: "하루치 1",
+    skin_haruchi2: "하루치 2",
+
+    // 추가 번역 요소들
+    stats_manual_title: "✏ 할 일 직접 기록",
+    stats_manual_today: "(오늘 {0}/{1}건)",
+    manual_water: "물 마시기", manual_food: "밥 먹기", manual_pet: "쓰다듬기", manual_workout: "운동", manual_reading: "독서",
+    btn_water: "물", btn_food: "밥", btn_pet: "쓰담", btn_workout: "운동", btn_reading: "독서",
+    manual_placeholder: "할 일 이름", manual_add: "추가",
+    manual_limit: "오늘 기록 한도({0}건)에 도달했습니다. 내일 다시 시도해 주세요.",
+    stats_play_days: "총 플레이 일수", stats_action_count: "총 액션 횟수", stats_total_exp: "총 획득 EXP", stats_avg_exp: "평균 일일 EXP",
+    stats_current_level: "현재 레벨", stats_first_play: "첫 플레이", stats_today: "오늘",
+    attendance_title: "📅 출석 체크", attendance_consecutive: "연속 출석", attendance_reward: "보상",
+    attendance_reward_desc: "매일 10 XP · 7일 +50 · 14일 +100 · 21일 +150 · 30일 +300",
+    attendance_this_month: "이번 달 출석",
+    cal_prev: "◀ 이전", cal_next: "다음 ▶", cal_attended: "출석", cal_missed: "미출석",
+    goal_daily_title: "🎯 일일 목표", goal_completed_today: "오늘 완료", goal_setting: "목표 설정", goal_save: "저장", goal_achieved_msg: "✨ 오늘 목표 달성!",
+    coupon_title: "🎁 쿠폰 입력", coupon_placeholder: "사전예약 쿠폰 입력", coupon_submit: "등록",
+    coupon_applied: "🐹 응애 하루치 스킨 적용 중!", coupon_hint: "사전예약 쿠폰으로 응애 하루치 스킨을 해금하세요!",
+    unit_day: "일", unit_times: "회", unit_points: "점",
+    log_sec_task: "📌 할일 완료 경험치 (할일/루틴/운동/독서/책/SNS)", log_sec_click: "🖱 클릭 경험치 (밥/물/쓰다듬기)", log_sec_other: "📋 기타",
+    log_init: "시스템 가동..", log_waiting: "하루치가 기다려요!", log_refresh: "🔄 새로고침",
+    action_pet: "쓰다듬기... ♥", action_sleep: "집에 들어가서 잠자기... Zzz", action_eat: "냠냠... 맛있다!", action_water: "벌컥벌컥... 시원해!",
+    goal_complete: "일일 목표 달성 완료!",
+    goal_complete_bonus: "🎯 목표 달성! 보너스", goal_complete_change: "🎯 목표 달성! (목표 변경으로 달성)", goal_target_changed: "🎯 일일 목표가 {0}개로 변경되었습니다.",
+    bgm_mute: "🔇 BGM 음소거", bgm_play: "🔊 BGM 재생", coupon_empty: "📌 쿠폰 번호를 입력해 주세요.",
+    notion_sync_msg: "📥 노션에서 +{0} XP 불러옴", cat_notion_sync: "노션동기화", cat_attendance: "출석보너스", cat_goal_bonus: "목표보너스",
+    action_grooming: "하루치 그루밍 중 ...", action_btn_d: "버튼 D 클릭", action_full_sleep: "밥 먹고 잠들었어요.. 기분 좋아요 😴",
+    clean_poop: "앗, 하루치가 똥을 쌌어요! (EXP -5)", cat_clean: "청소", clean_done: "방을 청소했어요! +5", clean_already: "방이 이미 깨끗해요.",
+    err_img_sad: "⚠ 오류: sad 이미지가 없어요!", err_img_general: "⚠ 오류: 이미지가 없어요!", err_img_sleep: "⚠ 오류: 잠자는 이미지가 없어요!",
+    err_img_water: "⚠ 오류: 물 마시는 이미지가 없어요!", err_img_back: "⚠ 오류: back 이미지가 없어요!", err_groom_overlay: "⚠ 그루밍 오버레이를 찾을 수 없습니다.",
+    sad_msg_1: "😢 하루치가 슬퍼 보여요...", sad_msg_2: "😞 하루치가 외로워하는 것 같아요", sad_msg_3: "😔 하루치가 기다리고 있어요...", sad_msg_4: "💔 하루치가 관심을 원해요", sad_msg_5: "😿 하루치가 쓸쓸해 보여요",
+    sad_msg_6: "😰 하루치가 불안해하는 것 같아요", sad_msg_7: "😥 하루치가 심심해하는 것 같아요", sad_msg_8: "😪 하루치가 지쳐 보여요...", sad_msg_9: "😓 하루치가 힘들어하는 것 같아요", sad_msg_10: "😭 하루치가 울고 있어요...",
+    angry_msg_1: "😠 하루치가 화가 났어요!", angry_msg_2: "😡 하루치가 매우 화가 나있어요!", angry_msg_3: "💢 하루치가 짜증이 났어요!", angry_msg_4: "🤬 하루치가 화가 나서 떠들어요!", angry_msg_5: "😤 하루치가 불만이 많아요!", angry_msg_6: "💥 하루치가 폭발 직전이에요!",
+    bubble_angry_1: "빠직!", bubble_angry_2: "찍찍!", bubble_angry_3: "찍!!", bubble_angry_4: "...", bubble_angry_5: "빠직!!", bubble_angry_6: "빠악!", bubble_angry_7: "쳇!",
+    butt_wiggle: "🍑 하루치 엉덩이가 씰룩씰룩~", butt_plump: "🍑 하루치 토실토실한 엉덩이!", bubble_wiggle: "씰룩씰룩", bubble_plump: "토실토실",
+    manual_limit_log: "📌 오늘 수동 기록 한도(10건)에 도달했습니다.", manual_record_log: "✏ {0} +{1} XP", cat_manual_record: "수동기록",
+    eat_msg_1: "냠냠! 해바라기씨 맛있다", eat_msg_2: "냠냠! 해바라기씨 맛있다 야르~", eat_msg_3: "하루치 두쫀쿠 먹고 싶다", eat_msg_4: "야미~ 야미~ 야미야미야미",
+    drink_reject: "물 더 이상 마시기 싫어요! 😣", drink_overfed: "물 너무 많이 마셨어요! 😵", drink_msg_1: "벌컥벌컥! 물을 마시는 중...", drink_msg_2: "물을 마시는 중...",
+    eat_reject: "잠깐만요, 더 이상 못 먹어요! 😣", eat_overfed: "너무 많이 먹었어요! 😵"
+  },
+  en: {
+    lang_settings: "LANGUAGE & SKIN",
+    grooming_adjust: "Adjust Grooming",
+    level: "LV.",
+    exp: "EXP",
+    sleep: "Sleep",
+    eat: "Eat",
+    play: "Play",
+    clean: "Workout",
+    go: "GO",
+    statistics_title: "📊 STATISTICS",
+    system_log_title: "📋 SYSTEM LOG",
+    credit: "Made by bbaekyohan",
+    goal: "Goal",
+    tooltip_pet: "Click: Pet Haruchi",
+    tooltip_sleep: "Click: Sleep",
+    tooltip_eat: "Click: Feed",
+    tooltip_water: "Click: Give Water",
+    tooltip_stats: "Double Click: Statistics",
+    tooltip_log: "Click to view full logs",
+    tooltip_settings: "Settings",
+    skin_classic: "Classic",
+    skin_black: "Black",
+    skin_white: "White",
+    skin_haruchi1: "Haruchi 1",
+    skin_haruchi2: "Haruchi 2",
+
+    // Additional UI Elements
+    stats_manual_title: "✏ Manual Log",
+    stats_manual_today: "(Today {0}/{1})",
+    manual_water: "Drink Water", manual_food: "Eat Food", manual_pet: "Pet", manual_workout: "Workout", manual_reading: "Read",
+    btn_water: "Water", btn_food: "Food", btn_pet: "Pet", btn_workout: "Workout", btn_reading: "Read",
+    manual_placeholder: "Task Name", manual_add: "Add",
+    manual_limit: "Daily limit reached ({0}). Try again tomorrow.",
+    stats_play_days: "Total Play Days", stats_action_count: "Total Actions", stats_total_exp: "Total EXP", stats_avg_exp: "Avg Daily EXP",
+    stats_current_level: "Current Level", stats_first_play: "First Play", stats_today: "Today",
+    attendance_title: "📅 Attendance", attendance_consecutive: "Consecutive Days", attendance_reward: "Rewards",
+    attendance_reward_desc: "Daily 10 XP · 7d +50 · 14d +100 · 21d +150 · 30d +300",
+    attendance_this_month: "This Month",
+    cal_prev: "◀ Prev", cal_next: "Next ▶", cal_attended: "Attended", cal_missed: "Missed",
+    goal_daily_title: "🎯 Daily Goal", goal_completed_today: "Completed Today", goal_setting: "Set Goal", goal_save: "Save", goal_achieved_msg: "✨ Goal Achieved!",
+    coupon_title: "🎁 Enter Coupon", coupon_placeholder: "Pre-order Coupon", coupon_submit: "Submit",
+    coupon_applied: "🐹 Baby Haruchi Skin Applied!", coupon_hint: "Enter pre-order coupon to unlock Baby Haruchi skin!",
+    unit_day: "d", unit_times: "x", unit_points: "xp",
+    goal_complete: "Daily Goal Completed!",
+    goal_complete_bonus: "🎯 Goal Achieved! Bonus", goal_complete_change: "🎯 Goal Achieved! (By target change)", goal_target_changed: "🎯 Daily goal changed to {0}.",
+    bgm_mute: "🔇 BGM Muted", bgm_play: "🔊 BGM Playing", coupon_empty: "📌 Please enter a coupon code.",
+    notion_sync_msg: "📥 Retrieved +{0} XP from Notion", cat_notion_sync: "NotionSync", cat_attendance: "Attendance", cat_goal_bonus: "GoalBonus",
+    action_grooming: "Haruchi is grooming...", action_btn_d: "Button D clicked", action_full_sleep: "Fell asleep happily after eating 😴",
+    clean_poop: "Oops, Haruchi pooped! (EXP -5)", cat_clean: "Cleaning", clean_done: "Cleaned the room! +5", clean_already: "The room is already clean.",
+    err_img_sad: "⚠ Error: sad image missing!", err_img_general: "⚠ Error: image missing!", err_img_sleep: "⚠ Error: sleeping image missing!",
+    err_img_water: "⚠ Error: drinking image missing!", err_img_back: "⚠ Error: back image missing!", err_groom_overlay: "⚠ Error: grooming overlay missing.",
+    sad_msg_1: "😢 Haruchi looks sad...", sad_msg_2: "😞 Haruchi feels lonely", sad_msg_3: "😔 Haruchi is waiting...", sad_msg_4: "💔 Haruchi wants attention", sad_msg_5: "😿 Haruchi seems desolate",
+    sad_msg_6: "😰 Haruchi seems anxious", sad_msg_7: "😥 Haruchi seems bored", sad_msg_8: "😪 Haruchi looks exhausted...", sad_msg_9: "😓 Haruchi seems tired", sad_msg_10: "😭 Haruchi is crying...",
+    angry_msg_1: "😠 Haruchi is angry!", angry_msg_2: "😡 Haruchi is very angry!", angry_msg_3: "💢 Haruchi is annoyed!", angry_msg_4: "🤬 Haruchi is throwing a tantrum!", angry_msg_5: "😤 Haruchi is dissatisfied!", angry_msg_6: "💥 Haruchi is about to explode!",
+    bubble_angry_1: "Snap!", bubble_angry_2: "Squeak!", bubble_angry_3: "Squeak!!", bubble_angry_4: "...", bubble_angry_5: "Snap!!", bubble_angry_6: "Crash!", bubble_angry_7: "Tsk!",
+    butt_wiggle: "🍑 Haruchi's butt wiggling~", butt_plump: "🍑 Haruchi's plump butt!", bubble_wiggle: "Wiggle wiggle", bubble_plump: "Plump plump",
+    manual_limit_log: "📌 Reached daily manual record limit (10).", manual_record_log: "✏ {0} +{1} XP", cat_manual_record: "ManualRecord",
+    eat_msg_1: "Yum! Sunflower seeds are tasty", eat_msg_2: "Yum! Tasty seeds yarr~", eat_msg_3: "Haruchi wants a treat", eat_msg_4: "Yummy yummy yummy~",
+    drink_reject: "I don't want water anymore! 😣", drink_overfed: "Drank way too much water! 😵", drink_msg_1: "Gulp gulp! Drinking water...", drink_msg_2: "Drinking water...",
+    eat_reject: "Wait, I can't eat anymore! 😣", eat_overfed: "Ate way too much! 😵",
+    /* Category tag translations */
+    '할일': 'Task', '루틴': 'Routine', '운동': 'Workout', '독서': 'Read', '책': 'Book', 'SNS': 'SNS', '목표보너스': 'GoalBonus', '수동기록': 'ManualRecord', '출석보너스': 'Attendance',
+    '밥먹기': 'Eat', '물마시기': 'Drink', '쓰다듬기': 'Pet', '청소': 'Cleaning', '노션동기화': 'NotionSync'
+  },
+  zh: {
+    lang_settings: "LANGUAGE & SKIN",
+    grooming_adjust: "修剪设置",
+    level: "LV.",
+    exp: "EXP",
+    sleep: "睡觉",
+    eat: "吃饭",
+    play: "玩耍",
+    clean: "运动",
+    go: "出发",
+    statistics_title: "📊 STATISTICS",
+    system_log_title: "📋 SYSTEM LOG",
+    credit: "制作 by bbaekyohan",
+    goal: "目标",
+    tooltip_pet: "点击: 抚摸",
+    tooltip_sleep: "点击: 睡觉",
+    tooltip_eat: "点击: 喂食",
+    tooltip_water: "点击: 喂水",
+    tooltip_stats: "双击: 查看统计",
+    tooltip_log: "点击查看完整日志",
+    tooltip_settings: "设置",
+    skin_classic: "经典",
+    skin_black: "黑色",
+    skin_white: "白色",
+    skin_haruchi1: "Haruchi 1",
+    skin_haruchi2: "Haruchi 2",
+
+    // Additional UI Elements
+    stats_manual_title: "✏ 手动记录任务",
+    stats_manual_today: "(今日 {0}/{1}次)",
+    manual_water: "喝水", manual_food: "吃饭", manual_pet: "抚摸", manual_workout: "运动", manual_reading: "阅读",
+    btn_water: "喝水", btn_food: "吃饭", btn_pet: "抚摸", btn_workout: "运动", btn_reading: "阅读",
+    manual_placeholder: "任务名称", manual_add: "添加",
+    manual_limit: "已达每日记录上限({0}次)。请明天重试。",
+    stats_play_days: "总游玩天数", stats_action_count: "总互动次数", stats_total_exp: "总获得经验", stats_avg_exp: "日均经验",
+    stats_current_level: "当前等级", stats_first_play: "首次游玩", stats_today: "今天",
+    attendance_title: "📅 签到记录", attendance_consecutive: "连续签到", attendance_reward: "奖励",
+    attendance_reward_desc: "每日 10 XP · 7天 +50 · 14天 +100 · 21天 +150 · 30天 +300",
+    attendance_this_month: "本月签到",
+    cal_prev: "◀ 上个月", cal_next: "下个月 ▶", cal_attended: "已签到", cal_missed: "未签到",
+    goal_daily_title: "🎯 每日目标", goal_completed_today: "今日完成", goal_setting: "设置目标", goal_save: "保存", goal_achieved_msg: "✨ 达成今日目标！",
+    coupon_title: "🎁 输入兑换码", coupon_placeholder: "预约兑换码", coupon_submit: "兑换",
+    coupon_applied: "🐹 幼年Haruchi皮肤已应用！", coupon_hint: "输入预约兑换码解锁幼年Haruchi皮肤！",
+    unit_day: "天", unit_times: "次", unit_points: "点",
+    goal_complete: "达成每日目标！",
+    goal_complete_bonus: "🎯 目标达成！奖励", goal_complete_change: "🎯 目标达成！(目标已修改)", goal_target_changed: "🎯 每日目标已修改为 {0} 个。",
+    bgm_mute: "🔇 BGM 已静音", bgm_play: "🔊 BGM 正在播放", coupon_empty: "📌 请输入兑换码。",
+    notion_sync_msg: "📥 从 Notion 读取了 +{0} XP", cat_notion_sync: "Notion同步", cat_attendance: "签到奖励", cat_goal_bonus: "目标奖励",
+    action_grooming: "Haruchi正在理毛...", action_btn_d: "点击了 D 按钮", action_full_sleep: "吃饱喝足地睡着了...很开心 😴",
+    clean_poop: "哎呀，Haruchi 拉屎了！(EXP -5)", cat_clean: "打扫房间", clean_done: "打扫了房间！+5", clean_already: "房间已经很干净了。",
+    err_img_sad: "⚠ 错误：找不到 sad 图像！", err_img_general: "⚠ 错误：找不到图像！", err_img_sleep: "⚠ 错误：找不到睡觉的图像！",
+    err_img_water: "⚠ 错误：找不到喝水的图像！", err_img_back: "⚠ 错误：找不到背影图像！", err_groom_overlay: "⚠ 找不到理毛覆盖层。",
+    sad_msg_1: "😢 Haruchi 看起来有些难过...", sad_msg_2: "😞 Haruchi 感到孤独", sad_msg_3: "😔 Haruchi 正在等你...", sad_msg_4: "💔 Haruchi 需要你的关注", sad_msg_5: "😿 Haruchi 看起来很寂寞",
+    sad_msg_6: "😰 Haruchi 看起来很焦躁", sad_msg_7: "😥 Haruchi 觉得无聊", sad_msg_8: "😪 Haruchi 看起来累坏了...", sad_msg_9: "😓 Haruchi 好像很疲惫", sad_msg_10: "😭 Haruchi 正在哭泣...",
+    angry_msg_1: "😠 Haruchi 生气了！", angry_msg_2: "😡 Haruchi 真的生气了！", angry_msg_3: "💢 Haruchi 烦躁起来了！", angry_msg_4: "🤬 Haruchi 气得吱吱叫！", angry_msg_5: "😤 Haruchi 抱怨很多！", angry_msg_6: "💥 Haruchi 要气炸了！",
+    bubble_angry_1: "啪唧！", bubble_angry_2: "吱吱！", bubble_angry_3: "吱吱！！", bubble_angry_4: "...", bubble_angry_5: "啪唧！！", bubble_angry_6: "砰！", bubble_angry_7: "切！",
+    butt_wiggle: "🍑 Haruchi的屁股在扭动~", butt_plump: "🍑 Haruchi胖嘟嘟的屁股！", bubble_wiggle: "扭扭~", bubble_plump: "圆嘟嘟",
+    manual_limit_log: "📌 今日手动记录已达上限(10次)。", manual_record_log: "✏ {0} +{1} XP", cat_manual_record: "手动记录",
+    eat_msg_1: "吧唧吧唧！葵花籽真好吃", eat_msg_2: "好吃！葵花籽真美味呀~", eat_msg_3: "Haruchi想吃零食", eat_msg_4: "雅咪雅咪雅咪雅咪",
+    drink_reject: "我不想喝水了！😣", drink_overfed: "水喝得太多了！😵", drink_msg_1: "咕噜咕噜！喝水中...", drink_msg_2: "喝水中...",
+    eat_reject: "等等，吃不下了！😣", eat_overfed: "吃得太撑了！😵",
+    /* Category tag translations */
+    '할일': '任务', '루틴': '日常', '운동': '运动', '독서': '阅读', '책': '书籍', 'SNS': 'SNS', '목표보너스': '目标奖励', '수동기록': '手动记录', '출석보너스': '签到奖励',
+    '밥먹기': '进食', '물마시기': '喝水', '쓰다듬기': '抚摸', '청소': '打扫', '노션동기화': 'Notion同步'
+  }
+};
+
+let currentLang = localStorage.getItem('haruchi_lang') || 'ko';
+
+/* 글로벌 번역 헬퍼 함수 */
+function t(key, ...args) {
+  let str = (i18n[currentLang] && i18n[currentLang][key]) || (i18n['ko'] && i18n['ko'][key]) || key;
+  args.forEach((arg, i) => {
+    str = str.replace(`{${i}}`, arg);
+  });
+  return str;
+}
+
+function updateUITexts() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (i18n[currentLang] && i18n[currentLang][key]) {
+      el.innerText = i18n[currentLang][key];
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const key = el.getAttribute('data-i18n-title');
+    if (i18n[currentLang] && i18n[currentLang][key]) {
+      el.title = i18n[currentLang][key];
+    }
+  });
+
+  // Re-render open modals dynamically to translate their content immediately
+  if (document.getElementById('statsModal')?.classList.contains('show')) {
+    showStats(false);
+  }
+  if (document.getElementById('logModal')?.classList.contains('show')) {
+    openLogModal();
+  }
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('is-active', btn.dataset.lang === currentLang);
+  });
+}
+
+function setLanguage(lang) {
+  if (!i18n[lang]) return;
+  currentLang = lang;
+  localStorage.setItem('haruchi_lang', lang);
+  updateUITexts();
 }
 const FRAME_THEMES = {
   classic: getAssetPath('./assets/scene/frame.png'),
@@ -25,7 +271,7 @@ const DEFAULT_FRAME_THEME = window.IS_PRO ? 'haruchi1' : 'classic';
 let currentFrameTheme = (function () {
   try {
     return localStorage.getItem('haruchi_frame_theme') || DEFAULT_FRAME_THEME;
-  } catch (e) {
+  } catch {
     return DEFAULT_FRAME_THEME;
   }
 })();
@@ -58,7 +304,7 @@ function applyFrameTheme(theme) {
   document.body.setAttribute('data-frame-theme', theme);
   try {
     localStorage.setItem('haruchi_frame_theme', theme);
-  } catch (e) { }
+  } catch { /* ignore */ }
 
   // 스킨별 버튼 이름 설정
   const labels = BUTTON_LABELS[theme] || BUTTON_LABELS.classic;
@@ -117,7 +363,8 @@ function toggleFrameSettingsPanel(event) {
 function initFrameSkinPicker() {
   const panel = document.getElementById('frameSettingsPanel');
   const logo = document.getElementById('deviceLogo');
-  if (!panel || !logo) return;
+  const logoClickArea = document.getElementById('logoClickArea');
+  if (!panel || !logo || !logoClickArea) return;
   if (frameSkinPickerInitialized) {
     applyFrameTheme(currentFrameTheme);
     return;
@@ -137,21 +384,38 @@ function initFrameSkinPicker() {
 
   // 로고 클릭 → 패널 토글 (프로 버전에서만 동작)
   if (window.IS_PRO) {
-    logo.style.cursor = 'pointer';
-    logo.title = '스킨 설정';
-    logo.addEventListener('click', function (e) {
+    // 클릭영역을 로고 이미지와 분리해 독립적으로 조정 가능하게 함
+    logo.style.pointerEvents = 'none';
+    logo.style.cursor = 'default';
+    logo.title = '';
+    logoClickArea.style.cursor = 'pointer';
+    // 툴팁은 초기화 후 data-i18n-title 로 덮어씌움
+    logoClickArea.setAttribute('data-i18n-title', 'tooltip_settings');
+    logoClickArea.addEventListener('click', function (e) {
       e.stopPropagation();
       panel.classList.toggle('is-open');
     });
   } else {
+    logo.style.pointerEvents = 'auto';
     logo.style.cursor = 'default';
     logo.title = '';
+    logoClickArea.style.cursor = 'default';
+    logoClickArea.title = '';
   }
+
+  // 다국어(i18n) 설정 버튼 이벤트 리스너 추가
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation(); // 설정창 닫힘 방지
+      const lang = e.target.dataset.lang;
+      setLanguage(lang);
+    });
+  });
 
   // 바깥 클릭 시 패널 닫기
   document.addEventListener('click', function (e) {
     if (!panel.classList.contains('is-open')) return;
-    const isInside = panel.contains(e.target) || logo.contains(e.target);
+    const isInside = panel.contains(e.target) || logoClickArea.contains(e.target);
     if (!isInside) panel.classList.remove('is-open');
   });
   frameSkinPickerInitialized = true;
@@ -192,7 +456,7 @@ function unmuteOpening() {
   o.muted = false;
   o.volume = 0.6;
   o.currentTime = 0;
-  o.play().catch(function () { });
+  o.play().catch(function () { /* ignore bgm error */ });
   if (h) h.classList.add('hidden');
 }
 /* 게임 시작: 오프닝 중지 → 게임 BGM 재생, 화면 전환 */
@@ -203,7 +467,7 @@ function startGame() {
   if (gameBgm) {
     gameBgm.volume = 0.6;
     gameBgm.currentTime = 0;
-    gameBgm.play().catch(function () { });
+    gameBgm.play().catch(function () { /* ignore bgm error */ });
   }
   var startScreen = document.getElementById('startScreen');
   var deviceWrapper = document.getElementById('deviceWrapper');
@@ -220,8 +484,8 @@ function toggleBgmMute() {
   var g = document.getElementById('gameBgm');
   if (g) {
     g.muted = !g.muted;
-    if (g.muted) log("🔇 BGM 음소거");
-    else log("🔊 BGM 재생");
+    if (g.muted) log(t('bgm_mute'));
+    else log(t('bgm_play'));
   }
 }
 const uiExp = document.getElementById('uiExp');
@@ -265,7 +529,7 @@ function getDailyEatDrink() {
         drinkCooldownUntil: parsed.drinkCooldownUntil || 0
       };
     }
-  } catch (_) { }
+  } catch { /* ignore */ }
   return { date: today, eat: 0, drink: 0, eatCooldownUntil: 0, drinkCooldownUntil: 0 };
 }
 function saveDailyEatDrink(obj) {
@@ -278,7 +542,7 @@ function getDailyManualTaskCount() {
     const raw = localStorage.getItem(MANUAL_TASK_KEY);
     const parsed = raw ? JSON.parse(raw) : null;
     if (parsed && parsed.date === today) return parsed.count || 0;
-  } catch (_) { }
+  } catch { /* ignore */ }
   return 0;
 }
 function saveDailyManualTaskCount(count) {
@@ -291,7 +555,7 @@ function getHamsterSkin() {
   try {
     const s = localStorage.getItem(SKIN_KEY);
     return (s === 'baby') ? 'baby' : 'normal';
-  } catch (_) { return 'normal'; }
+  } catch { return 'normal'; }
 }
 function setHamsterSkin(skin) {
   localStorage.setItem(SKIN_KEY, skin === 'baby' ? 'baby' : 'normal');
@@ -321,7 +585,7 @@ function submitCoupon() {
   const input = document.getElementById('couponInput');
   const code = input ? input.value.trim() : '';
   if (!code) {
-    log('📌 쿠폰 번호를 입력해 주세요.', { kind: 'system' });
+    log(t('coupon_empty'), { kind: 'system' });
     return;
   }
   const result = applyCoupon(code);
@@ -405,7 +669,7 @@ async function fetchAndApplyNotionXP() {
         logLevelUp(`⭐ 노션 동기화! LV.${game.level} ⭐`);
         showLevelUpEffect();
       } else {
-        log(`📥 노션에서 +${delta} XP 불러옴`, { category: '노션동기화', xp: delta });
+        log(t('notion_sync_msg', delta), { category: '노션동기화', xp: delta });
       }
     }
   } catch (e) {
@@ -545,7 +809,7 @@ function applyAttendanceReward() {
   try {
     const last = localStorage.getItem(ATTENDANCE_REWARD_KEY);
     if (last === today) return;
-  } catch (_) { }
+  } catch { /* ignore */ }
   if (stats.consecutiveDays < 1) return;
 
   let xp = ATTENDANCE_DAILY_XP;
@@ -619,7 +883,7 @@ function updateStats(expGained, countsTowardGoal = false) {
       saveDailyGoal();
       showGoalAchievedEffect();
       const bonusExp = Math.floor(expGained * 0.5);
-      log(`🎯 목표 달성! 보너스 +${bonusExp} EXP`, { category: '목표보너스', xp: bonusExp });
+      log(`${t('goal_complete_bonus')} +${bonusExp} EXP`, { category: t('cat_goal_bonus'), xp: bonusExp });
       game.exp += bonusExp;
       while (game.exp >= getMaxExp(game.level)) {
         game.exp -= getMaxExp(game.level);
@@ -671,7 +935,7 @@ function loadSavedImagePositions() {
       if (o.height != null) root.style.setProperty('--full-and-sleep-height', String(o.height).includes('px') ? o.height : o.height + 'px');
     }
     /* 로고 위치: :root CSS 변수 사용 */
-  } catch (_) { }
+  } catch { /* ignore */ }
 }
 
 function init() {
@@ -680,6 +944,7 @@ function init() {
   const h = document.getElementById('hamster');
   if (h) h.src = getBaseHamsterSrc();
   updateUI();
+  updateUITexts(); // 다국어(i18n) 초기 텍스트 렌더링
   if (NOTION_ENABLED) {
     fetchAndApplyNotionXP();
     fetchAndMergeNotionLogs(); /* 노션 완료 로그 → 시스템 로그 */
@@ -693,8 +958,8 @@ function init() {
   /* 초기 로그 히스토리 (팝업용) */
   if (logHistory.length === 0) {
     logHistory = [
-      { msg: '시스템 가동..', kind: 'normal', category: null, xp: null, date: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', dateStyle: 'short', timeStyle: 'short' }) },
-      { msg: '하루치가 기다려요!', kind: 'normal', category: null, xp: null, date: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', dateStyle: 'short', timeStyle: 'short' }) }
+      { msg: t('log_init'), kind: 'normal', category: null, xp: null, date: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', dateStyle: 'short', timeStyle: 'short' }) },
+      { msg: t('log_waiting'), kind: 'normal', category: null, xp: null, date: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', dateStyle: 'short', timeStyle: 'short' }) }
     ];
   }
 
@@ -731,7 +996,7 @@ function handleBtn(btn) {
     return;
   }
   if (btn === 'A') {
-    log("하루치 그루밍 중 ...");
+    log(t('action_grooming'));
     showGroomingAnimation();
   } else if (btn === 'B') {
     showButtAction();
@@ -739,7 +1004,7 @@ function handleBtn(btn) {
     toggleBgmMute();
   } else if (btn === 'D') {
     // D 버튼 기능 (추후 확장 가능)
-    log("버튼 D 클릭");
+    log(t('action_btn_d'));
   }
 }
 
@@ -755,7 +1020,7 @@ function handleHamsterClick() {
   }
   game.isBusy = true;
   game.lastActionTime = Date.now(); // 액션 시간 업데이트
-  log("쓰담쓰담.. 기분 최고! +5", { category: '쓰다듬기', xp: 5 });
+  log(`${t('action_pet')} +5`, { category: '쓰다듬기', xp: 5 });
   changeAction('./assets/hamster/happy.png', 2000);
   showExpParticle(5);
   addExp(5);
@@ -777,10 +1042,10 @@ function handleHouseClick() {
   const useFullAndSleep = justAteAt > 0 && (Date.now() - justAteAt) < JUST_ATE_WINDOW_MS;
   justAteAt = 0;
   if (useFullAndSleep) {
-    log("밥 먹고 잠들었어요.. 기분 좋아요 😴");
+    log(t('action_full_sleep'));
     changeSleepAction(5000, 'assets/hamster/overfed/full_and_sleep.png', 'full-and-sleep-adjust');
   } else {
-    log("집에 들어가서 잠자기... Zzz +0");
+    log(`${t('action_sleep')} +0`);
     changeSleepAction(5000);
   }
   addExp(0);
@@ -804,7 +1069,7 @@ function handleBowlClick() {
       saveDailyEatDrink(daily);
     } else if (daily.eatCooldownUntil && now <= daily.eatCooldownUntil) {
       game.isBusy = true;
-      log("잠깐만요, 더 이상 못 먹어요! 😣");
+      log(t('eat_reject'));
       hamster.classList.add('btn-test-stopdrink');
       hamster.src = 'assets/hamster/overfed/stop drink.png';
       hamster.classList.remove('bounce', 'sleeping');
@@ -825,7 +1090,7 @@ function handleBowlClick() {
       return;
     } else {
       game.isBusy = true;
-      log("너무 많이 먹었어요! 😵");
+      log(t('eat_overfed'));
       hamster.classList.add('btn-test-adjust');
       changeAction('assets/hamster/overfed/throw up.png', 2500);
       daily.eatCooldownUntil = now + EAT_DRINK_COOLDOWN_MS;
@@ -841,10 +1106,10 @@ function handleBowlClick() {
   justAteAt = Date.now();
 
   const eatMessages = [
-    "냠냠! 해바라기씨 맛있다 +10",
-    "냠냠! 해바라기씨 맛있다 야르~ +10",
-    "하루치 두쫀쿠 먹고 싶다 +10",
-    "야미~ 야미~ 야미야미야미 +10"
+    t('eat_msg_1') + " +10",
+    t('eat_msg_2') + " +10",
+    t('eat_msg_3') + " +10",
+    t('eat_msg_4') + " +10"
   ];
   const randomMessage = eatMessages[Math.floor(Math.random() * eatMessages.length)];
   log(randomMessage, { category: '밥먹기', xp: 10 });
@@ -874,7 +1139,7 @@ function handleWaterBottleClick() {
       saveDailyEatDrink(daily);
     } else if (daily.drinkCooldownUntil && now <= daily.drinkCooldownUntil) {
       game.isBusy = true;
-      log("물 더 이상 마시기 싫어요! 😣");
+      log(t('drink_reject'));
       hamster.classList.add('btn-test-stopdrink');
       hamster.src = 'assets/hamster/overfed/stop drink.png';
       hamster.classList.remove('bounce', 'sleeping', 'drinking');
@@ -895,7 +1160,7 @@ function handleWaterBottleClick() {
       return;
     } else {
       game.isBusy = true;
-      log("물 너무 많이 마셨어요! 😵");
+      log(t('drink_overfed'));
       hamster.classList.add('btn-test-throwup2');
       hamster.src = 'assets/hamster/overfed/throw up 2.png';
       hamster.classList.remove('bounce', 'sleeping', 'drinking');
@@ -926,9 +1191,9 @@ function handleWaterBottleClick() {
   const useDrinkWater = Math.random() < 0.2;
   const drinkImage = useDrinkWater ? './assets/hamster/drinkwater.png' : './assets/hamster/drink.png';
   if (useDrinkWater) {
-    log("벌컥벌컥! 물을 마시는 중... +10", { category: '물마시기', xp: 10 });
+    log(`${t('drink_msg_1')} +10`, { category: '물마시기', xp: 10 });
   } else {
-    log("물을 마시는 중... +10", { category: '물마시기', xp: 10 });
+    log(`${t('drink_msg_2')} +10`, { category: '물마시기', xp: 10 });
   }
   changeDrinkAction(drinkImage, 2000);
   showExpParticle(10);
@@ -960,7 +1225,7 @@ function changeAction(imgSrc, duration) {
   // 이미지 로드 실패 시 원상복구
   hamster.onerror = function () {
     console.warn("이미지 로드 실패:", imgSrc);
-    log("⚠ 오류: 이미지가 없어요!");
+    log(t('err_img_general'));
     hamster.src = originalSrc;
     hamster.classList.add('bounce');
     hamster.classList.remove('sleeping');
@@ -987,7 +1252,7 @@ function changeSleepAction(duration, sleepImageSrc, adjustClass) {
 
   hamster.onerror = function () {
     console.warn("이미지 로드 실패:", sleepImg);
-    log("⚠ 오류: 잠자는 이미지가 없어요!");
+    log(t('err_img_sleep'));
     hamster.src = originalSrc;
     hamster.classList.add('bounce');
     hamster.classList.remove('sleeping');
@@ -1032,7 +1297,7 @@ function changeDrinkAction(imgSrc, duration) {
   // 이미지 로드 실패 시 원상복구
   hamster.onerror = function () {
     console.warn("이미지 로드 실패:", imgSrc);
-    log("⚠ 오류: 물 마시는 이미지가 없어요!");
+    log(t('err_img_water'));
     hamster.src = originalSrc;
     hamster.classList.remove('drinking', 'drink-normal', 'drink-water');
     hamster.classList.add('bounce');
@@ -1154,23 +1419,9 @@ function showSadRandomly(forceShow = false) {
   game.isBusy = true;
   game.lastSadTime = Date.now();
 
-  // 랜덤 sad 메시지 배열
-  const sadMessages = [
-    "😢 하루치가 슬퍼 보여요...",
-    "😞 하루치가 외로워하는 것 같아요",
-    "😔 하루치가 기다리고 있어요...",
-    "💔 하루치가 관심을 원해요",
-    "😿 하루치가 쓸쓸해 보여요",
-    "😰 하루치가 불안해하는 것 같아요",
-    "😥 하루치가 심심해하는 것 같아요",
-    "😪 하루치가 지쳐 보여요...",
-    "😓 하루치가 힘들어하는 것 같아요",
-    "😭 하루치가 울고 있어요..."
-  ];
-
-  // 랜덤으로 메시지 선택
-  const randomMessage = sadMessages[Math.floor(Math.random() * sadMessages.length)];
-  log(randomMessage);
+  // 랜덤 sad 메시지 생성 (1~10)
+  const randomKey = 'sad_msg_' + (Math.floor(Math.random() * 10) + 1);
+  log(t(randomKey));
 
   const originalSrc = getBaseHamsterSrc();
   hamster.src = 'assets/hamster/sad.png';
@@ -1179,7 +1430,7 @@ function showSadRandomly(forceShow = false) {
   // 이미지 로드 실패 시 원상복구
   hamster.onerror = function () {
     console.warn("이미지 로드 실패: sad.png");
-    log("⚠ 오류: sad 이미지가 없어요!");
+    log(t('err_img_sad'));
     hamster.src = originalSrc;
     hamster.classList.add('bounce');
     game.isBusy = false;
@@ -1207,19 +1458,9 @@ function showAngryRandomly(forceShow = false) {
   game.isBusy = true;
   game.lastAngryTime = Date.now();
 
-  // 랜덤 angry 메시지 배열
-  const angryMessages = [
-    "😠 하루치가 화가 났어요!",
-    "😡 하루치가 매우 화가 나있어요!",
-    "💢 하루치가 짜증이 났어요!",
-    "🤬 하루치가 화가 나서 떠들어요!",
-    "😤 하루치가 불만이 많아요!",
-    "💥 하루치가 폭발 직전이에요!"
-  ];
-
-  // 랜덤으로 메시지 선택
-  const randomMessage = angryMessages[Math.floor(Math.random() * angryMessages.length)];
-  log(randomMessage);
+  // 랜덤 angry 메시지 생성 (1~6)
+  const randomKey = 'angry_msg_' + (Math.floor(Math.random() * 6) + 1);
+  log(t(randomKey));
 
   const originalSrc = getBaseHamsterSrc();
   hamster.src = 'assets/hamster/back.png';
@@ -1228,16 +1469,15 @@ function showAngryRandomly(forceShow = false) {
 
   // 오른쪽 말풍선 빠직 표시
   const speechBubble = document.getElementById('angrySpeechBubble');
-  const angryBubbleTexts = ['빠직!', '찍찍!', '찍!!', '...'];
   if (speechBubble) {
-    speechBubble.textContent = angryBubbleTexts[Math.floor(Math.random() * angryBubbleTexts.length)];
+    speechBubble.textContent = t('bubble_angry_' + (Math.floor(Math.random() * 4) + 1));
     speechBubble.classList.add('show');
   }
 
   // 이미지 로드 실패 시 원상복구
   hamster.onerror = function () {
     console.warn("이미지 로드 실패: back.png");
-    log("⚠ 오류: back 이미지가 없어요!");
+    log(t('err_img_back'));
     hamster.src = originalSrc;
     hamster.classList.add('bounce');
     hamster.classList.remove('angry');
@@ -1265,21 +1505,16 @@ function showAngryFaceAction() {
 
   game.isBusy = true;
 
-  const angryMessages = [
-    "😠 하루치가 화가 났어요!",
-    "😡 하루치가 매우 화가 나있어요!",
-    "💢 하루치가 짜증이 났어요!"
-  ];
-  log(angryMessages[Math.floor(Math.random() * angryMessages.length)]);
+  const randomKey = 'angry_msg_' + (Math.floor(Math.random() * 6) + 1);
+  log(t(randomKey));
 
   const originalSrc = getBaseHamsterSrc();
   hamster.src = './assets/hamster/angry.png';
   hamster.classList.remove('bounce', 'sleeping', 'drinking');
 
   const speechBubble = document.getElementById('angrySpeechBubble');
-  const angryBubbleTexts = ['빠직!', '빠직!!', '빠악!', '쳇!'];
   if (speechBubble) {
-    speechBubble.textContent = angryBubbleTexts[Math.floor(Math.random() * angryBubbleTexts.length)];
+    speechBubble.textContent = t('bubble_angry_' + (Math.floor(Math.random() * 4) + 1));
     speechBubble.classList.add('show');
   }
 
@@ -1309,9 +1544,9 @@ function showButtAction() {
   game.isBusy = true;
 
   const isWiggle = Math.random() < 0.5; // 50% 씰룩씰룩, 50% 토실토실
-  const bubbleText = isWiggle ? '씰룩씰룩' : '토실토실';
+  const bubbleTextKey = isWiggle ? 'bubble_wiggle' : 'bubble_plump';
 
-  log(isWiggle ? '🍑 하루치 엉덩이가 씰룩씰룩~' : '🍑 하루치 토실토실한 엉덩이!');
+  log(t(isWiggle ? 'butt_wiggle' : 'butt_plump'));
 
   const originalSrc = getBaseHamsterSrc();
   hamster.src = 'assets/hamster/back.png';
@@ -1321,7 +1556,7 @@ function showButtAction() {
 
   const buttBubble = document.getElementById('buttSpeechBubble');
   if (buttBubble) {
-    buttBubble.textContent = bubbleText;
+    buttBubble.textContent = t(bubbleTextKey);
     buttBubble.classList.add('show');
   }
 
@@ -1377,8 +1612,8 @@ function startSadCheckTimer() {
 let groomingAnimationInterval = null;
 let currentGroomingFrame = 0;
 const GROOMING_FRAME_COUNT = 16; // 총 16프레임
-const GROOMING_FRAME_WIDTH = 64; // 원본 1프레임 너비 (256px / 4)
-const GROOMING_FRAME_HEIGHT = 64; // 원본 1프레임 높이 (256px / 4)
+const GROOMING_FRAME_WIDTH = 64;
+const GROOMING_FRAME_HEIGHT = 64;
 const DISPLAY_FRAME_WIDTH = 200; // 그루밍 애니메이션 표시 크기 (오버레이 크기에 맞춤)
 const DISPLAY_FRAME_HEIGHT = 200; // 그루밍 애니메이션 표시 크기 (오버레이 크기에 맞춤)
 
@@ -1495,7 +1730,7 @@ function updateGroomingFrame() {
 function autoAlignGroomingFrames() {
   const groomingOverlay = document.getElementById('groomingOverlay');
   if (!groomingOverlay) {
-    log("⚠ 그루밍 오버레이를 찾을 수 없습니다.");
+    log(t('err_groom_overlay'));
     return;
   }
 
@@ -1806,8 +2041,8 @@ function getAttendanceCalendarHTML(year, month) {
   if (!year) year = attendanceViewYear;
   if (month === undefined) month = attendanceViewMonth;
   const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' });
-  const monthNames = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
-  const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+  const monthNames = [t('month_1'), t('month_2'), t('month_3'), t('month_4'), t('month_5'), t('month_6'), t('month_7'), t('month_8'), t('month_9'), t('month_10'), t('month_11'), t('month_12')];
+  const weekdays = [t('day_sun'), t('day_mon'), t('day_tue'), t('day_wed'), t('day_thu'), t('day_fri'), t('day_sat')];
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
   const startWeekday = firstDay.getDay();
@@ -1824,10 +2059,11 @@ function getAttendanceCalendarHTML(year, month) {
     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
     const checked = stats.playDays.has(dateStr);
     const isToday = dateStr === today;
-    cellsHtml += `<div class="attendance-day ${checked ? 'checked' : ''} ${isToday ? 'today' : ''}" title="${dateStr} ${checked ? '출석' : '미출석'}">${d}</div>`;
+    const titleStatus = checked ? t('cal_attended') : t('cal_missed');
+    cellsHtml += `<div class="attendance-day ${checked ? 'checked' : ''} ${isToday ? 'today' : ''}" title="${dateStr} ${titleStatus}">${d}</div>`;
   }
   return {
-    title: `${year}년 ${monthNames[month]}`,
+    title: t('attendance_month_title', year.toString(), monthNames[month]),
     weekdays: weekdaysHtml,
     cells: cellsHtml,
     count: viewMonthCount
@@ -1879,17 +2115,17 @@ function showStats(resetCalendarToCurrent) {
   const manualRemain = Math.max(0, MANUAL_TASK_DAILY_LIMIT - manualCount);
   content.innerHTML = `
         <div class="stats-section" id="manualTaskSection">
-          <div class="stats-section-title">✏ 할 일 직접 기록 <span style="opacity:0.8; font-size:10px;">(오늘 ${manualCount}/${MANUAL_TASK_DAILY_LIMIT}건)</span></div>
+          <div class="stats-section-title">${t('stats_manual_title')} <span style="opacity:0.8; font-size:10px;">${t('stats_manual_today', manualCount, MANUAL_TASK_DAILY_LIMIT)}</span></div>
           ${manualRemain > 0 ? `
           <div class="stats-item" style="flex-wrap: wrap; gap: 6px;">
-            <button type="button" onclick="addManualTask('물 마시기', 10)" style="padding: 6px 10px; font-size: 10px; background: #0f380f; color: #9bbc0f; border: 1px solid #306230; border-radius: 4px; cursor: pointer;">물 10</button>
-            <button type="button" onclick="addManualTask('밥 먹기', 10)" style="padding: 6px 10px; font-size: 10px; background: #0f380f; color: #9bbc0f; border: 1px solid #306230; border-radius: 4px; cursor: pointer;">밥 10</button>
-            <button type="button" onclick="addManualTask('쓰다듬기', 5)" style="padding: 6px 10px; font-size: 10px; background: #0f380f; color: #9bbc0f; border: 1px solid #306230; border-radius: 4px; cursor: pointer;">쓰담 5</button>
-            <button type="button" onclick="addManualTask('운동', 20)" style="padding: 6px 10px; font-size: 10px; background: #0f380f; color: #9bbc0f; border: 1px solid #306230; border-radius: 4px; cursor: pointer;">운동 20</button>
-            <button type="button" onclick="addManualTask('독서', 40)" style="padding: 6px 10px; font-size: 10px; background: #0f380f; color: #9bbc0f; border: 1px solid #306230; border-radius: 4px; cursor: pointer;">독서 40</button>
+            <button type="button" onclick="addManualTask('${t('manual_water')}', 10)" style="padding: 6px 10px; font-size: 10px; background: #0f380f; color: #9bbc0f; border: 1px solid #306230; border-radius: 4px; cursor: pointer;">${t('btn_water')} 10</button>
+            <button type="button" onclick="addManualTask('${t('manual_food')}', 10)" style="padding: 6px 10px; font-size: 10px; background: #0f380f; color: #9bbc0f; border: 1px solid #306230; border-radius: 4px; cursor: pointer;">${t('btn_food')} 10</button>
+            <button type="button" onclick="addManualTask('${t('manual_pet')}', 5)" style="padding: 6px 10px; font-size: 10px; background: #0f380f; color: #9bbc0f; border: 1px solid #306230; border-radius: 4px; cursor: pointer;">${t('btn_pet')} 5</button>
+            <button type="button" onclick="addManualTask('${t('manual_workout')}', 20)" style="padding: 6px 10px; font-size: 10px; background: #0f380f; color: #9bbc0f; border: 1px solid #306230; border-radius: 4px; cursor: pointer;">${t('btn_workout')} 20</button>
+            <button type="button" onclick="addManualTask('${t('manual_reading')}', 40)" style="padding: 6px 10px; font-size: 10px; background: #0f380f; color: #9bbc0f; border: 1px solid #306230; border-radius: 4px; cursor: pointer;">${t('btn_reading')} 40</button>
           </div>
           <div class="stats-item" style="flex-wrap: wrap; align-items: center; gap: 6px;">
-            <input type="text" id="manualTaskName" placeholder="할 일 이름" maxlength="30"
+            <input type="text" id="manualTaskName" placeholder="${t('manual_placeholder')}" maxlength="30"
                    onkeydown="if(event.key==='Enter')submitManualTaskCustom()"
                    style="width: 90px; padding: 6px 8px; font-size: 11px; background: rgba(15,56,15,0.8); border: 2px solid #0f380f; color: #fff; border-radius: 4px;">
             <select id="manualTaskXp" style="padding: 6px 8px; font-size: 11px; background: rgba(15,56,15,0.8); border: 2px solid #0f380f; color: #fff; border-radius: 4px; width: 60px;">
@@ -1902,60 +2138,60 @@ function showStats(resetCalendarToCurrent) {
               <option value="50">50</option>
             </select>
             <span style="font-size: 10px; opacity: 0.9;">XP</span>
-            <button type="button" onclick="submitManualTaskCustom()" style="padding: 6px 10px; font-size: 10px; background: #306230; color: #9bbc0f; border: 1px solid #306230; border-radius: 4px; cursor: pointer;">추가</button>
+            <button type="button" onclick="submitManualTaskCustom()" style="padding: 6px 10px; font-size: 10px; background: #306230; color: #9bbc0f; border: 1px solid #306230; border-radius: 4px; cursor: pointer;">${t('manual_add')}</button>
           </div>
           ` : `
-          <div class="stats-item" style="color: #8b7355;">오늘 기록 한도(10건)에 도달했습니다. 내일 다시 시도해 주세요.</div>
+          <div class="stats-item" style="color: #8b7355;">${t('manual_limit', 10)}</div>
           `}
         </div>
         <div class="stats-section">
-          <div class="stats-section-title">📊 통계</div>
+          <div class="stats-section-title">📊 ${t('statistics_title').replace('📊 ', '')}</div>
           <div class="stats-item">
-            <span class="stats-label">총 플레이 일수</span>
-            <span class="stats-value">${playDaysCount}일</span>
+            <span class="stats-label">${t('stats_play_days')}</span>
+            <span class="stats-value">${playDaysCount}${t('unit_day')}</span>
           </div>
           <div class="stats-item">
-            <span class="stats-label">총 액션 횟수</span>
-            <span class="stats-value">${stats.totalActions}회</span>
+            <span class="stats-label">${t('stats_action_count')}</span>
+            <span class="stats-value">${stats.totalActions}${t('unit_times')}</span>
           </div>
           <div class="stats-item">
-            <span class="stats-label">총 획득 EXP</span>
-            <span class="stats-value">${stats.totalExp}점</span>
+            <span class="stats-label">${t('stats_total_exp')}</span>
+            <span class="stats-value">${stats.totalExp}${t('unit_points')}</span>
           </div>
           <div class="stats-item">
-            <span class="stats-label">평균 일일 EXP</span>
-            <span class="stats-value">${avgDailyExp}점</span>
+            <span class="stats-label">${t('stats_avg_exp')}</span>
+            <span class="stats-value">${avgDailyExp}${t('unit_points')}</span>
           </div>
           <div class="stats-item">
-            <span class="stats-label">현재 레벨</span>
+            <span class="stats-label">${t('stats_current_level')}</span>
             <span class="stats-value">LV.${game.level}</span>
           </div>
           <div class="stats-item">
-            <span class="stats-label">첫 플레이</span>
-            <span class="stats-value">${stats.firstPlayDate || '오늘'}</span>
+            <span class="stats-label">${t('stats_first_play')}</span>
+            <span class="stats-value">${stats.firstPlayDate || t('stats_today')}</span>
           </div>
         </div>
 
         <div class="stats-section">
-          <div class="stats-section-title">📅 출석 체크</div>
+          <div class="stats-section-title">📅 ${t('attendance_title').replace('📅 ', '')}</div>
           <div class="stats-item">
-            <span class="stats-label">연속 출석</span>
-            <span class="stats-value">${stats.consecutiveDays}일 ${stats.consecutiveDays >= 7 ? '🔥' : ''}</span>
+            <span class="stats-label">${t('attendance_consecutive')}</span>
+            <span class="stats-value">${stats.consecutiveDays}${t('unit_day')} ${stats.consecutiveDays >= 7 ? '🔥' : ''}</span>
           </div>
           <div class="stats-item" style="font-size: 10px; opacity: 0.85;">
-            <span class="stats-label">보상</span>
-            <span class="stats-value">매일 10 XP · 7일 +50 · 14일 +100 · 21일 +150 · 30일 +300</span>
+            <span class="stats-label">${t('attendance_reward')}</span>
+            <span class="stats-value">${t('attendance_reward_desc')}</span>
           </div>
           <div class="stats-item">
-            <span class="stats-label">이번 달 출석</span>
-            <span class="stats-value">${getMonthlyAttendanceCount()}일</span>
+            <span class="stats-label">${t('attendance_this_month')}</span>
+            <span class="stats-value">${getMonthlyAttendanceCount()}${t('unit_day')}</span>
           </div>
           <div class="attendance-calendar-wrap">
             <div class="attendance-calendar-header">
-              <span class="attendance-calendar-title">${cal.title} (${cal.count}일 출석)</span>
+              <span class="attendance-calendar-title">${cal.title} (${t('attendance_count_days', cal.count)})</span>
               <div class="attendance-calendar-nav">
-                <button type="button" onclick="changeAttendanceMonth(-1)">◀ 이전</button>
-                <button type="button" onclick="changeAttendanceMonth(1)" ${!canGoNextMonth() ? 'disabled' : ''}>다음 ▶</button>
+                <button type="button" onclick="changeAttendanceMonth(-1)">${t('cal_prev')}</button>
+                <button type="button" onclick="changeAttendanceMonth(1)" ${!canGoNextMonth() ? 'disabled' : ''}>${t('cal_next')}</button>
               </div>
             </div>
             <div class="attendance-calendar-weekdays">${cal.weekdays}</div>
@@ -1964,13 +2200,13 @@ function showStats(resetCalendarToCurrent) {
         </div>
         
         <div class="stats-section">
-          <div class="stats-section-title">🎯 일일 목표</div>
+          <div class="stats-section-title">🎯 ${t('goal_daily_title').replace('🎯 ', '')}</div>
           <div class="stats-item">
-            <span class="stats-label">오늘 완료</span>
+            <span class="stats-label">${t('goal_completed_today')}</span>
             <span class="stats-value" id="statsGoalCompleteValue">${dailyGoal.completed}/${dailyGoal.target} (${goalPercent}%)</span>
           </div>
           <div class="stats-item">
-            <span class="stats-label">목표 설정</span>
+            <span class="stats-label">${t('goal_setting')}</span>
             <span class="stats-value">
               <input type="number" id="goalInput" min="1" max="50" value="${dailyGoal.target}" 
                      style="width: 50px; padding: 4px; font-size: 11px; text-align: center; 
@@ -1978,28 +2214,26 @@ function showStats(resetCalendarToCurrent) {
                             color: #ffffff; border-radius: 4px;">
               <button onclick="saveGoal()" style="margin-left: 8px; padding: 4px 8px; 
                      font-size: 10px; background: #0f380f; color: #9bbc0f; 
-                     border: 2px solid #0f380f; border-radius: 4px; cursor: pointer;">저장</button>
+                     border: 2px solid #0f380f; border-radius: 4px; cursor: pointer;">${t('goal_save')}</button>
             </span>
           </div>
-          ${dailyGoal.achieved ? '<div class="stats-item" id="statsGoalAchievedMsg" style="color: #ffcc00; font-weight: bold;">✨ 오늘 목표 달성!</div>' : ''}
+          ${dailyGoal.achieved ? `<div class="stats-item" id="statsGoalAchievedMsg" style="color: #ffcc00; font-weight: bold;">${t('goal_achieved_msg')}</div>` : ''}
         </div>
 
         <div class="stats-section">
-          <div class="stats-section-title">🎁 쿠폰 입력</div>
+          <div class="stats-section-title">🎁 ${t('coupon_title').replace('🎁 ', '')}</div>
           <div class="stats-item" style="flex-wrap: wrap; align-items: center; gap: 6px;">
-            <input type="text" id="couponInput" placeholder="사전예약 쿠폰 입력" maxlength="30"
+            <input type="text" id="couponInput" placeholder="${t('coupon_placeholder')}" maxlength="30"
                    onkeydown="if(event.key==='Enter')submitCoupon()"
                    style="flex: 1; min-width: 120px; padding: 6px 10px; font-size: 11px; 
                           background: rgba(15,56,15,0.8); border: 2px solid #0f380f; 
                           color: #fff; border-radius: 4px;">
             <button type="button" onclick="submitCoupon()"
                     style="padding: 6px 12px; font-size: 11px; background: #306230; color: #9bbc0f; 
-                           border: 2px solid #306230; border-radius: 4px; cursor: pointer;">등록</button>
+                           border: 2px solid #306230; border-radius: 4px; cursor: pointer;">${t('coupon_submit')}</button>
           </div>
           <div class="stats-item" style="font-size: 10px; opacity: 0.85;">
-            ${getHamsterSkin() === 'baby'
-      ? '🐹 응애 하루치 스킨 적용 중!'
-      : '사전예약 쿠폰으로 응애 하루치 스킨을 해금하세요!'}
+            ${getHamsterSkin() === 'baby' ? t('coupon_applied') : t('coupon_hint')}
           </div>
         </div>
         ${window.IS_PRO ? `
@@ -2053,7 +2287,7 @@ function saveGoal() {
           // 새로 달성한 경우에만 효과 표시
           dailyGoal.achieved = true;
           showGoalAchievedEffect();
-          log(`🎯 목표 달성! (목표 변경으로 달성)`);
+          log(t('goal_complete_change'));
         } else {
           dailyGoal.achieved = true;
         }
@@ -2064,7 +2298,7 @@ function saveGoal() {
       saveDailyGoal();
       updateGoalUI();
       updateStatsPopupGoal(); /* 팝업 내 목표 표시 즉시 반영 */
-      log(`🎯 일일 목표가 ${newTarget}개로 변경되었습니다.`);
+      log(t('goal_target_changed', newTarget));
       35
     }
   }
@@ -2122,26 +2356,32 @@ document.addEventListener('keydown', function (e) {
 
 /* 레벨별 칭호 시스템 */
 function getTitleByLevel(level) {
-  if (level >= 1000) return "🌌 우주급 성장 마스터";
-  if (level >= 500) return "🌟 전설의 성장왕";
-  if (level >= 300) return "💎 다이아몬드 성장가";
-  if (level >= 200) return "👑 플래티넘 마스터";
-  if (level >= 150) return "🏆 골드 챔피언";
-  if (level >= 100) return "⭐ 골드 성장가";
-  if (level >= 80) return "🔥 열정의 마스터";
-  if (level >= 60) return "💪 습관의 달인";
-  if (level >= 50) return "🎯 목표 달성 전문가";
-  if (level >= 40) return "📚 지식의 수집가";
-  if (level >= 30) return "🎯 목표 달성자";
-  if (level >= 25) return "📊 성장 기록가";
-  if (level >= 20) return "✨ 성장하는 리더";
-  if (level >= 17) return "🏃 꾸준함의 증명자";
-  if (level >= 15) return "💪 노력하는 하루치";
-  if (level >= 12) return "📝 습관 만들기 중";
-  if (level >= 10) return "📈 성장 중인 하루치";
-  if (level >= 7) return "🌿 조금씩 자라는 중";
-  if (level >= 5) return "🌱 새싹 하루치";
-  return "🐹 새내기 하루치";
+  const titles = {
+    ko: ["우주급 성장 마스터", "전설의 성장왕", "다이아몬드 성장가", "플래티넘 마스터", "골드 챔피언", "골드 성장가", "열정의 마스터", "습관의 달인", "목표 달성 전문가", "지식의 수집가", "목표 달성자", "성장 기록가", "성장하는 리더", "꾸준함의 증명자", "노력하는 하루치", "습관 만들기 중", "성장 중인 하루치", "조금씩 자라는 중", "새싹 하루치", "새내기 하루치"],
+    en: ["Universal Growth Master", "Legendary Growth King", "Diamond Grower", "Platinum Master", "Gold Champion", "Gold Grower", "Passion Master", "Habit Master", "Target Expert", "Knowledge Collector", "Goal Achiever", "Growth Logger", "Growing Leader", "Proof of Persistence", "Hardworking Haruchi", "Building Habits", "Growing Haruchi", "Growing Bit by Bit", "Budding Haruchi", "Rookie Haruchi"],
+    zh: ["宇宙级成长大师", "传说成长王", "钻石成长家", "白金大师", "黄金冠军", "黄金成长家", "热情大师", "习惯达人", "目标达成专家", "知识收集者", "目标达成者", "成长记录者", "成长中的领袖", "坚持的证明", "努力的Haruchi", "习惯养成中", "成长中的Haruchi", "一点点长大", "发芽的Haruchi", "新手Haruchi"]
+  };
+  const list = titles[currentLang] || titles['ko'];
+  if (level >= 1000) return `🌌 ${list[0]}`;
+  if (level >= 500) return `🌟 ${list[1]}`;
+  if (level >= 300) return `💎 ${list[2]}`;
+  if (level >= 200) return `👑 ${list[3]}`;
+  if (level >= 150) return `🏆 ${list[4]}`;
+  if (level >= 100) return `⭐ ${list[5]}`;
+  if (level >= 80) return `🔥 ${list[6]}`;
+  if (level >= 60) return `💪 ${list[7]}`;
+  if (level >= 50) return `🎯 ${list[8]}`;
+  if (level >= 40) return `📚 ${list[9]}`;
+  if (level >= 30) return `🎯 ${list[10]}`;
+  if (level >= 25) return `📊 ${list[11]}`;
+  if (level >= 20) return `✨ ${list[12]}`;
+  if (level >= 17) return `🏃 ${list[13]}`;
+  if (level >= 15) return `💪 ${list[14]}`;
+  if (level >= 12) return `📝 ${list[15]}`;
+  if (level >= 10) return `📈 ${list[16]}`;
+  if (level >= 7) return `🌿 ${list[17]}`;
+  if (level >= 5) return `🌱 ${list[18]}`;
+  return `🐹 ${list[19]}`;
 }
 
 function updateUI() {
@@ -2215,7 +2455,8 @@ function log(msg, opts) {
   addToLogHistory(msg, opts.kind || 'normal', opts.category || null, opts.xp != null ? opts.xp : null);
   if (!uiLog) return;
   const item = document.createElement('div');
-  item.className = 'log-item new' + (opts.category ? ' log-cat-' + opts.category : '');
+  const isDrinkGulpLog = typeof msg === 'string' && msg.includes('벌컥벌컥!');
+  item.className = 'log-item new' + (opts.category ? ' log-cat-' + opts.category : '') + (isDrinkGulpLog ? ' log-drink-gulp' : '');
   item.innerText = `> ${msg}`;
   uiLog.prepend(item);
   if (uiLog.children.length > 20) uiLog.removeChild(uiLog.lastChild);
@@ -2242,12 +2483,18 @@ function logImportant(msg) {
 }
 
 async function openLogModal() {
-  if (NOTION_ENABLED) await fetchAndMergeNotionLogs(); /* 열 때마다 최신 노션 완료 로그 반영 */
+  if (NOTION_ENABLED) {
+    try {
+      await fetchAndMergeNotionLogs(); /* 열 때마다 최신 노션 완료 로그 반영 */
+    } catch (e) {
+      console.error('Failed to fetch Notion logs:', e);
+    }
+  }
   const content = document.getElementById('logModalContent');
   if (!content) return;
   const all = logHistory.length ? logHistory : [
-    { msg: '시스템 가동..', kind: 'normal', category: null, xp: null, date: null },
-    { msg: '하루치가 기다려요!', kind: 'normal', category: null, xp: null, date: null }
+    { msg: t('log_init'), kind: 'normal', category: null, xp: null, date: null },
+    { msg: t('log_waiting'), kind: 'normal', category: null, xp: null, date: null }
   ];
   const taskLogs = all.filter(e => e.category && LOG_CATEGORY_TASK.includes(e.category));
   const clickLogs = all.filter(e => e.category && LOG_CATEGORY_CLICK.includes(e.category));
@@ -2281,7 +2528,8 @@ async function openLogModal() {
       if (e.category) {
         const tagSpan = document.createElement('span');
         tagSpan.className = 'log-cat-tag';
-        tagSpan.textContent = String(e.category);
+        // 카테고리 (밥먹기 등) 이름을 번역하여 표시, 번역이 없으면 원본 그대로 출력
+        tagSpan.textContent = t(String(e.category));
         line.appendChild(tagSpan);
         line.appendChild(document.createTextNode(' '));
       }
@@ -2311,16 +2559,16 @@ async function openLogModal() {
     const refreshBtn = document.createElement('button');
     refreshBtn.className = 'log-refresh-btn';
     refreshBtn.type = 'button';
-    refreshBtn.textContent = '🔄 새로고침';
+    refreshBtn.textContent = t('log_refresh');
     refreshBtn.addEventListener('click', openLogModal);
     refreshWrap.appendChild(refreshBtn);
     content.appendChild(refreshWrap);
   }
 
   const sections = [
-    renderSectionNode('📌 할일 완료 경험치 (할일/루틴/운동/독서/책/SNS)', taskLogs, 'log-section-task'),
-    renderSectionNode('🖱 클릭 경험치 (밥/물/쓰다듬기)', clickLogs, 'log-section-click'),
-    renderSectionNode('📋 기타', otherLogs, 'log-section-other')
+    renderSectionNode(t('log_sec_task'), taskLogs, 'log-section-task'),
+    renderSectionNode(t('log_sec_click'), clickLogs, 'log-section-click'),
+    renderSectionNode(t('log_sec_other'), otherLogs, 'log-section-other')
   ];
   sections.forEach((section) => {
     if (section) content.appendChild(section);
@@ -2484,7 +2732,7 @@ function showWelcomeFeedback() {
   const key = 'hamsterFeedbackWelcome';
   try {
     if (localStorage.getItem(key) === today) return;
-  } catch (_) { }
+  } catch { /* ignore */ }
 
   localStorage.setItem(key, today);
   /* 게임 시작 2초 후 환영 메시지 */
