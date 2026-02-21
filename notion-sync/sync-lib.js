@@ -31,12 +31,6 @@ function getTitle(page, propName) {
   return (p.title || []).map(t => t.plain_text || '').join('');
 }
 
-function getStatus(page, propName) {
-  const p = page.properties?.[propName];
-  if (!p || p.type !== 'status') return '';
-  return p.status?.name || '';
-}
-
 function getSelect(page, propName) {
   const p = page.properties?.[propName];
   if (!p || (p.type !== 'select' && p.type !== 'status')) return null;
@@ -165,7 +159,7 @@ async function queryCompletedItems(notion, dbId, source, CONFIG) {
   return results;
 }
 
-async function createXpLog(notion, source, title, xp, CONFIG) {
+async function createXpLog(notion, source, title, xp, CONFIG, sourcePageId) {
   const dbId = CONFIG.xpLogDbId;
   if (!dbId) return null;
   const logTitle = `[${source.type}] · ${(title || '무제').slice(0, 50)} · [${xp}]XP`;
@@ -176,12 +170,19 @@ async function createXpLog(notion, source, title, xp, CONFIG) {
     const titleKey = Object.keys(p).find(k => p[k]?.type === 'title') || '이름';
     const xpKey = Object.keys(p).find(k => k === 'XP' || k === 'xp') || 'XP';
     const relKey = Object.keys(p).find(k => ['하루치', '캐릭터', 'Haruchi'].includes(k) && p[k]?.type === 'relation');
+    const sourceRelKey = Object.keys(p).find(k => (k.includes(source.type) || k.includes('DB')) && p[k]?.type === 'relation' && k !== relKey);
+    const paymentKey = Object.keys(p).find(k => k.includes('지급키'));
+
     props[titleKey] = { title: [{ text: { content: logTitle } }] };
     props[xpKey] = { number: xp };
     if (relKey) props[relKey] = { relation: [{ id: CONFIG.haruchiPageId }] };
-  } catch (_) {
+    if (sourceRelKey && sourcePageId) props[sourceRelKey] = { relation: [{ id: sourcePageId }] };
+    if (paymentKey && sourcePageId) props[paymentKey] = { rich_text: [{ text: { content: sourcePageId } }] };
+  } catch {
     props.이름 = { title: [{ text: { content: logTitle } }] };
     props.XP = { number: xp };
+    props['지급키'] = { rich_text: [{ text: { content: sourcePageId } }] };
+    props[`${source.type} DB`] = { relation: [{ id: sourcePageId }] };
   }
   const page = await notion.pages.create({
     parent: { database_id: dbId },
@@ -198,7 +199,9 @@ async function markGranted(notion, pageId, propName, CONFIG) {
         properties: { [p]: { checkbox: true } },
       });
       return;
-    } catch (_) {}
+    } catch {
+      /* ignore */
+    }
   }
 }
 
@@ -237,7 +240,7 @@ async function runSync(env) {
           else if (platform.includes('인스타') || platform.includes('Instagram')) xp = 30;
           else if (platform.includes('블로그') || platform.includes('Blog')) xp = 80;
         }
-        const logId = await createXpLog(notion, src, title, xp, CONFIG);
+        const logId = await createXpLog(notion, src, title, xp, CONFIG, page.id);
         if (logId) {
           await markGranted(notion, page.id, CONFIG.grantedProp, CONFIG);
           totalCreated++;
