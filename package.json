@@ -4,6 +4,7 @@
     "type": "module",
     "scripts": {
         "build": "echo 'No build step'",
+        "lint": "eslint \"tama/js/**/*.js\" \"api/**/*.js\" \"notion-sync/**/*.js\"",
         "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
         "clean": "Remove-Item -Recurse -Force node_modules, package-lock.json -ErrorAction Ignore; npm install"
     },
@@ -11,7 +12,10 @@
         "@notionhq/client": "^2.2.15"
     },
     "devDependencies": {
+        "@eslint/js": "^10.0.1",
         "cross-env": "^10.1.0",
+        "eslint": "^10.0.1",
+        "globals": "^17.3.0",
         "jest": "^30.2.0"
     }
 }

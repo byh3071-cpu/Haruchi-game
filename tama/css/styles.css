@@ -512,12 +512,12 @@
       --water-bottle-height: 95px;
 
       /* === 하루치 스킨 1: 물마시기 모션/워터드랍 === */
-      --drink-right: 76.7px;
+      --drink-right: 76.6px;
       --drink-bottom: -28px;
       --drink-water-right-offset: 35px;
       --drink-water-bottom-offset: 25px;
       --water-drop-offset-x: 2px;
-      --water-drop-offset-y: 12px;
+      --water-drop-offset-y: 15px;
 
       /* === 하루치 스킨 1: 물/ㄴ 버튼 말풍선 최적화 === */
       --drink-bubble-left: 50%;
@@ -534,6 +534,13 @@
       --butt-bubble-font-size: 14px;
       --butt-bubble-padding-x: 14px;
       --butt-bubble-padding-y: 8px;
+      --feedback-bubble-left: 50%;
+      --feedback-bubble-top: 22%;
+      --feedback-bubble-offset-x: 0px;
+      --feedback-bubble-offset-y: 0px;
+      --feedback-bubble-font-size: 12px;
+      --feedback-bubble-padding-x: 16px;
+      --feedback-bubble-padding-y: 10px;
 
       /* === ㄴ 버튼(둥실둥실/back) 모션 위치 최적화 === */
       --back-left: 55%;
@@ -1812,14 +1819,14 @@
     /* 물 마시는 말풍선 (챱챱챱 / 할짝할짝) */
     .drink-speech-bubble {
       position: absolute;
-      left: calc(var(--drink-bubble-left) + var(--drink-bubble-offset-x));
-      top: calc(var(--drink-bubble-top) + var(--drink-bubble-offset-y));
+      left: calc(var(--drink-bubble-left, 53%) + var(--drink-bubble-offset-x, 0px));
+      top: calc(var(--drink-bubble-top, 28%) + var(--drink-bubble-offset-y, 0px));
       transform: translate(-50%, -50%);
       background: #fff;
       border: 3px solid #0f380f;
       border-radius: 12px;
-      padding: var(--drink-bubble-padding-y) var(--drink-bubble-padding-x);
-      font-size: var(--drink-bubble-font-size);
+      padding: var(--drink-bubble-padding-y, 8px) var(--drink-bubble-padding-x, 14px);
+      font-size: var(--drink-bubble-font-size, 14px);
       font-weight: bold;
       color: #0f380f;
       z-index: 22;
@@ -1938,15 +1945,15 @@
     /* === 똑똑한 잔소리 (Smart Feedback) 말풍선 === */
     .feedback-speech-bubble {
       position: absolute;
-      left: calc(var(--feedback-bubble-left) + var(--feedback-bubble-offset-x));
-      top: calc(var(--feedback-bubble-top) + var(--feedback-bubble-offset-y));
+      left: calc(var(--feedback-bubble-left, 50%) + var(--feedback-bubble-offset-x, 0px));
+      top: calc(var(--feedback-bubble-top, 22%) + var(--feedback-bubble-offset-y, 0px));
       transform: translate(-50%, -50%) scale(0);
       background: linear-gradient(135deg, #fffbe6 0%, #fff9c4 100%);
       border: 3px solid #0f380f;
       border-radius: 16px;
-      padding: var(--feedback-bubble-padding-y) var(--feedback-bubble-padding-x);
+      padding: var(--feedback-bubble-padding-y, 10px) var(--feedback-bubble-padding-x, 16px);
       font-family: 'Noto Sans KR', sans-serif;
-      font-size: var(--feedback-bubble-font-size);
+      font-size: var(--feedback-bubble-font-size, 12px);
       font-weight: bold;
       color: #0f380f;
       z-index: 30;
