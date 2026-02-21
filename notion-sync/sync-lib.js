@@ -168,9 +168,9 @@ async function createXpLog(notion, source, title, xp, CONFIG, sourcePageId) {
     const schema = await notion.databases.retrieve({ database_id: dbId });
     const p = schema.properties || {};
     const titleKey = Object.keys(p).find(k => p[k]?.type === 'title') || '이름';
-    const xpKey = Object.keys(p).find(k => k === 'XP' || k === 'xp') || 'XP';
-    const relKey = Object.keys(p).find(k => ['하루치', '캐릭터', 'Haruchi'].includes(k) && p[k]?.type === 'relation');
-    const sourceRelKey = Object.keys(p).find(k => (k.includes(source.type) || k.includes('DB')) && p[k]?.type === 'relation' && k !== relKey);
+    const xpKey = Object.keys(p).find(k => (k === 'XP' || k === 'xp' || k.includes('XP')) && p[k]?.type === 'number') || 'XP';
+    const relKey = Object.keys(p).find(k => (k.includes('하루치') || k.includes('캐릭터') || k.includes('Haruchi')) && p[k]?.type === 'relation');
+    const sourceRelKey = Object.keys(p).find(k => k.includes(source.type) && p[k]?.type === 'relation' && k !== relKey);
     const paymentKey = Object.keys(p).find(k => k.includes('지급키'));
 
     props[titleKey] = { title: [{ text: { content: logTitle } }] };
