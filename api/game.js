@@ -22,6 +22,11 @@ export default async function handler(req, res) {
   }
 
   const action = (req.query && req.query.action) || 'getXp';
+  if (!isOwnerAuthorized(req)) {
+    if (action === 'getLogs') return res.status(200).json({ logs: [] });
+    if (action === 'getXp') return res.status(200).json({ totalExp: 0, source: 'owner_auth_required' });
+    return res.status(403).json({ error: 'Owner authorization required' });
+  }
 
   if (action === 'getLogs') {
     try {
@@ -130,6 +135,15 @@ export default async function handler(req, res) {
 
   return res.status(400).json({ error: 'Unknown action' });
 };
+
+function isOwnerAuthorized(req) {
+  const ownerKey = process.env.OWNER_ACCESS_KEY;
+  if (!ownerKey) return true;
+  const cookie = String(req.headers?.cookie || '');
+  const match = cookie.match(/(?:^|;\s*)haruchi_owner=([^;]+)/);
+  if (!match) return false;
+  return decodeURIComponent(match[1]) === ownerKey;
+}
 
 /** XP 로그 DB에서 하루치와 연결된 XP 합산 (Rollup 없을 때 폴백) */
 async function sumXpFromLogDb(notion, dbId, haruchiPageId) {

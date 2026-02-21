@@ -433,7 +433,7 @@ function initFrameSkinPicker() {
  * [동기화] notion-sync/index.js: 소스 DB 완료 항목 → XP 로그 생성 (cron 실행)
  * 환경변수: NOTION_SETUP.md 참고
  * ======================================================== */
-/* 노션 모드 감지: ?notion=1 파라미터 또는 iframe 임베드 */
+/* 노션 모드 감지: (?notion=1 또는 iframe 임베드) */
 const NOTION_ENABLED = typeof window !== 'undefined' && (
   document.documentElement.classList.contains('notion-embed') ||
   location.search.includes('notion=1') ||
