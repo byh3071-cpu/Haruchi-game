@@ -7,9 +7,40 @@ Vercel 대시보드 → 프로젝트 → Settings → Environment Variables
 | 변수명 | 필수 | 설명 |
 |--------|------|------|
 | `NOTION_API_KEY` | ✅ | 노션 Integration 토큰 (https://www.notion.so/my-integrations) |
-| `HARUCHI_PAGE_ID` | ✅ | 하루치 캐릭터 페이지 ID (URL 마지막 32자리) |
+| `HARUCHI_PAGE_ID` | ✅ | DB 자체 ID가 아닌, **DB 안의 하루치 항목(레코드) 페이지 ID** |
 | `NOTION_XP_PROPERTY` | | 총 XP 속성 이름. 쉼표로 여러 개 시도 (기본: `총 XP,XP,경험치,totalExp`) |
 | `XP_LOG_DB_ID` | | XP 로그 DB ID (하루치 페이지에 Rollup이 없을 때 폴백) |
+| `OWNER_ACCESS_KEY` | 권장 | 공개 URL에서 본인만 노션 연동 허용할 때 사용하는 소유자 인증 키 |
+
+### HARUCHI_PAGE_ID / XP_LOG_DB_ID 구분 (중요)
+
+- `HARUCHI_PAGE_ID`: "하루치 DB"를 열고 `하루치` 행을 클릭했을 때 열리는 **아이템 페이지 URL ID**
+- `XP_LOG_DB_ID`: XP 로그 **데이터베이스 자체 URL ID**
+- `HARUCHI_PAGE_ID`에 DB ID를 넣으면 `page_id_is_database` 오류가 발생합니다.
+
+## 1-1. 공개 배포에서 본인만 노션 연동하기 (Owner Session)
+
+`OWNER_ACCESS_KEY`를 설정하면, 인증된 브라우저만 `/api/game`의 노션 XP/로그를 받을 수 있습니다.
+
+1) Vercel에 `OWNER_ACCESS_KEY` 저장 후 재배포  
+2) 본인 브라우저에서 배포 도메인 접속 후 콘솔에서 1회 실행:
+
+```js
+const key = "YOUR_OWNER_ACCESS_KEY";
+fetch("/api/owner-auth", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ key })
+}).then(r => r.json()).then(console.log);
+```
+
+3) 확인:
+- 성공 시 `{ ok: true }`
+- `/api/game?action=getXp` 호출 시 `source: "owner_auth_required"`가 아니면 인증 상태
+
+보안 주의:
+- `?key=...` URL 방식은 히스토리에 남을 수 있으므로 권장하지 않습니다.
+- `OWNER_ACCESS_KEY`는 정기적으로 교체하세요.
 
 ## 2. 노션 DB 구조 (권장)
 
