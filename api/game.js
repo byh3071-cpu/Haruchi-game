@@ -39,8 +39,8 @@ export default async function handler(req, res) {
         return res.status(200).json({ logs: [] });
       }
       const notion = new Client({ auth: token });
-      const haruchiId = pageId.replace(/-/g, '');
-      const dbIdClean = xpLogDbId.replace(/-/g, '');
+      const haruchiId = normalizeNotionId(pageId);
+      const dbIdClean = normalizeNotionId(xpLogDbId);
       const relProps = (process.env.NOTION_RELATION_PROPERTY || '하루치,캐릭터,Haruchi').split(',').map(s => s.trim());
       let logs = [];
       for (const relProp of relProps) {
@@ -94,9 +94,24 @@ export default async function handler(req, res) {
       }
 
       const notion = new Client({ auth: token });
-      const page = await notion.pages.retrieve({
-        page_id: pageId.replace(/-/g, ''),
-      });
+      const normalizedPageId = normalizeNotionId(pageId);
+      let page;
+      try {
+        page = await notion.pages.retrieve({
+          page_id: normalizedPageId,
+        });
+      } catch (err) {
+        if (isDatabaseIdProvidedToPageApi(err)) {
+          return res.status(200).json({
+            totalExp: 0,
+            source: 'misconfigured_page_id',
+            error: 'page_id_is_database',
+            message: 'HARUCHI_PAGE_ID에는 DB ID가 아니라 DB 안의 하루치 항목 페이지 ID를 넣어야 합니다.',
+            ...(includeDebug ? { debug: getNotionErrorMeta(err) } : {}),
+          });
+        }
+        throw err;
+      }
 
       const props = page.properties || {};
       let totalExp = 0;
@@ -121,7 +136,7 @@ export default async function handler(req, res) {
       if (totalExp === 0) {
         const xpLogDbId = process.env.XP_LOG_DB_ID;
         if (xpLogDbId) {
-          const sum = await sumXpFromLogDb(notion, xpLogDbId, pageId.replace(/-/g, ''));
+          const sum = await sumXpFromLogDb(notion, xpLogDbId, normalizedPageId);
           if (sum > 0) totalExp = sum;
         }
       }
@@ -171,9 +186,23 @@ function getNotionErrorMeta(err) {
   };
 }
 
+function normalizeNotionId(rawValue) {
+  const text = String(rawValue || '').trim();
+  const uuidMatch = text.match(/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/);
+  if (uuidMatch) return uuidMatch[0].replace(/-/g, '');
+  const compactMatch = text.match(/[0-9a-fA-F]{32}/);
+  if (compactMatch) return compactMatch[0];
+  return text.replace(/-/g, '');
+}
+
+function isDatabaseIdProvidedToPageApi(err) {
+  const message = String(err?.message || '').toLowerCase();
+  return message.includes('is a database, not a page');
+}
+
 /** XP 로그 DB에서 하루치와 연결된 XP 합산 (Rollup 없을 때 폴백) */
 async function sumXpFromLogDb(notion, dbId, haruchiPageId) {
-  const dbIdClean = dbId.replace(/-/g, '');
+  const dbIdClean = normalizeNotionId(dbId);
   const relProps = (process.env.NOTION_RELATION_PROPERTY || '하루치,캐릭터,Haruchi').split(',').map(s => s.trim());
 
   for (const relProp of relProps) {
