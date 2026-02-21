@@ -3,9 +3,15 @@
     "version": "1.0.0",
     "type": "module",
     "scripts": {
-        "build": "echo 'No build step'"
+        "build": "echo 'No build step'",
+        "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+        "clean": "Remove-Item -Recurse -Force node_modules, package-lock.json -ErrorAction Ignore; npm install"
     },
     "dependencies": {
         "@notionhq/client": "^2.2.15"
+    },
+    "devDependencies": {
+        "cross-env": "^10.1.0",
+        "jest": "^30.2.0"
     }
 }

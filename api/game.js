@@ -38,31 +38,26 @@ export default async function handler(req, res) {
       let logs = [];
       for (const relProp of relProps) {
         try {
-          let cursor;
-          do {
-            const q = await notion.databases.query({
-              database_id: dbIdClean,
-              filter: { property: relProp, relation: { contains: haruchiId } },
-              sorts: [{ timestamp: 'created_time', direction: 'descending' }],
-              start_cursor: cursor,
-              page_size: 50,
-            });
-            for (const p of q.results || []) {
-              const props = p.properties || {};
-              const titleProp = props.이름 || props.제목 || Object.values(props).find(x => x?.type === 'title');
-              const titleText = titleProp?.title || [];
-              const raw = titleText.map(t => (t && t.plain_text) || '').join('');
-              const m = raw.match(/\[([^\]]+)\]\s*·\s*(.+?)\s*·\s*\[(\d+)\]XP/);
-              const type = m ? m[1] : '기타';
-              const title = m ? m[2] : raw || '무제';
-              const xp = m ? parseInt(m[3], 10) : (getXpFromProps(props) || parseXpFromTitle(props.이름 || props.제목) || 0);
-              const created = p.created_time ? new Date(p.created_time).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', dateStyle: 'short', timeStyle: 'short' }) : '';
-              logs.push({ type, title, xp, date: created });
-            }
-            cursor = q.next_cursor;
-          } while (cursor);
+          const q = await notion.databases.query({
+            database_id: dbIdClean,
+            filter: { property: relProp, relation: { contains: haruchiId } },
+            sorts: [{ timestamp: 'created_time', direction: 'descending' }],
+            page_size: 50,
+          });
+          for (const p of q.results || []) {
+            const props = p.properties || {};
+            const titleProp = props.이름 || props.제목 || Object.values(props).find(x => x?.type === 'title');
+            const titleText = titleProp?.title || [];
+            const raw = titleText.map(t => (t && t.plain_text) || '').join('');
+            const m = raw.match(/\[([^\]]+)\]\s*·\s*(.+?)\s*·\s*\[(\d+)\]XP/);
+            const type = m ? m[1] : '기타';
+            const title = m ? m[2] : raw || '무제';
+            const xp = m ? parseInt(m[3], 10) : (getXpFromProps(props) || parseXpFromTitle(props.이름 || props.제목) || 0);
+            const created = p.created_time ? new Date(p.created_time).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', dateStyle: 'short', timeStyle: 'short' }) : '';
+            logs.push({ type, title, xp, date: created });
+          }
           break;
-        } catch (_) {}
+        } catch (_) { }
       }
       return res.status(200).json({ logs });
     } catch (err) {
@@ -144,24 +139,19 @@ async function sumXpFromLogDb(notion, dbId, haruchiPageId) {
   for (const relProp of relProps) {
     try {
       let sum = 0;
-      let cursor;
-      do {
-        const res = await notion.databases.query({
-          database_id: dbIdClean,
-          filter: { property: relProp, relation: { contains: haruchiPageId } },
-          start_cursor: cursor,
-          page_size: 100,
-        });
-        for (const p of res.results || []) {
-          const props = p.properties || {};
-          const titleProp = props.이름 || props.제목 || props.title || Object.values(props).find(x => x?.type === 'title');
-          const xp = getXpFromProps(props) || parseXpFromTitle(titleProp);
-          if (xp > 0) sum += xp;
-        }
-        cursor = res.next_cursor;
-      } while (cursor);
+      const res = await notion.databases.query({
+        database_id: dbIdClean,
+        filter: { property: relProp, relation: { contains: haruchiPageId } },
+        page_size: 100,
+      });
+      for (const p of res.results || []) {
+        const props = p.properties || {};
+        const titleProp = props.이름 || props.제목 || props.title || Object.values(props).find(x => x?.type === 'title');
+        const xp = getXpFromProps(props) || parseXpFromTitle(titleProp);
+        if (xp > 0) sum += xp;
+      }
       return sum;
-    } catch (_) {}
+    } catch (_) { }
   }
   return 0;
 }

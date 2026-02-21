@@ -332,11 +332,31 @@ function submitCoupon() {
   }
 }
 
+function getMaxExp(level) {
+  if (level <= 10) return 100;
+  if (level <= 30) return 300;
+  return 500;
+}
+
+function calculateLevelAndExp(totalExp) {
+  let level = 1;
+  let exp = totalExp;
+  while (true) {
+    const required = getMaxExp(level);
+    if (exp >= required) {
+      exp -= required;
+      level++;
+    } else {
+      break;
+    }
+  }
+  return { level, exp };
+}
+
 /* [수정] 시작 레벨 1, 경험치 0으로 초기화 */
 let game = {
   level: 1,
   exp: 0,
-  maxExp: 100,
   isBusy: false,
   lastActionTime: Date.now(), // 마지막 액션 시간 추적
   lastSadTime: 0, // 마지막 sad 표시 시간 (중복 방지)
@@ -376,8 +396,9 @@ async function fetchAndApplyNotionXP() {
     if (delta > 0) {
       stats.totalExp += delta;
       const prevLevel = game.level;
-      game.level = Math.floor(stats.totalExp / game.maxExp) + 1;
-      game.exp = stats.totalExp % game.maxExp;
+      const calc = calculateLevelAndExp(stats.totalExp);
+      game.level = calc.level;
+      game.exp = calc.exp;
       saveStats();
       updateUI();
       if (game.level > prevLevel) {
@@ -428,8 +449,9 @@ function initStats() {
     };
     /* 저장된 총 경험치로 레벨/EXP 복원 */
     if (stats.totalExp > 0) {
-      game.level = Math.floor(stats.totalExp / game.maxExp) + 1;
-      game.exp = stats.totalExp % game.maxExp;
+      const calc = calculateLevelAndExp(stats.totalExp);
+      game.level = calc.level;
+      game.exp = calc.exp;
     }
   }
 
@@ -532,9 +554,9 @@ function applyAttendanceReward() {
 
   stats.totalExp += xp;
   game.exp += xp;
-  while (game.exp >= game.maxExp) {
+  while (game.exp >= getMaxExp(game.level)) {
+    game.exp -= getMaxExp(game.level);
     game.level++;
-    game.exp -= game.maxExp;
     logLevelUp(`⭐ LEVEL UP! LV.${game.level} ⭐`);
     showLevelUpEffect();
   }
@@ -599,9 +621,9 @@ function updateStats(expGained, countsTowardGoal = false) {
       const bonusExp = Math.floor(expGained * 0.5);
       log(`🎯 목표 달성! 보너스 +${bonusExp} EXP`, { category: '목표보너스', xp: bonusExp });
       game.exp += bonusExp;
-      if (game.exp >= game.maxExp) {
+      while (game.exp >= getMaxExp(game.level)) {
+        game.exp -= getMaxExp(game.level);
         game.level++;
-        game.exp -= game.maxExp;
         logLevelUp(`⭐ LEVEL UP! LV.${game.level} ⭐`);
         showLevelUpEffect();
       }
@@ -697,6 +719,7 @@ function fitScale() {
   scaleWrapper.style.width = (fw * scale) + 'px';
   scaleWrapper.style.height = (fh * scale) + 'px';
   device.style.transform = `scale(${scale})`;
+  window.currentScale = scale;
 }
 
 function handleBtn(btn) {
@@ -709,7 +732,6 @@ function handleBtn(btn) {
   }
   if (btn === 'A') {
     log("하루치 그루밍 중 ...");
-    game.isBusy = false;
     showGroomingAnimation();
   } else if (btn === 'B') {
     showButtAction();
@@ -1042,27 +1064,34 @@ function startWaterDropAnimation(duration) {
   const screenRect = screenTop.getBoundingClientRect();
 
   // CSS 변수에서 오프셋 값 가져오기 (body에서 우선, 없으면 :root에서)
-  // 현재 최적 위치: X=-115px, Y=-90px (물 급수통에 어울리는 위치)
   const bodyStyles = getComputedStyle(document.body);
   const rootStyles = getComputedStyle(document.documentElement);
-  const offsetX = parseFloat(bodyStyles.getPropertyValue('--water-drop-offset-x')) ||
-    parseFloat(rootStyles.getPropertyValue('--water-drop-offset-x')) || -80;
-  const offsetY = parseFloat(bodyStyles.getPropertyValue('--water-drop-offset-y')) ||
-    parseFloat(rootStyles.getPropertyValue('--water-drop-offset-y')) || -65;
+
+  const getPropValue = (prop, fallback) => {
+    const val = bodyStyles.getPropertyValue(prop).trim() || rootStyles.getPropertyValue(prop).trim();
+    if (!val) return fallback;
+    const num = parseFloat(val);
+    return isNaN(num) ? fallback : num;
+  };
+
+  const offsetX = getPropValue('--water-drop-offset-x', -80);
+  const offsetY = getPropValue('--water-drop-offset-y', -65);
 
   // 물방울이 떨어지는 시작 위치 (물 급수통 아래쪽 중앙)
-  // 물 급수통 클릭 영역의 중앙 X 위치, 하단 Y 위치
-  const baseX = bottleRect.left + bottleRect.width / 2 - screenRect.left;
-  const baseY = bottleRect.bottom - screenRect.top;
+  // getBoundingClientRect()는 화면(Viewport) 좌표이므로, 스케일 보정이 필요함
+  const scale = window.currentScale || 1;
 
-  // CSS 변수로 설정한 오프셋 적용
-  let startX = baseX + offsetX;
-  let startY = baseY + offsetY;
+  // 화면상 거리 계산
+  const screenX = (bottleRect.left + bottleRect.width / 2) - screenRect.left;
+  const screenY = bottleRect.bottom - screenRect.top;
+
+  // 스케일 보정된 로컬 좌표 계산
+  let startX = (screenX / scale) + offsetX;
+  let startY = (screenY / scale) + offsetY;
+
   if (document.documentElement.classList.contains('notion-embed')) {
-    const notionX = parseFloat(bodyStyles.getPropertyValue('--water-drop-offset-x-notion')) ||
-      parseFloat(rootStyles.getPropertyValue('--water-drop-offset-x-notion')) || 55;
-    const notionY = parseFloat(bodyStyles.getPropertyValue('--water-drop-offset-y-notion')) ||
-      parseFloat(rootStyles.getPropertyValue('--water-drop-offset-y-notion')) || 18;
+    const notionX = getPropValue('--water-drop-offset-x-notion', 55);
+    const notionY = getPropValue('--water-drop-offset-y-notion', 18);
     startX += notionX;
     startY += notionY;
   }
@@ -1518,7 +1547,9 @@ function autoAlignGroomingFrames() {
 
 /* 그루밍 애니메이션 표시 */
 function showGroomingAnimation() {
-  // A 버튼에서 언제든지 호출 가능하도록 busy/쿨타임 제한 제거
+  // 동시 입력 충돌 방지: 그루밍 중에는 다른 액션 차단
+  if (game.isBusy || hamster.classList.contains('grooming')) return;
+  game.isBusy = true;
 
   // 기존 애니메이션이 실행 중이면 정리
   if (groomingAnimationInterval) {
@@ -1539,6 +1570,7 @@ function showGroomingAnimation() {
   const groomingOverlay = document.getElementById('groomingOverlay');
   if (!groomingOverlay) {
     console.error('groomingOverlay 요소를 찾을 수 없습니다.');
+    game.isBusy = false;
     return;
   }
 
@@ -1645,6 +1677,7 @@ function showGroomingAnimation() {
         }
 
         currentGroomingFrame = 0;
+        game.isBusy = false;
         return;
       }
     }
@@ -1683,9 +1716,9 @@ function startGroomingCheckTimer() {
 
 function addExp(amount) {
   game.exp += amount;
-  if (game.exp >= game.maxExp) {
+  while (game.exp >= getMaxExp(game.level)) {
+    game.exp -= getMaxExp(game.level);
     game.level++;
-    game.exp -= game.maxExp;
     logLevelUp(`⭐ LEVEL UP! LV.${game.level} ⭐`);
     showLevelUpEffect();
   }
@@ -2114,7 +2147,7 @@ function getTitleByLevel(level) {
 function updateUI() {
   if (!uiLevel || !uiExp || !expText) return;
   uiLevel.innerText = game.level;
-  const pct = Math.min(100, (game.exp / game.maxExp) * 100);
+  const pct = Math.min(100, (game.exp / getMaxExp(game.level)) * 100);
   uiExp.style.width = `${pct}%`;
   expText.innerText = `${Math.floor(pct)}%`;
 
@@ -2130,13 +2163,16 @@ function updateUI() {
 }
 
 function addToLogHistory(msg, kind, category, xp, date) {
+  const safeMsg = typeof msg === 'string' ? msg : String(msg ?? '');
+  const safeCategory = category == null ? null : String(category);
+  const safeDate = date == null ? null : String(date);
   const now = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', dateStyle: 'short', timeStyle: 'short' });
   logHistory.unshift({
-    msg,
+    msg: safeMsg,
     kind: kind || 'normal',
-    category: category || null,
+    category: safeCategory || null,
     xp: xp != null ? xp : null,
-    date: date != null ? date : now
+    date: safeDate != null ? safeDate : now
   });
   if (logHistory.length > 200) logHistory.pop();
 }
@@ -2153,9 +2189,9 @@ function addManualTask(name, xp) {
   const displayName = (name || '할 일').trim() || '할 일';
   log(`✏ ${displayName} +${capped} XP`, { category: '수동기록', xp: capped });
   game.exp += capped;
-  while (game.exp >= game.maxExp) {
+  while (game.exp >= getMaxExp(game.level)) {
+    game.exp -= getMaxExp(game.level);
     game.level++;
-    game.exp -= game.maxExp;
     logLevelUp(`⭐ LEVEL UP! LV.${game.level} ⭐`);
     showLevelUpEffect();
   }
@@ -2208,6 +2244,7 @@ function logImportant(msg) {
 async function openLogModal() {
   if (NOTION_ENABLED) await fetchAndMergeNotionLogs(); /* 열 때마다 최신 노션 완료 로그 반영 */
   const content = document.getElementById('logModalContent');
+  if (!content) return;
   const all = logHistory.length ? logHistory : [
     { msg: '시스템 가동..', kind: 'normal', category: null, xp: null, date: null },
     { msg: '하루치가 기다려요!', kind: 'normal', category: null, xp: null, date: null }
@@ -2216,26 +2253,79 @@ async function openLogModal() {
   const clickLogs = all.filter(e => e.category && LOG_CATEGORY_CLICK.includes(e.category));
   const otherLogs = all.filter(e => !e.category || (!LOG_CATEGORY_TASK.includes(e.category) && !LOG_CATEGORY_CLICK.includes(e.category)));
 
-  function renderSection(title, entries, sectionClass) {
-    if (entries.length === 0) return '';
-    return `
-          <div class="log-section ${sectionClass}">
-            <div class="log-section-title">${title}</div>
-            ${entries.map(e => {
-      const c = e.kind === 'level-up' ? 'level-up' : e.kind === 'important' ? 'important' : '';
-      const tag = e.category ? `<span class="log-cat-tag">${e.category}</span>` : '';
-      const xpStr = (e.xp != null && e.msg.indexOf('+' + e.xp) === -1) ? ` <span class="log-xp">+${e.xp} XP</span>` : '';
-      const dateStr = e.date ? `<span class="log-date">${e.date}</span>` : '';
-      return `<div class="log-line ${c}">${dateStr} ${tag}> ${e.msg}${xpStr}</div>`;
-    }).join('')}
-          </div>`;
+  function renderSectionNode(title, entries, sectionClass) {
+    if (entries.length === 0) return null;
+
+    const section = document.createElement('div');
+    section.className = `log-section ${sectionClass}`;
+
+    const sectionTitle = document.createElement('div');
+    sectionTitle.className = 'log-section-title';
+    sectionTitle.textContent = title;
+    section.appendChild(sectionTitle);
+
+    entries.forEach((e) => {
+      const line = document.createElement('div');
+      line.className = 'log-line';
+      if (e.kind === 'level-up') line.classList.add('level-up');
+      if (e.kind === 'important') line.classList.add('important');
+
+      if (e.date) {
+        const dateSpan = document.createElement('span');
+        dateSpan.className = 'log-date';
+        dateSpan.textContent = String(e.date);
+        line.appendChild(dateSpan);
+        line.appendChild(document.createTextNode(' '));
+      }
+
+      if (e.category) {
+        const tagSpan = document.createElement('span');
+        tagSpan.className = 'log-cat-tag';
+        tagSpan.textContent = String(e.category);
+        line.appendChild(tagSpan);
+        line.appendChild(document.createTextNode(' '));
+      }
+
+      const msg = String(e.msg ?? '');
+      line.appendChild(document.createTextNode(`> ${msg}`));
+
+      if (e.xp != null && !msg.includes('+' + e.xp)) {
+        line.appendChild(document.createTextNode(' '));
+        const xpSpan = document.createElement('span');
+        xpSpan.className = 'log-xp';
+        xpSpan.textContent = `+${e.xp} XP`;
+        line.appendChild(xpSpan);
+      }
+
+      section.appendChild(line);
+    });
+
+    return section;
   }
 
-  content.innerHTML =
-    (NOTION_ENABLED ? `<div class="log-refresh-wrap"><button onclick="openLogModal()" class="log-refresh-btn">🔄 새로고침</button></div>` : '') +
-    renderSection('📌 할일 완료 경험치 (할일/루틴/운동/독서/책/SNS)', taskLogs, 'log-section-task') +
-    renderSection('🖱 클릭 경험치 (밥/물/쓰다듬기)', clickLogs, 'log-section-click') +
-    renderSection('📋 기타', otherLogs, 'log-section-other');
+  content.innerHTML = '';
+
+  if (NOTION_ENABLED) {
+    const refreshWrap = document.createElement('div');
+    refreshWrap.className = 'log-refresh-wrap';
+    const refreshBtn = document.createElement('button');
+    refreshBtn.className = 'log-refresh-btn';
+    refreshBtn.type = 'button';
+    refreshBtn.textContent = '🔄 새로고침';
+    refreshBtn.addEventListener('click', openLogModal);
+    refreshWrap.appendChild(refreshBtn);
+    content.appendChild(refreshWrap);
+  }
+
+  const sections = [
+    renderSectionNode('📌 할일 완료 경험치 (할일/루틴/운동/독서/책/SNS)', taskLogs, 'log-section-task'),
+    renderSectionNode('🖱 클릭 경험치 (밥/물/쓰다듬기)', clickLogs, 'log-section-click'),
+    renderSectionNode('📋 기타', otherLogs, 'log-section-other')
+  ];
+  sections.forEach((section) => {
+    if (section) content.appendChild(section);
+  });
+
   document.getElementById('logModal').classList.add('show');
 }
 
@@ -2408,10 +2498,10 @@ showWelcomeFeedback();
 window.dev = {
 
   addExp: function (amount) { addExp(amount); },
-  levelUp: function () { game.exp = game.maxExp; addExp(0); },
+  levelUp: function () { game.exp = getMaxExp(game.level); addExp(0); },
   setLevel: function (level) { game.level = level; game.exp = 0; updateUI(); },
   setExp: function (exp) { game.exp = exp; updateUI(); },
-  status: function () { console.log(`LV.${game.level} EXP:${game.exp}/${game.maxExp}`); },
+  status: function () { console.log(`LV.${game.level} EXP:${game.exp}/${getMaxExp(game.level)}`); },
   feedback: function () { showSmartFeedback(true); } /* 피드백 강제 표시 */
 };
 
