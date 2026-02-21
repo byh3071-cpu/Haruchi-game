@@ -1021,7 +1021,7 @@ function handleHamsterClick() {
   game.isBusy = true;
   game.lastActionTime = Date.now(); // 액션 시간 업데이트
   log(`${t('action_pet')} +5`, { category: '쓰다듬기', xp: 5 });
-  changeAction('./assets/hamster/happy.png', 2000);
+  changeAction(getAssetPath('./assets/hamster/happy.png'), 2000);
   showExpParticle(5);
   addExp(5);
   updateStats(5, false);  /* 쓰다듬기: 목표 미포함 */
@@ -1043,7 +1043,7 @@ function handleHouseClick() {
   justAteAt = 0;
   if (useFullAndSleep) {
     log(t('action_full_sleep'));
-    changeSleepAction(5000, 'assets/hamster/overfed/full_and_sleep.png', 'full-and-sleep-adjust');
+    changeSleepAction(5000, getAssetPath('assets/hamster/overfed/full_and_sleep.png'), 'full-and-sleep-adjust');
   } else {
     log(`${t('action_sleep')} +0`);
     changeSleepAction(5000);
@@ -1071,7 +1071,7 @@ function handleBowlClick() {
       game.isBusy = true;
       log(t('eat_reject'));
       hamster.classList.add('btn-test-stopdrink');
-      hamster.src = 'assets/hamster/overfed/stop drink.png';
+      hamster.src = getAssetPath('assets/hamster/overfed/stop drink.png');
       hamster.classList.remove('bounce', 'sleeping');
       hamster.onerror = function () {
         hamster.src = getBaseHamsterSrc();
@@ -1092,7 +1092,7 @@ function handleBowlClick() {
       game.isBusy = true;
       log(t('eat_overfed'));
       hamster.classList.add('btn-test-adjust');
-      changeAction('assets/hamster/overfed/throw up.png', 2500);
+      changeAction(getAssetPath('assets/hamster/overfed/throw up.png'), 2500);
       daily.eatCooldownUntil = now + EAT_DRINK_COOLDOWN_MS;
       saveDailyEatDrink(daily);
       setTimeout(() => { hamster.classList.remove('btn-test-adjust'); game.isBusy = false; }, 2500);
@@ -1209,7 +1209,7 @@ function showThrowUp2NearWaterBottle() {
   const overlay = document.createElement('div');
   overlay.className = 'throwup2-overlay';
   const img = document.createElement('img');
-  img.src = 'assets/hamster/overfed/throw up 2.png';
+  img.src = getAssetPath('assets/hamster/overfed/throw up 2.png');
   img.alt = '';
   overlay.appendChild(img);
   screenTop.appendChild(overlay);
@@ -1244,7 +1244,7 @@ function changeAction(imgSrc, duration) {
 /* 잠자는 모습 (오른쪽 집 안) - sleepImageSrc 생략 시 sleep.png, 밥 먹고 잠들면 full_and_sleep.png. adjustClass 있으면 해당 클래스로 위치·크기 적용 */
 function changeSleepAction(duration, sleepImageSrc, adjustClass) {
   const originalSrc = getBaseHamsterSrc();
-  const sleepImg = sleepImageSrc || './assets/hamster/sleep.png';
+  const sleepImg = sleepImageSrc || getAssetPath('./assets/hamster/sleep.png');
   hamster.src = sleepImg;
   hamster.classList.remove('bounce');
   hamster.classList.add('sleeping');
@@ -1424,7 +1424,7 @@ function showSadRandomly(forceShow = false) {
   log(t(randomKey));
 
   const originalSrc = getBaseHamsterSrc();
-  hamster.src = 'assets/hamster/sad.png';
+  hamster.src = getAssetPath('assets/hamster/sad.png');
   hamster.classList.remove('bounce', 'sleeping', 'drinking');
 
   // 이미지 로드 실패 시 원상복구
@@ -1463,7 +1463,7 @@ function showAngryRandomly(forceShow = false) {
   log(t(randomKey));
 
   const originalSrc = getBaseHamsterSrc();
-  hamster.src = 'assets/hamster/back.png';
+  hamster.src = getAssetPath('assets/hamster/back.png');
   hamster.classList.remove('bounce', 'sleeping', 'drinking');
   hamster.classList.add('angry');
 
@@ -1549,7 +1549,7 @@ function showButtAction() {
   log(t(isWiggle ? 'butt_wiggle' : 'butt_plump'));
 
   const originalSrc = getBaseHamsterSrc();
-  hamster.src = 'assets/hamster/back.png';
+  hamster.src = getAssetPath('assets/hamster/back.png');
   hamster.classList.remove('bounce', 'sleeping', 'drinking', 'angry');
   hamster.classList.add('butt');
   if (isWiggle) hamster.classList.add('butt-wiggle');

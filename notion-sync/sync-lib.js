@@ -81,12 +81,13 @@ async function queryWithFilterCandidates(notion, dbId, filtersToTry) {
 
 async function queryCompletedItems(notion, dbId, source, CONFIG) {
   const id = dbId.replace(/-/g, '');
-  let schema = null;
+  let schema;
   try {
     schema = await notion.databases.retrieve({ database_id: id });
   } catch (e) {
-    if (e.message?.includes('linked database')) schema = null;
-    else throw new Error('DB 조회 실패: ' + e.message);
+    if (!e.message?.includes('linked database')) {
+      throw new Error('DB 조회 실패: ' + e.message, { cause: e });
+    }
   }
 
   const completionCandidates = ['완료', '완료됨', '체크'];
@@ -243,7 +244,7 @@ async function runSync(env) {
         }
       }
     } catch (e) {
-      throw new Error(`${src.type} DB 처리 오류: ${e.message}`);
+      throw new Error(`${src.type} DB 처리 오류: ${e.message}`, { cause: e });
     }
   }
   return { created: totalCreated };
