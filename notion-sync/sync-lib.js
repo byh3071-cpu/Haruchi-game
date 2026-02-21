@@ -183,6 +183,7 @@ async function createXpLog(notion, source, title, xp, CONFIG, sourcePageId) {
     props.XP = { number: xp };
     props['지급키'] = { rich_text: [{ text: { content: sourcePageId } }] };
     props[`${source.type} DB`] = { relation: [{ id: sourcePageId }] };
+    props['하루치 DB'] = { relation: [{ id: CONFIG.haruchiPageId }] };
   }
   const page = await notion.pages.create({
     parent: { database_id: dbId },
