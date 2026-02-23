@@ -80,6 +80,8 @@
 
 **Pro URL**: `https://haruchipro.vercel.app/?notion=1`
 
+**Pro 2.0 템플릿**: 기존 DB 통합·레이아웃은 [PRO_NOTION_TEMPLATE_GUIDE.md](./PRO_NOTION_TEMPLATE_GUIDE.md) 참고
+
 ---
 
 ## ❓ 자주 묻는 질문

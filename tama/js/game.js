@@ -948,8 +948,8 @@ function init() {
   if (NOTION_ENABLED) {
     fetchAndApplyNotionXP();
     fetchAndMergeNotionLogs(); /* 노션 완료 로그 → 시스템 로그 */
-    setInterval(fetchAndMergeNotionLogs, 60000); /* 60초마다 새 완료 로그 갱신 */
-    setInterval(fetchAndApplyNotionXP, 60000); /* 60초마다 XP 자동 갱신 */
+    setInterval(fetchAndMergeNotionLogs, 30000); /* 30초마다 새 완료 로그 갱신 */
+    setInterval(fetchAndApplyNotionXP, 30000); /* 30초마다 XP 자동 갱신 */
   }
   fitScale();
   window.addEventListener('resize', fitScale);
@@ -961,6 +961,10 @@ function init() {
       { msg: t('log_init'), kind: 'normal', category: null, xp: null, date: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', dateStyle: 'short', timeStyle: 'short' }) },
       { msg: t('log_waiting'), kind: 'normal', category: null, xp: null, date: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', dateStyle: 'short', timeStyle: 'short' }) }
     ];
+  }
+  /* Pro+노션: 시스템 로그에 안내 문구 추가 */
+  if (NOTION_ENABLED && window.IS_PRO) {
+    log('✓ 노션 체크만 하면 자동으로!', { kind: 'normal', category: 'Pro' });
   }
 
   // sad 이미지 랜덤 표시 체크 시작

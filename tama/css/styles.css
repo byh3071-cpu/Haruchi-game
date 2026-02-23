@@ -454,6 +454,11 @@
 
     }
 
+    /* 프로 + 화이트: 칭호칸이 프레임에 닿지 않도록 오른쪽 여백 */
+    body.app-tier-pro[data-frame-theme="white"] .title-row .hamster-title {
+      margin-right: -4px;
+    }
+
     /* 하루치 스킨 1 */
     body[data-frame-theme="haruchi1"] {
       /* === 화면/패널 위치 === */
@@ -479,9 +484,9 @@
       --log-panel-padding-left: 8px;
 
       /* === 하루치 스킨 1: 로고 위치 === */
-      --logo-top: 9.5%;
-      --logo-left: 66.5%;
-      --logo-width: 112px;
+      --logo-top: 9%;
+      --logo-left: 66%;
+      --logo-width: 150px;
       --main-logo-top: 1.5%;
       --main-logo-left: 50%;
 
@@ -595,9 +600,9 @@
       --log-panel-padding-left: 8px;
 
       /* === 하루치 스킨 2: 로고 위치 (하루치1과 동일) === */
-      --logo-top: 9.5%;
-      --logo-left: 66.5%;
-      --logo-width: 112px;
+      --logo-top: 9%;
+      --logo-left: 66%;
+      --logo-width: 150px;
       --main-logo-top: 3.5%;
       --main-logo-left: 50%;
 
