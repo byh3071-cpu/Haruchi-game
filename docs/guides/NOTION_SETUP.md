@@ -75,7 +75,14 @@ node index.js
 **Cron 권장**: 5~10분마다 실행 (GitHub Actions, Vercel Cron, 외부 cron 등)
 
 ### notion-sync 환경변수 (.env)
-`notion-sync/.env` 참고. notion-sync는 로컬에서 실행하므로 .env 사용.
+
+```bash
+cd notion-sync
+cp .env.example .env
+# .env에 실제 값 입력
+```
+
+테스트용 최소 설정: [NOTION_TEST_SETUP.md](./NOTION_TEST_SETUP.md)
 
 ## 4. 게임에서 사용
 

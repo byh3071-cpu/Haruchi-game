@@ -10,7 +10,11 @@
  * Vercel 배포 시: api/cron-sync.js가 Vercel Cron으로 자동 실행됨 (별도 설정 불필요)
  */
 
-require('dotenv').config();
+/* 프로 2.0 테스트: node index.js pro2 또는 NOTION_ENV=pro2 node index.js */
+const envFile = process.env.NOTION_ENV === 'pro2' || process.argv.includes('pro2')
+  ? '.env.pro2'
+  : '.env';
+require('dotenv').config({ path: envFile });
 const { runSync } = require('./sync-lib');
 
 runSync()

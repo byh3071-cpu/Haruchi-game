@@ -7,6 +7,14 @@
 
 const { Client } = require('@notionhq/client');
 
+/** Notion API용 UUID 형식 (하이픈 포함) */
+function toUuid(id) {
+  if (!id || typeof id !== 'string') return id;
+  const s = String(id).replace(/-/g, '');
+  if (s.length !== 32) return id;
+  return `${s.slice(0, 8)}-${s.slice(8, 12)}-${s.slice(12, 16)}-${s.slice(16, 20)}-${s.slice(20, 32)}`;
+}
+
 function buildConfig(env = process.env) {
   return {
     token: env.NOTION_API_KEY || env.NOTION_TOKEN,
@@ -74,7 +82,7 @@ async function queryWithFilterCandidates(notion, dbId, filtersToTry) {
 }
 
 async function queryCompletedItems(notion, dbId, source, CONFIG) {
-  const id = dbId.replace(/-/g, '');
+  const id = (dbId || '').replace(/-/g, '');
   let schema;
   try {
     schema = await notion.databases.retrieve({ database_id: id });
@@ -164,8 +172,9 @@ async function createXpLog(notion, source, title, xp, CONFIG, sourcePageId) {
   if (!dbId) return null;
   const logTitle = `[${source.type}] · ${(title || '무제').slice(0, 50)} · [${xp}]XP`;
   const props = {};
+  const dbIdUuid = toUuid(dbId);
   try {
-    const schema = await notion.databases.retrieve({ database_id: dbId });
+    const schema = await notion.databases.retrieve({ database_id: dbIdUuid });
     const p = schema.properties || {};
     const titleKey = Object.keys(p).find(k => p[k]?.type === 'title') || '이름';
     const xpKey = Object.keys(p).find(k => (k === 'XP' || k === 'xp' || k.includes('XP')) && p[k]?.type === 'number') || 'XP';
@@ -186,7 +195,7 @@ async function createXpLog(notion, source, title, xp, CONFIG, sourcePageId) {
     props['하루치 DB'] = { relation: [{ id: CONFIG.haruchiPageId }] };
   }
   const page = await notion.pages.create({
-    parent: { database_id: dbId },
+    parent: { database_id: dbIdUuid },
     properties: props,
   });
   return page.id;

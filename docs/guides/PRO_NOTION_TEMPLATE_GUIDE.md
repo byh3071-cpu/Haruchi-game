@@ -120,7 +120,13 @@
 
 ---
 
-## 5. Cursor/코드 측에서 확인할 사항
+## 5. 테스트 설정
+
+테스트용 인라인 DB로 연동 확인: [NOTION_TEST_SETUP.md](./NOTION_TEST_SETUP.md)
+
+---
+
+## 6. Cursor/코드 측에서 확인할 사항
 
 - [NOTION_SETUP.md](./NOTION_SETUP.md): 환경변수, DB 구조
 - [PRO_SERVER_URL.md](./PRO_SERVER_URL.md): Pro/Basic URL
