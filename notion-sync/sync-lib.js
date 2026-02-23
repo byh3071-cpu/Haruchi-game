@@ -82,7 +82,7 @@ async function queryWithFilterCandidates(notion, dbId, filtersToTry) {
 }
 
 async function queryCompletedItems(notion, dbId, source, CONFIG) {
-  const id = (dbId || '').replace(/-/g, '');
+  const id = toUuid(String(dbId || '').replace(/-/g, '')) || (dbId || '').replace(/-/g, '');
   let schema;
   try {
     schema = await notion.databases.retrieve({ database_id: id });
@@ -195,7 +195,7 @@ async function createXpLog(notion, source, title, xp, CONFIG, sourcePageId) {
     props['하루치 DB'] = { relation: [{ id: CONFIG.haruchiPageId }] };
   }
   const page = await notion.pages.create({
-    parent: { database_id: dbIdUuid },
+    parent: { type: 'database_id', database_id: dbIdUuid },
     properties: props,
   });
   return page.id;
