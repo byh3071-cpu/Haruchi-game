@@ -2,6 +2,8 @@
 
 > 노션 템플릿 작업과 Cursor(코드/문서) 작업이 원활히 이어지도록 하는 가이드
 
+**관련**: [CURSOR_ANTIGRAVITY_COLLABORATION.md](./CURSOR_ANTIGRAVITY_COLLABORATION.md) — Cursor × Antigravity 역할 분담
+
 ---
 
 ## 1. 역할 구분
@@ -41,6 +43,7 @@
 | `docs/guides/NOTION_TEMPLATE_GUIDE.md` | 기본/Pro 공통 사용 가이드 |
 | `docs/guides/NOTION_SETUP.md` | 환경변수, DB 구조, notion-sync |
 | `docs/planning/PRO_FEATURES_ROADMAP.md` | Pro 2.0 기능 로드맵 |
+| `docs/planning/PRO_AUTOMATION_ROADMAP.md` | 사용자 친화적 자동화 (OAuth, Firebase, 노션 DB 자동 연결) |
 
 ---
 

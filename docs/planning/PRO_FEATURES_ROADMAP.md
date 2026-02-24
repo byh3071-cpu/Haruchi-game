@@ -121,4 +121,10 @@ window.IS_PRO = hostname.includes('haruchipro') || location.search.includes('tie
 
 ---
 
-*마지막 업데이트: 2026-02-16*
+## 📎 관련 문서
+
+- [PRO_AUTOMATION_ROADMAP.md](./PRO_AUTOMATION_ROADMAP.md) — 사용자 친화적 자동화 (OAuth, Firebase/Supabase, 노션 DB 자동 연결)
+
+---
+
+*마지막 업데이트: 2026-02-23*

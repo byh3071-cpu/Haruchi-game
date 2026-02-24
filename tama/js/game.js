@@ -948,8 +948,8 @@ function init() {
   if (NOTION_ENABLED) {
     fetchAndApplyNotionXP();
     fetchAndMergeNotionLogs(); /* 노션 완료 로그 → 시스템 로그 */
-    setInterval(fetchAndMergeNotionLogs, 30000); /* 30초마다 새 완료 로그 갱신 */
-    setInterval(fetchAndApplyNotionXP, 30000); /* 30초마다 XP 자동 갱신 */
+    setInterval(fetchAndMergeNotionLogs, 2000); /* 2초마다 새 완료 로그 갱신 (즉시 반영) */
+    setInterval(fetchAndApplyNotionXP, 2000); /* 2초마다 XP 자동 갱신 (완료 체크 → 바로 반영) */
   }
   fitScale();
   window.addEventListener('resize', fitScale);
@@ -965,6 +965,29 @@ function init() {
   /* Pro+노션: 시스템 로그에 안내 문구 추가 */
   if (NOTION_ENABLED && window.IS_PRO) {
     log('✓ 노션 체크만 하면 자동으로!', { kind: 'normal', category: 'Pro' });
+  }
+  /* 노션 모드: 즉시 동기화 버튼 (메인 화면) */
+  if (NOTION_ENABLED) {
+    const logPanel = document.querySelector('.log-panel-clickable');
+    if (logPanel) {
+      const syncBtn = document.createElement('button');
+      syncBtn.className = 'log-sync-btn';
+      syncBtn.type = 'button';
+      syncBtn.title = t('log_refresh');
+      syncBtn.textContent = '🔄';
+      syncBtn.setAttribute('aria-label', t('log_refresh'));
+      syncBtn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        syncBtn.disabled = true;
+        try {
+          await Promise.all([fetchAndApplyNotionXP(), fetchAndMergeNotionLogs()]);
+        } finally {
+          syncBtn.disabled = false;
+        }
+      });
+      logPanel.style.position = 'relative';
+      logPanel.appendChild(syncBtn);
+    }
   }
 
   // sad 이미지 랜덤 표시 체크 시작
@@ -2040,6 +2063,28 @@ function getMonthlyAttendanceCount(year, month) {
   return count;
 }
 
+/* 해당 날짜 기준 연속 출석 일수 (그 날 포함, 과거로 계산) */
+function getConsecutiveStreakAt(dateStr) {
+  let count = 0;
+  const [y, m, day] = dateStr.split('-').map(Number);
+  let d = new Date(y, m - 1, day);
+  for (let i = 0; i < 365; i++) {
+    const s = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    if (!stats.playDays.has(s)) break;
+    count++;
+    d.setDate(d.getDate() - 1);
+  }
+  return count;
+}
+
+/* 연속 일수별 씨앗 아이콘: 1~3일 🌱 / 4~6일 🌿 / 7일+ 🌻 */
+function getSeedIcon(streak) {
+  if (streak >= 7) return '🌻';
+  if (streak >= 4) return '🌿';
+  if (streak >= 1) return '🌱';
+  return '';
+}
+
 /* 출석 캘린더 - 월별 달력 형태 (일~토) */
 function getAttendanceCalendarHTML(year, month) {
   if (!year) year = attendanceViewYear;
@@ -2063,8 +2108,11 @@ function getAttendanceCalendarHTML(year, month) {
     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
     const checked = stats.playDays.has(dateStr);
     const isToday = dateStr === today;
+    const streak = checked ? getConsecutiveStreakAt(dateStr) : 0;
+    const seedIcon = getSeedIcon(streak);
     const titleStatus = checked ? t('cal_attended') : t('cal_missed');
-    cellsHtml += `<div class="attendance-day ${checked ? 'checked' : ''} ${isToday ? 'today' : ''}" title="${dateStr} ${titleStatus}">${d}</div>`;
+    const cellContent = checked && seedIcon ? `${seedIcon} ${d}` : String(d);
+    cellsHtml += `<div class="attendance-day ${checked ? 'checked' : ''} ${isToday ? 'today' : ''}" title="${dateStr} ${titleStatus}">${cellContent}</div>`;
   }
   return {
     title: t('attendance_month_title', year.toString(), monthNames[month]),
@@ -2117,7 +2165,9 @@ function showStats(resetCalendarToCurrent) {
 
   const manualCount = getDailyManualTaskCount();
   const manualRemain = Math.max(0, MANUAL_TASK_DAILY_LIMIT - manualCount);
+  const dashboardClass = window.IS_PRO ? ' stats-dashboard-pro' : '';
   content.innerHTML = `
+        <div class="stats-content-wrap${dashboardClass}">
         <div class="stats-section" id="manualTaskSection">
           <div class="stats-section-title">${t('stats_manual_title')} <span style="opacity:0.8; font-size:10px;">${t('stats_manual_today', manualCount, MANUAL_TASK_DAILY_LIMIT)}</span></div>
           ${manualRemain > 0 ? `
@@ -2176,7 +2226,7 @@ function showStats(resetCalendarToCurrent) {
           </div>
         </div>
 
-        <div class="stats-section">
+        <div class="stats-section" id="attendanceSection">
           <div class="stats-section-title">📅 ${t('attendance_title').replace('📅 ', '')}</div>
           <div class="stats-item">
             <span class="stats-label">${t('attendance_consecutive')}</span>
@@ -2245,6 +2295,7 @@ function showStats(resetCalendarToCurrent) {
           제작 by bbaekyohan PRO
         </div>
         ` : ''}
+        </div>
       `;
 
   modal.classList.add('show');
@@ -2266,8 +2317,9 @@ function updateStatsPopupGoal() {
       achievedDiv.id = 'statsGoalAchievedMsg';
       achievedDiv.className = 'stats-item';
       achievedDiv.style.cssText = 'color: #ffcc00; font-weight: bold;';
-      achievedDiv.textContent = '✨ 오늘 목표 달성!';
-      const goalSection = document.getElementById('statsContent')?.querySelector('.stats-section');
+      achievedDiv.textContent = t('goal_achieved_msg');
+      const goalValueEl = document.getElementById('statsGoalCompleteValue');
+      const goalSection = goalValueEl?.closest('.stats-section');
       const lastItem = goalSection?.querySelector('.stats-item:last-of-type');
       if (lastItem) lastItem.after(achievedDiv);
     }
@@ -2489,9 +2541,12 @@ function logImportant(msg) {
 async function openLogModal() {
   if (NOTION_ENABLED) {
     try {
-      await fetchAndMergeNotionLogs(); /* 열 때마다 최신 노션 완료 로그 반영 */
+      await Promise.all([
+        fetchAndApplyNotionXP(), /* XP 즉시 반영 */
+        fetchAndMergeNotionLogs() /* 최신 노션 완료 로그 반영 */
+      ]);
     } catch (e) {
-      console.error('Failed to fetch Notion logs:', e);
+      console.error('Failed to fetch Notion data:', e);
     }
   }
   const content = document.getElementById('logModalContent');

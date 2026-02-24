@@ -1661,6 +1661,32 @@
       cursor: pointer;
     }
 
+    .log-sync-btn {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 22px;
+      height: 22px;
+      padding: 0;
+      font-size: 12px;
+      background: rgba(15, 56, 15, 0.8);
+      border: 1px solid #306230;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+    }
+    .log-sync-btn:hover {
+      background: #306230;
+      color: #9bbc0f;
+    }
+    .log-sync-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     .log-modal-panel {
       max-width: 90%;
       width: 400px;
@@ -2399,6 +2425,24 @@
       margin-bottom: 0;
     }
 
+    /* Pro 통합 대시보드: 카드형 그리드 */
+    .stats-content-wrap.stats-dashboard-pro {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .stats-content-wrap.stats-dashboard-pro .stats-section {
+      background: rgba(15, 56, 15, 0.5);
+      border: 2px solid #306230;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 0;
+    }
+    .stats-content-wrap.stats-dashboard-pro .stats-section#manualTaskSection,
+    .stats-content-wrap.stats-dashboard-pro .stats-section#attendanceSection {
+      grid-column: 1 / -1;
+    }
+
     .stats-section-title {
       font-size: 13px;
       font-weight: bold;
@@ -2789,4 +2833,41 @@
       color: rgba(155, 188, 15, 0.9);
       text-shadow: 1px 1px 0 #0f380f;
       font-family: 'Press Start 2P', 'Noto Sans KR', sans-serif;
+    }
+
+    /* ===== 모바일 최적화 (768px 이하) ===== */
+    @media (max-width: 768px) {
+      html {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .stats-modal .stats-panel {
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        max-height: 100%;
+        border-radius: 0;
+        overflow-y: auto;
+      }
+      .stats-content-wrap.stats-dashboard-pro {
+        grid-template-columns: 1fr;
+      }
+      .stats-content-wrap.stats-dashboard-pro .stats-section#manualTaskSection,
+      .stats-content-wrap.stats-dashboard-pro .stats-section#attendanceSection {
+        grid-column: 1;
+      }
+      .stats-section button,
+      .attendance-calendar-nav button {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 10px 14px;
+      }
+      .device-container .btn-area {
+        min-width: 48px;
+        min-height: 48px;
+      }
+      .panel-content-clickable,
+      .log-panel-clickable {
+        min-height: 44px;
+      }
     }
