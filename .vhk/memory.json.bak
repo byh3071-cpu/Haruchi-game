@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 2,
+  "decisions": [
+    {
+      "id": "d1",
+      "content": "Vanilla JS 스택 — TypeScript/Next 템플릿 init 후 RULES.md로 덮어씀",
+      "tags": [
+        "stack",
+        "haruchi"
+      ],
+      "createdAt": "2026-06-10T04:24:00.607Z",
+      "status": "active"
+    },
+    {
+      "id": "d2",
+      "content": "tama/assets/ 로컬 에셋이 SoT — pull 시 이미지 덮어쓰기 금지",
+      "tags": [
+        "assets",
+        "policy"
+      ],
+      "createdAt": "2026-06-10T04:24:01.076Z",
+      "status": "active"
+    }
+  ],
+  "failures": [
+    {
+      "id": "f1",
+      "content": "OS 전역 NOTION_TOKEN이 Jest 테스트에 상속되어 no_token 테스트 실패",
+      "tags": [
+        "test",
+        "env"
+      ],
+      "createdAt": "2026-06-10T04:24:01.572Z",
+      "status": "active",
+      "lesson": "테스트에서 NOTION_TOKEN도 명시적으로 비울 것"
+    }
+  ],
+  "successes": [],
+  "patterns": []
+}

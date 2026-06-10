@@ -1,0 +1,28 @@
+# Haruchi-game — GitHub Copilot Instructions
+
+> 코딩/디자인 전용. 기록/운영 → CLAUDE.md 참조.
+> ⚡ 이 파일은 RULES.md에서 자동 생성됨 (vhk sync). 직접 수정 금지.
+
+## 필수 참조
+- docs/PRD.md · docs/ARCHITECTURE.md · CLAUDE.md · RULES.md
+
+## 기술 스택 (변경 시 ADR 필수)
+- 프론트: Vanilla JavaScript (tama/js/game.js), HTML, CSS — 프레임워크 없음
+- 백엔드: Vercel Serverless Functions (api/), Node.js >= 22
+- 연동: @notionhq/client (Notion XP 동기화), Make.com 자동화
+- 테스트: Jest (ESM, --experimental-vm-modules)
+- 린트: ESLint flat config
+- 배포: Vercel (tama/ 정적 + api/ 서버리스)
+- 데이터: 브라우저 localStorage (클라이언트) + Notion DB (Pro 동기화)
+
+## 코딩 규칙
+- 들여쓰기 spaces 2, 세미콜론 생략 (no-semicolon)
+- 변수명·함수명·커밋 메시지는 영어, 응답·문서는 한국어
+- 빈 catch 금지, console.log 프로덕션 제거
+- 시크릿·API 키 하드코딩 금지 — .env.local / Vercel 환경변수만 사용
+- 확인 없이 파일 삭제·이동·이름 변경 금지
+- 에러 발생 시 임의 수정 금지 — 원인과 해결 방안 먼저 제시
+- 새 기능은 입력값·출력값·예외 조건 먼저 확인 후 구현
+
+## 커밋 컨벤션
+- feat: / fix: / refactor: / docs: / chore:

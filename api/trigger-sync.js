@@ -8,8 +8,8 @@
  *   TRIGGER_SYNC_SECRET - 호출 시 인증용 (Make에서 Authorization: Bearer {값})
  *
  * 호출 예: POST /api/trigger-sync
- *   Header: Authorization: Bearer YOUR_TRIGGER_SYNC_SECRET
- *   또는: ?key=YOUR_TRIGGER_SYNC_SECRET
+ *   Header: Authorization 헤더에 "Bearer" + 공백 + TRIGGER_SYNC_SECRET 값
+ *   또는: ?key= 쿼리에 TRIGGER_SYNC_SECRET 값
  */
 
 import { createRequire } from 'module';

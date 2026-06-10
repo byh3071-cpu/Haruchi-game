@@ -27,7 +27,7 @@ describe('game API handler', () => {
         req.query.action = 'getLogs';
 
         const originalEnv = process.env;
-        process.env = { ...originalEnv, NOTION_API_KEY: '', HARUCHI_PAGE_ID: '', XP_LOG_DB_ID: '' };
+        process.env = { ...originalEnv, NOTION_API_KEY: '', NOTION_TOKEN: '', HARUCHI_PAGE_ID: '', XP_LOG_DB_ID: '' };
 
         await handler(req, res);
 
@@ -41,7 +41,7 @@ describe('game API handler', () => {
         req.query.action = 'getXp';
 
         const originalEnv = process.env;
-        process.env = { ...originalEnv, NOTION_API_KEY: '', HARUCHI_PAGE_ID: 'some-id' };
+        process.env = { ...originalEnv, NOTION_API_KEY: '', NOTION_TOKEN: '', HARUCHI_PAGE_ID: 'some-id' };
 
         await handler(req, res);
 

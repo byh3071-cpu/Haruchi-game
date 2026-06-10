@@ -1,0 +1,9 @@
+﻿# 환경변수·시크릿 — AI 인덱싱/읽기 차단
+.env
+.env.*
+.env.local
+.env.pro2
+*.pem
+*.key
+credentials.json
+secrets.json

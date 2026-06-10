@@ -10,3 +10,7 @@ node_modules/
 # 로그/캐시
 *.log
 .DS_Store
+
+# vhk init
+dist/
+*.tsbuildinfo
