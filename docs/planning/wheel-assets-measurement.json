@@ -1,0 +1,175 @@
+{
+  "measuredAt": "2026-06-10",
+  "files": {
+    "normal": {
+      "path": "tama/assets/hamster/normal.png",
+      "width": 500,
+      "height": 500,
+      "opaqueColors": 7838,
+      "contentBbox": {
+        "opaque": 14816,
+        "minX": 188,
+        "minY": 178,
+        "maxX": 311,
+        "maxY": 323,
+        "width": 124,
+        "height": 146
+      },
+      "displayScale": 0.58,
+      "integerScaleRecommended": [
+        {
+          "scale": 1,
+          "display": 500
+        }
+      ]
+    },
+    "wheel": {
+      "path": "tama/assets/animations/wheel.png",
+      "width": 500,
+      "height": 500,
+      "possibleGrids": [
+        {
+          "cols": 4,
+          "rows": 2,
+          "cellW": 125,
+          "cellH": 250
+        },
+        {
+          "cols": 2,
+          "rows": 4,
+          "cellW": 250,
+          "cellH": 125
+        },
+        {
+          "cols": 8,
+          "rows": 1,
+          "cellW": 62.5,
+          "cellH": 500
+        }
+      ],
+      "frameBboxes4x2": [
+        {
+          "opaque": 10154,
+          "minX": 0,
+          "minY": 108,
+          "maxX": 124,
+          "maxY": 231,
+          "width": 125,
+          "height": 124
+        },
+        {
+          "opaque": 10158,
+          "minX": 1,
+          "minY": 108,
+          "maxX": 124,
+          "maxY": 231,
+          "width": 124,
+          "height": 124
+        },
+        {
+          "opaque": 10006,
+          "minX": 0,
+          "minY": 108,
+          "maxX": 124,
+          "maxY": 231,
+          "width": 125,
+          "height": 124
+        },
+        {
+          "opaque": 10166,
+          "minX": 0,
+          "minY": 107,
+          "maxX": 123,
+          "maxY": 230,
+          "width": 124,
+          "height": 124
+        },
+        {
+          "opaque": 10295,
+          "minX": 1,
+          "minY": 20,
+          "maxX": 124,
+          "maxY": 144,
+          "width": 124,
+          "height": 125
+        },
+        {
+          "opaque": 10024,
+          "minX": 2,
+          "minY": 20,
+          "maxX": 124,
+          "maxY": 144,
+          "width": 123,
+          "height": 125
+        },
+        {
+          "opaque": 9882,
+          "minX": 2,
+          "minY": 20,
+          "maxX": 124,
+          "maxY": 143,
+          "width": 123,
+          "height": 124
+        },
+        {
+          "opaque": 10257,
+          "minX": 1,
+          "minY": 20,
+          "maxX": 124,
+          "maxY": 143,
+          "width": 124,
+          "height": 124
+        }
+      ]
+    },
+    "grooming": {
+      "path": "tama/assets/animations/spr_hamster_shedding.png",
+      "width": 500,
+      "height": 500,
+      "grid": "4×4",
+      "cellW": 125,
+      "cellH": 125,
+      "overlayDisplay": 120,
+      "overlayScale": 0.96
+    },
+    "bg": {
+      "path": "tama/assets/scene/bg.png",
+      "width": 1392,
+      "height": 768
+    }
+  },
+  "css": {
+    "normalWidth": 290,
+    "normalHeight": 290,
+    "groomingOverlayDefault": 120
+  },
+  "splitV1Targets": {
+    "wheel_hamster": {
+      "cols": 4,
+      "rows": 2,
+      "frames": 8
+    },
+    "wheel_base": {
+      "cols": 1,
+      "rows": 1,
+      "frames": 1
+    }
+  },
+  "recommendations": {
+    "hamsterDisplay": {
+      "note": "Current CSS 290px on 500px native is NOT integer scale (0.58×) — existing debt",
+      "nearestIntegerScales": [
+        {
+          "scale": 1,
+          "display": 500
+        }
+      ]
+    },
+    "splitV1CellSize": {
+      "optionA_matchNormalCanvas": "500×500 per frame (large)",
+      "optionB_matchGroomingCell": "125×125 per frame (matches grooming grid)",
+      "optionC_matchGroomingRow": "125×250 per frame (4×2 on 500×500 sheet like current wheel.png)",
+      "chosenForPhase2": "125×125 cells on 1000×250 hamster sheet (8×1) + 125×125 wheel_base — TBD after validate pass"
+    }
+  }
+}

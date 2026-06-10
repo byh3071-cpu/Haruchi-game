@@ -12,6 +12,10 @@
     "build": "echo 'No build step'",
     "lint": "eslint \"tama/js/**/*.js\" \"api/**/*.js\" \"notion-sync/**/*.js\"",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "asset:measure": "node scripts/measure-wheel-assets.mjs --write",
+    "validate:sprite": "node scripts/validate-sprite-sheet.mjs",
+    "compare:palette": "node scripts/compare-palette.mjs",
+    "validate:wheel-legacy": "node scripts/validate-sprite-sheet.mjs tama/assets/animations/wheel.png --cols 4 --rows 2",
     "clean": "Remove-Item -Recurse -Force node_modules, package-lock.json -ErrorAction Ignore; npm install"
   },
   "dependencies": {
@@ -22,6 +26,8 @@
     "cross-env": "^10.1.0",
     "eslint": "^10.0.1",
     "globals": "^17.3.0",
-    "jest": "^30.2.0"
+    "jest": "^30.2.0",
+    "pngjs": "^7.0.0",
+    "puppeteer-core": "^25.1.0"
   }
 }

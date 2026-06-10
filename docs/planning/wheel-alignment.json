@@ -1,0 +1,32 @@
+{
+  "measuredAt": "2026-06-10",
+  "method": "dark-outline flood fill (r<130,g<100,b<80) — verified visually via qa_alignment_proof.png",
+  "bgWheel": {
+    "note": "front rim outer circle in bg.png",
+    "centerX": 282.5,
+    "centerY": 320,
+    "diameter": 346,
+    "topY": 147,
+    "outlineBboxX": [110, 455]
+  },
+  "frameWheel": {
+    "note": "wheel_run.png frame 0, rim outline (slightly elliptical: taller than wide)",
+    "centerX": 112,
+    "equatorY": 101.5,
+    "diameterX": 147,
+    "outlineBbox": { "x": [39, 185], "y": [4, 216] }
+  },
+  "overlay": {
+    "scale": 2.3537,
+    "displayCellPx": 527,
+    "leftPx": 18.9,
+    "topPx": 81.1,
+    "leftPctOfBg": 1.36,
+    "topPctOfBg": 10.56,
+    "widthPctOfBg": 37.86
+  },
+  "caveats": [
+    "frame wheel is slightly elliptical vs bg circular — overlay is a bit taller; covers bg wheel fully (verified)",
+    "percentages are relative to the bg.png box (1392x768); in-game element must share that box"
+  ]
+}

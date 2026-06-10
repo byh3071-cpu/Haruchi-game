@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gate 0-B — 챗바퀴 애니메이션 A vs B 비교</title>
+  <style>
+    :root {
+      --bg: #1a1a2e;
+      --panel: #16213e;
+      --text: #eaeaea;
+      --muted: #94a3b8;
+      --accent: #f4a261;
+      --border: #334155;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+    }
+    header h1 { margin: 0 0 0.35rem; font-size: 1.25rem; }
+    header p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+    }
+    .controls label { font-size: 0.85rem; color: var(--muted); }
+    .controls input[type="range"] { width: 120px; }
+    .controls button {
+      background: var(--accent);
+      border: none;
+      color: #111;
+      padding: 0.45rem 0.9rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      padding: 1rem 1.5rem 2rem;
+    }
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .card h2 {
+      margin: 0;
+      padding: 0.85rem 1rem;
+      font-size: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .card .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+    .badge.rec { background: #22c55e33; color: #86efac; }
+    .badge.hard { background: #f9731633; color: #fdba74; }
+    .stage-wrap {
+      position: relative;
+      background: #2d4a3e;
+      aspect-ratio: 4/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      image-rendering: pixelated;
+    }
+    .stage {
+      position: relative;
+      width: 256px;
+      height: 256px;
+      transform-origin: center center;
+    }
+    .scene-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, #87ceeb 0%, #87ceeb 55%, #8fbc8f 55%, #6b8e6b 100%);
+      border-radius: 4px;
+    }
+    .wheel-static {
+      position: absolute;
+      left: 50%;
+      top: 58%;
+      width: 140px;
+      height: 140px;
+      margin-left: -70px;
+      margin-top: -70px;
+      border: 6px solid #5c4033;
+      border-radius: 50%;
+      opacity: 0.35;
+      pointer-events: none;
+    }
+    .wheel-static::after {
+      content: '';
+      position: absolute;
+      inset: 18px;
+      border: 3px dashed #8b6914;
+      border-radius: 50%;
+    }
+    /* A: Combined sprite sheet */
+    .combined-layer {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 128px;
+      height: 128px;
+      margin: -64px 0 0 -64px;
+      background-repeat: no-repeat;
+      image-rendering: pixelated;
+      animation: combinedRun 0.72s steps(8) infinite;
+    }
+    @keyframes combinedRun {
+      from { background-position: 0 0; }
+      to { background-position: -1024px 0; }
+    }
+    /* B: Split layers */
+    .split-wheel {
+      position: absolute;
+      left: 50%;
+      top: 58%;
+      width: 128px;
+      height: 128px;
+      margin: -64px 0 0 -64px;
+      image-rendering: pixelated;
+      animation: wheelSpin 0.72s linear infinite;
+      transform-origin: center center;
+    }
+    .split-hamster {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 96px;
+      height: 96px;
+      margin: -48px 0 0 -48px;
+      background-repeat: no-repeat;
+      image-rendering: pixelated;
+      animation: legsRun 0.72s steps(8) infinite;
+    }
+    @keyframes wheelSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes legsRun {
+      from { background-position: 0 0; }
+      to { background-position: -768px 0; }
+    }
+    .notes {
+      padding: 0.85rem 1rem 1rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .notes ul { margin: 0.5rem 0 0; padding-left: 1.2rem; }
+    .notes li { margin-bottom: 0.35rem; }
+    .verdict {
+      margin: 0 1.5rem 1.5rem;
+      padding: 1rem 1.25rem;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.9rem;
+    }
+    .verdict strong { color: var(--accent); }
+    .zoom-hint {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--muted);
+      padding-bottom: 0.5rem;
+    }
+    .paused .combined-layer,
+    .paused .split-wheel,
+    .paused .split-hamster {
+      animation-play-state: paused;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Gate 0-B 비교: 합성(A) vs 분리(B)</h1>
+    <p>실제 하루치 에셋 없이도 <strong>움직임 방식 차이</strong>를 눈으로 확인하는 도구입니다. Live Server 또는 브라우저에서 이 파일을 직접 엽니다.</p>
+  </header>
+
+  <div class="controls">
+    <button type="button" id="togglePlay">⏸ 일시정지</button>
+    <label>속도 <input type="range" id="speed" min="0.4" max="1.2" step="0.04" value="0.72"> <span id="speedVal">0.72s</span></label>
+    <label>줌 <input type="range" id="zoom" min="1" max="4" step="1" value="2"> <span id="zoomVal">2×</span></label>
+    <label><input type="checkbox" id="showGhost" checked> bg 정적 바퀴(유령) 표시</label>
+  </div>
+
+  <div class="grid" id="root">
+    <article class="card">
+      <h2>A. 합성 8프레임 <span class="badge rec">v1 권장</span></h2>
+      <div class="stage-wrap">
+        <div class="stage" data-stage>
+          <div class="scene-bg"></div>
+          <div class="wheel-static" data-ghost></div>
+          <div class="combined-layer" id="combinedLayer"></div>
+        </div>
+      </div>
+      <div class="zoom-hint">픽셀 선명도 확인: 줌 4× 권장</div>
+      <div class="notes">
+        <strong>방식:</strong> 햄스터+바퀴를 한 장 시트에 8칸 그림 → CSS <code>steps(8)</code>
+        <ul>
+          <li>정렬 포인트 1개 (오버레이 위치만 맞추면 됨)</li>
+          <li>바퀴 림은 프레임마다 <em>같이 그려 고정</em> → 회전감은 다리로 표현</li>
+          <li>실패 증상: 바퀴가 미끄러지듯 보일 수 있음 (대부분 수용 가능)</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="card">
+      <h2>B. 분리 (바퀴 rotate + 다리 시트) <span class="badge hard">v2 후보</span></h2>
+      <div class="stage-wrap">
+        <div class="stage" data-stage>
+          <div class="scene-bg"></div>
+          <div class="wheel-static" data-ghost></div>
+          <div class="split-wheel" id="splitWheel"></div>
+          <div class="split-hamster" id="splitHamster"></div>
+        </div>
+      </div>
+      <div class="zoom-hint">회전축·햄스터 위치 어긋남 주의</div>
+      <div class="notes">
+        <strong>방식:</strong> 바퀴 1장 + 햄스터 다리 8프레임 → 바퀴는 <code>rotate</code>, 다리는 <code>steps</code>
+        <ul>
+          <li>정렬 포인트 2개 (회전축 + 햄스터 앵커) — 난이도 높음</li>
+          <li>바퀴가 <em>진짜로</em> 돌아가서 가장 자연스러움</li>
+          <li>실패 증상: 바퀴·햄스터 어긋남, 서브픽셀 흐림, 이중 바퀴</li>
+        </ul>
+      </div>
+    </article>
+  </div>
+
+  <div class="verdict">
+    <strong>판단 가이드:</strong>
+    A에서 “다리만 움직이고 바퀴는 고정”이 거슬리지 않으면 → <strong>v1 = A (합성)</strong>으로 구현·출시.
+    B가 확실히 더 낫다고 느껴질 때만 v2로 분리 방식 검토.
+    결정 후 <code>docs/planning/wheel-gate0-asset.md</code> Gate 0-B에 체크하세요.
+  </div>
+
+  <script>
+    const FRAME_W = 128
+    const FRAME_H = 128
+    const FRAMES = 8
+
+    function makeCombinedSheet () {
+      const c = document.createElement('canvas')
+      c.width = FRAME_W * FRAMES
+      c.height = FRAME_H
+      const ctx = c.getContext('2d')
+      ctx.imageSmoothingEnabled = false
+
+      for (let i = 0; i < FRAMES; i++) {
+        const ox = i * FRAME_W
+        const phase = (i / FRAMES) * Math.PI * 2
+        drawWheelRim(ctx, ox + FRAME_W / 2, FRAME_H * 0.62, 52, phase * 0.15)
+        drawHamster(ctx, ox + FRAME_W / 2, FRAME_H * 0.48, phase)
+      }
+      return c.toDataURL()
+    }
+
+    function makeLegsSheet () {
+      const c = document.createElement('canvas')
+      c.width = 96 * FRAMES
+      c.height = 96
+      const ctx = c.getContext('2d')
+      ctx.imageSmoothingEnabled = false
+
+      for (let i = 0; i < FRAMES; i++) {
+        const ox = i * 96
+        const phase = (i / FRAMES) * Math.PI * 2
+        drawHamsterBodyOnly(ctx, ox + 48, 52, phase)
+      }
+      return c.toDataURL()
+    }
+
+    function makeWheelOnly () {
+      const c = document.createElement('canvas')
+      c.width = 128
+      c.height = 128
+      const ctx = c.getContext('2d')
+      ctx.imageSmoothingEnabled = false
+      drawWheelRim(ctx, 64, 78, 52, 0)
+      return c.toDataURL()
+    }
+
+    function drawWheelRim (ctx, cx, cy, r, rot) {
+      ctx.save()
+      ctx.translate(cx, cy)
+      ctx.rotate(rot)
+      ctx.fillStyle = '#8b6914'
+      ctx.beginPath()
+      ctx.arc(0, 0, r, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.strokeStyle = '#5c4033'
+      ctx.lineWidth = 6
+      ctx.stroke()
+      for (let s = 0; s < 8; s++) {
+        const a = (s / 8) * Math.PI * 2
+        ctx.strokeStyle = '#5c4033'
+        ctx.lineWidth = 3
+        ctx.beginPath()
+        ctx.moveTo(Math.cos(a) * (r - 12), Math.sin(a) * (r - 12))
+        ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r)
+        ctx.stroke()
+      }
+      ctx.restore()
+    }
+
+    function drawHamster (ctx, cx, cy, phase) {
+      drawHamsterBodyOnly(ctx, cx, cy, phase)
+    }
+
+    function drawHamsterBodyOnly (ctx, cx, cy, phase) {
+      const legSwing = Math.sin(phase) * 10
+      const bodyY = cy + Math.sin(phase * 2) * 3
+
+      ctx.fillStyle = '#f5d0c5'
+      ctx.fillRect(cx - 28, bodyY - 22, 56, 40)
+
+      ctx.fillStyle = '#e8a598'
+      ctx.fillRect(cx + 18, bodyY - 8, 14, 12)
+
+      ctx.fillStyle = '#1a1a1a'
+      ctx.fillRect(cx + 24, bodyY - 6, 4, 4)
+      ctx.fillStyle = '#fff'
+      ctx.fillRect(cx + 25, bodyY - 5, 2, 2)
+
+      ctx.fillStyle = '#f5d0c5'
+      ctx.fillRect(cx - 32, bodyY - 28, 12, 12)
+
+      ctx.fillStyle = '#c49a6c'
+      ctx.fillRect(cx - 8 + legSwing, bodyY + 16, 10, 14)
+      ctx.fillRect(cx + 6 - legSwing, bodyY + 16, 10, 14)
+
+      ctx.strokeStyle = '#1a1a1a'
+      ctx.lineWidth = 2
+      ctx.strokeRect(cx - 28, bodyY - 22, 56, 40)
+    }
+
+    const combinedUrl = makeCombinedSheet()
+    const legsUrl = makeLegsSheet()
+    const wheelUrl = makeWheelOnly()
+
+    const combinedLayer = document.getElementById('combinedLayer')
+    combinedLayer.style.backgroundImage = `url(${combinedUrl})`
+    combinedLayer.style.backgroundSize = `${FRAME_W * FRAMES}px ${FRAME_H}px`
+    combinedLayer.style.width = `${FRAME_W}px`
+    combinedLayer.style.height = `${FRAME_H}px`
+
+    const splitWheel = document.getElementById('splitWheel')
+    splitWheel.style.backgroundImage = `url(${wheelUrl})`
+    splitWheel.style.backgroundSize = '128px 128px'
+
+    const splitHamster = document.getElementById('splitHamster')
+    splitHamster.style.backgroundImage = `url(${legsUrl})`
+    splitHamster.style.backgroundSize = `${96 * FRAMES}px 96px`
+
+    let playing = true
+    const root = document.getElementById('root')
+    document.getElementById('togglePlay').addEventListener('click', () => {
+      playing = !playing
+      root.classList.toggle('paused', !playing)
+      document.getElementById('togglePlay').textContent = playing ? '⏸ 일시정지' : '▶ 재생'
+    })
+
+    function applySpeed (sec) {
+      document.documentElement.style.setProperty('--dur', `${sec}s`)
+      combinedLayer.style.animationDuration = `${sec}s`
+      splitWheel.style.animationDuration = `${sec}s`
+      splitHamster.style.animationDuration = `${sec}s`
+      document.getElementById('speedVal').textContent = `${sec}s`
+    }
+
+    document.getElementById('speed').addEventListener('input', (e) => {
+      applySpeed(parseFloat(e.target.value))
+    })
+
+    document.getElementById('zoom').addEventListener('input', (e) => {
+      const z = parseInt(e.target.value, 10)
+      document.querySelectorAll('[data-stage]').forEach((el) => {
+        el.style.transform = `scale(${z})`
+      })
+      document.getElementById('zoomVal').textContent = `${z}×`
+    })
+
+    document.getElementById('showGhost').addEventListener('change', (e) => {
+      document.querySelectorAll('[data-ghost]').forEach((el) => {
+        el.style.display = e.target.checked ? 'block' : 'none'
+      })
+    })
+
+    document.querySelectorAll('[data-stage]').forEach((el) => {
+      el.style.transform = 'scale(2)'
+    })
+    applySpeed(0.72)
+  </script>
+</body>
+</html>

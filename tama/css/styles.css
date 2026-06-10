@@ -983,6 +983,40 @@
       display: block;
     }
 
+    /* 챗바퀴 달리기 오버레이 (Pro, D 버튼)
+       위치·크기는 JS가 bg.png cover 수식으로 계산 (docs/planning/wheel-alignment.json) */
+    .wheel-overlay {
+      position: absolute;
+      /* styles.css 기준 상대 경로 (tama/css/ → tama/assets/) */
+      background-image: url('../assets/animations/wheel_run.png');
+      background-size: 800% 100%;
+      background-repeat: no-repeat;
+      background-position: 0% 0;
+      image-rendering: pixelated;
+      pointer-events: none;
+      z-index: 20;
+      display: none;
+    }
+
+    .wheel-overlay.active {
+      display: block;
+      animation: wheelRun var(--wheel-duration, 0.63s) steps(7) infinite;
+    }
+
+    /* 마무리 컷: 8번째 프레임(정면 포즈) 1회 표시 */
+    .wheel-overlay.finish {
+      display: block;
+      animation: none;
+      background-position: 100% 0;
+    }
+
+    /* 8프레임 시트(800%)에서 프레임 k의 position-x = k*100/7%.
+       0%→100%를 steps(7)로 가면 프레임 0~6 루프 (7번 프레임은 finish 전용) */
+    @keyframes wheelRun {
+      from { background-position: 0% 0; }
+      to { background-position: 100% 0; }
+    }
+
     /* 하루치 쓰다듬기 클릭 영역 */
     .hamster-click-area {
       position: absolute;
@@ -2870,4 +2904,52 @@
       .log-panel-clickable {
         min-height: 44px;
       }
+    }
+
+    /* 로컬 Live Server 전용 — Pro/Basic 프리뷰 토글 (배포 URL에는 미표시) */
+    .dev-tier-toggle {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 11px;
+      pointer-events: auto;
+    }
+
+    .dev-tier-label {
+      color: rgba(255, 255, 255, 0.65);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding-right: 2px;
+    }
+
+    .dev-tier-btn {
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.08);
+      color: #e8e8e8;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .dev-tier-btn.is-active {
+      background: #9bbc0f;
+      color: #0f380f;
+      border-color: #8bac0f;
+    }
+
+    .dev-tier-btn:not(.is-active):hover {
+      background: rgba(255, 255, 255, 0.16);
     }

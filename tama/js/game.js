@@ -67,7 +67,7 @@ const i18n = {
     goal_complete_bonus: "🎯 목표 달성! 보너스", goal_complete_change: "🎯 목표 달성! (목표 변경으로 달성)", goal_target_changed: "🎯 일일 목표가 {0}개로 변경되었습니다.",
     bgm_mute: "🔇 BGM 음소거", bgm_play: "🔊 BGM 재생", coupon_empty: "📌 쿠폰 번호를 입력해 주세요.",
     notion_sync_msg: "📥 노션에서 +{0} XP 불러옴", cat_notion_sync: "노션동기화", cat_attendance: "출석보너스", cat_goal_bonus: "목표보너스",
-    action_grooming: "하루치 그루밍 중 ...", action_btn_d: "버튼 D 클릭", action_full_sleep: "밥 먹고 잠들었어요.. 기분 좋아요 😴",
+    action_grooming: "하루치 그루밍 중 ...", action_btn_d: "버튼 D 클릭", action_wheel: "하루치가 챗바퀴를 신나게 달려요! 🎡", action_full_sleep: "밥 먹고 잠들었어요.. 기분 좋아요 😴",
     clean_poop: "앗, 하루치가 똥을 쌌어요! (EXP -5)", cat_clean: "청소", clean_done: "방을 청소했어요! +5", clean_already: "방이 이미 깨끗해요.",
     err_img_sad: "⚠ 오류: sad 이미지가 없어요!", err_img_general: "⚠ 오류: 이미지가 없어요!", err_img_sleep: "⚠ 오류: 잠자는 이미지가 없어요!",
     err_img_water: "⚠ 오류: 물 마시는 이미지가 없어요!", err_img_back: "⚠ 오류: back 이미지가 없어요!", err_groom_overlay: "⚠ 그루밍 오버레이를 찾을 수 없습니다.",
@@ -129,7 +129,7 @@ const i18n = {
     goal_complete_bonus: "🎯 Goal Achieved! Bonus", goal_complete_change: "🎯 Goal Achieved! (By target change)", goal_target_changed: "🎯 Daily goal changed to {0}.",
     bgm_mute: "🔇 BGM Muted", bgm_play: "🔊 BGM Playing", coupon_empty: "📌 Please enter a coupon code.",
     notion_sync_msg: "📥 Retrieved +{0} XP from Notion", cat_notion_sync: "NotionSync", cat_attendance: "Attendance", cat_goal_bonus: "GoalBonus",
-    action_grooming: "Haruchi is grooming...", action_btn_d: "Button D clicked", action_full_sleep: "Fell asleep happily after eating 😴",
+    action_grooming: "Haruchi is grooming...", action_btn_d: "Button D clicked", action_wheel: "Haruchi is running on the wheel! 🎡", action_full_sleep: "Fell asleep happily after eating 😴",
     clean_poop: "Oops, Haruchi pooped! (EXP -5)", cat_clean: "Cleaning", clean_done: "Cleaned the room! +5", clean_already: "The room is already clean.",
     err_img_sad: "⚠ Error: sad image missing!", err_img_general: "⚠ Error: image missing!", err_img_sleep: "⚠ Error: sleeping image missing!",
     err_img_water: "⚠ Error: drinking image missing!", err_img_back: "⚠ Error: back image missing!", err_groom_overlay: "⚠ Error: grooming overlay missing.",
@@ -194,7 +194,7 @@ const i18n = {
     goal_complete_bonus: "🎯 目标达成！奖励", goal_complete_change: "🎯 目标达成！(目标已修改)", goal_target_changed: "🎯 每日目标已修改为 {0} 个。",
     bgm_mute: "🔇 BGM 已静音", bgm_play: "🔊 BGM 正在播放", coupon_empty: "📌 请输入兑换码。",
     notion_sync_msg: "📥 从 Notion 读取了 +{0} XP", cat_notion_sync: "Notion同步", cat_attendance: "签到奖励", cat_goal_bonus: "目标奖励",
-    action_grooming: "Haruchi正在理毛...", action_btn_d: "点击了 D 按钮", action_full_sleep: "吃饱喝足地睡着了...很开心 😴",
+    action_grooming: "Haruchi正在理毛...", action_btn_d: "点击了 D 按钮", action_wheel: "Haruchi在跑轮上飞奔! 🎡", action_full_sleep: "吃饱喝足地睡着了...很开心 😴",
     clean_poop: "哎呀，Haruchi 拉屎了！(EXP -5)", cat_clean: "打扫房间", clean_done: "打扫了房间！+5", clean_already: "房间已经很干净了。",
     err_img_sad: "⚠ 错误：找不到 sad 图像！", err_img_general: "⚠ 错误：找不到图像！", err_img_sleep: "⚠ 错误：找不到睡觉的图像！",
     err_img_water: "⚠ 错误：找不到喝水的图像！", err_img_back: "⚠ 错误：找不到背影图像！", err_groom_overlay: "⚠ 找不到理毛覆盖层。",
@@ -1030,8 +1030,13 @@ function handleBtn(btn) {
   } else if (btn === 'C') {
     toggleBgmMute();
   } else if (btn === 'D') {
-    // D 버튼 기능 (추후 확장 가능)
-    log(t('action_btn_d'));
+    if (window.IS_PRO) {
+      log(t('action_wheel'));
+      showWheelAnimation();
+    } else {
+      // Basic: 기존 placeholder 유지
+      log(t('action_btn_d'));
+    }
   }
 }
 
@@ -1954,6 +1959,78 @@ function showGroomingAnimation() {
 
   // setInterval로 애니메이션 시작 (프레임별 가변 속도 적용)
   groomingAnimationInterval = setInterval(advanceFrame, getGroomingAnimationSpeed(currentGroomingFrame));
+}
+
+/* ===== 챗바퀴 달리기 애니메이션 (Pro, D 버튼) =====
+   에셋: assets/animations/wheel_run.png (8×1, 셀 224×224)
+   프레임 0~6 루프(CSS steps) + 프레임 7 마무리 정면 포즈 1회.
+   정합값 출처: docs/planning/wheel-alignment.json */
+const WHEEL_BG_NATIVE = { w: 1392, h: 768 };
+const WHEEL_ALIGN = { leftPx: 18.9, topPx: 81.1, sizePx: 527.2 };
+const WHEEL_LOOP_MS = 630;       // 7프레임 × 90ms
+const WHEEL_LOOP_COUNT = 4;      // 루프 횟수 (~2.5초)
+const WHEEL_FINISH_MS = 700;     // 마무리 프레임 표시 시간
+let wheelAnimationTimeout = null;
+
+/* bg.png가 object-fit: cover / object-position: 30% bottom 으로 그려질 때
+   bg 원본 좌표 → screen-top 컨테이너 좌표 변환 */
+function computeWheelOverlayRect(container) {
+  const cw = container.clientWidth;
+  const ch = container.clientHeight;
+  const scale = Math.max(cw / WHEEL_BG_NATIVE.w, ch / WHEEL_BG_NATIVE.h);
+  const drawnW = WHEEL_BG_NATIVE.w * scale;
+  const drawnH = WHEEL_BG_NATIVE.h * scale;
+  const offsetX = (cw - drawnW) * 0.30; // object-position x = 30%
+  const offsetY = ch - drawnH;          // object-position y = bottom
+  return {
+    left: offsetX + WHEEL_ALIGN.leftPx * scale,
+    top: offsetY + WHEEL_ALIGN.topPx * scale,
+    size: WHEEL_ALIGN.sizePx * scale
+  };
+}
+
+function showWheelAnimation() {
+  if (game.isBusy) return;
+  const overlay = document.getElementById('wheelOverlay');
+  const container = document.querySelector('.screen-top');
+  if (!overlay || !container) return;
+  game.isBusy = true;
+  game.lastActionTime = Date.now();
+
+  // 햄스터 숨김 (그루밍 패턴과 동일)
+  hamster.classList.remove('bounce', 'sleeping', 'drinking');
+  hamster.style.opacity = '0';
+  hamster.style.visibility = 'hidden';
+
+  const rect = computeWheelOverlayRect(container);
+  overlay.style.left = rect.left + 'px';
+  overlay.style.top = rect.top + 'px';
+  overlay.style.width = rect.size + 'px';
+  overlay.style.height = rect.size + 'px';
+
+  overlay.classList.remove('finish');
+  overlay.classList.add('active');
+
+  wheelAnimationTimeout = setTimeout(() => {
+    overlay.classList.remove('active');
+    overlay.classList.add('finish');
+    wheelAnimationTimeout = setTimeout(stopWheelAnimation, WHEEL_FINISH_MS);
+  }, WHEEL_LOOP_MS * WHEEL_LOOP_COUNT);
+}
+
+function stopWheelAnimation() {
+  if (wheelAnimationTimeout) {
+    clearTimeout(wheelAnimationTimeout);
+    wheelAnimationTimeout = null;
+  }
+  const overlay = document.getElementById('wheelOverlay');
+  if (overlay) {
+    overlay.classList.remove('active', 'finish');
+  }
+  hamster.style.opacity = '';
+  hamster.style.visibility = '';
+  hamster.classList.add('bounce');
+  game.isBusy = false;
 }
 
 /* 그루밍 애니메이션 체크 타이머 */

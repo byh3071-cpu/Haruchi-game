@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phase 2 — 챗바퀴 후보 A/B 실제 bg 오버레이 비교</title>
+  <style>
+    :root {
+      --bg: #1a1a2e;
+      --panel: #16213e;
+      --text: #eaeaea;
+      --muted: #94a3b8;
+      --accent: #f4a261;
+      --border: #334155;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+    }
+    header h1 { margin: 0 0 0.35rem; font-size: 1.2rem; }
+    header p { margin: 0; color: var(--muted); font-size: 0.85rem; }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 0.9rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      font-size: 0.85rem;
+    }
+    .controls label { color: var(--muted); }
+    .controls button {
+      background: var(--accent);
+      border: none;
+      color: #111;
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      padding: 1rem 1.5rem 2rem;
+    }
+    @media (max-width: 1100px) { .grid { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .card h2 {
+      margin: 0;
+      padding: 0.8rem 1rem;
+      font-size: 0.95rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      padding: 0.12rem 0.45rem;
+      border-radius: 4px;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+    .badge.match { background: #22c55e33; color: #86efac; }
+    .badge.diff { background: #f9731633; color: #fdba74; }
+    .scene {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1392/768;
+      background-image: url('../../tama/assets/scene/bg.png');
+      background-size: 100% 100%;
+      image-rendering: pixelated;
+      overflow: hidden;
+    }
+    .overlay {
+      position: absolute;
+      background-repeat: no-repeat;
+      image-rendering: pixelated;
+    }
+    /* Candidate A: 8x1 sheet, frame 125x125 */
+    .ovA {
+      width: calc(125px * var(--ovA-scale, 1));
+      height: calc(125px * var(--ovA-scale, 1));
+      background-image: url('../../tama/assets/animations/_candidates/candidateA_legacy_wheel_8x1.png');
+      background-size: calc(1000px * var(--ovA-scale, 1)) calc(125px * var(--ovA-scale, 1));
+      animation: runA var(--dur, 0.72s) steps(8) infinite;
+    }
+    @keyframes runA {
+      from { background-position: 0 0; }
+      to { background-position: calc(-1000px * var(--ovA-scale, 1)) 0; }
+    }
+    /* Candidate B: 8x1 sheet — sized in % of scene (resolution independent) */
+    .ovB {
+      width: var(--ovB-w, 37.86%);
+      aspect-ratio: 1 / 1;
+      background-image: url('../../tama/assets/animations/wheel_run.png');
+      background-size: 800% 100%;
+      animation: runB var(--dur, 0.72s) steps(8) infinite;
+    }
+    /* 800% sheet: frame k at background-position-x = k*100/7 % */
+    @keyframes runB {
+      from { background-position: 0% 0; }
+      to { background-position: 114.28571% 0; }
+    }
+    .notes {
+      padding: 0.8rem 1rem 1rem;
+      font-size: 0.83rem;
+      color: var(--muted);
+    }
+    .notes ul { margin: 0.4rem 0 0; padding-left: 1.2rem; }
+    .notes li { margin-bottom: 0.3rem; }
+    .paused .overlay { animation-play-state: paused; }
+    .pos-readout {
+      font-family: ui-monospace, monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      padding: 0 1rem 0.6rem;
+    }
+    .verdict {
+      margin: 0 1.5rem 1.5rem;
+      padding: 1rem 1.25rem;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.88rem;
+    }
+    .verdict strong { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Phase 2 — 후보 A vs B (실제 bg.png 오버레이)</h1>
+    <p>드래그로 오버레이 위치 조정 가능. 새 그림 없이 <strong>기존 에셋에서 추출</strong>한 후보입니다. Live Server로 여세요 (파일 직접 열기는 이미지 경로 차단될 수 있음).</p>
+  </header>
+
+  <div class="controls">
+    <button type="button" id="togglePlay">⏸ 일시정지</button>
+    <label>속도 <input type="range" id="speed" min="0.4" max="1.4" step="0.04" value="0.72"> <span id="speedVal">0.72s</span></label>
+    <label>A 크기 <input type="range" id="scaleA" min="0.5" max="3" step="0.05" value="1.6"> <span id="scaleAVal">1.6×</span></label>
+    <label>B 크기 <input type="range" id="scaleB" min="20" max="60" step="0.2" value="37.86"> <span id="scaleBVal">37.86%</span></label>
+  </div>
+
+  <div class="grid" id="root">
+    <article class="card">
+      <h2>후보 A — legacy wheel.png 재슬라이스 <span class="badge diff">바퀴살 회전 O · bg 바퀴와 디자인 다름</span></h2>
+      <div class="scene">
+        <div class="overlay ovA" id="ovA" style="left: 6%; top: 18%;"></div>
+      </div>
+      <div class="pos-readout" id="posA">A: left 6%, top 18%</div>
+      <div class="notes">
+        <ul>
+          <li>125×125 × 8프레임 — 격자 정규화 완료, 바퀴살이 실제로 회전</li>
+          <li>스타일: 햄스터 색이 normal.png보다 주황빛 · 바퀴는 살형(스포크), bg는 원통형</li>
+          <li>bg 정적 바퀴를 <strong>가리는</strong> 방식으로 써야 함 (디자인 불일치)</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="card">
+      <h2>후보 B — wheel_run.png (정렬 완료 ✅ 채택) <span class="badge match">bg 바퀴와 같은 디자인 (사다리 포함)</span></h2>
+      <div class="scene">
+        <div class="overlay ovB" id="ovB" style="left: 1.36%; top: 10.56%;"></div>
+      </div>
+      <div class="pos-readout" id="posB">B: left 1.36%, top 10.56% (자동 측정값 — wheel-alignment.json)</div>
+      <div class="notes">
+        <ul>
+          <li>224×224 × 8프레임 — 콘텐츠 검출로 정규화, 유령 픽셀 제거</li>
+          <li>스타일: <strong>bg.png 챗바퀴·사다리와 동일 디자인</strong> — 같은 배치에서 나온 에셋으로 추정</li>
+          <li>주의: 8번째 프레임이 정면 포즈 (마무리 컷) — 루프용으로는 7프레임으로 잘라야 자연스러울 수 있음</li>
+          <li>프레임별 콘텐츠 크기 146~155px로 약간 들쭉 — 정제 단계에서 바퀴 중심 기준 재정렬 필요</li>
+        </ul>
+      </div>
+    </article>
+  </div>
+
+  <div class="verdict">
+    <strong>판단 포인트:</strong>
+    ① bg의 정적 바퀴와 이중으로 보이지 않는가 (오버레이를 정확히 겹치거나 가리거나)
+    ② 햄스터 스타일이 normal.png와 동일 계열인가
+    ③ 루프가 자연스러운가 (B는 8번째 프레임 점검).
+    드래그로 bg 바퀴 위에 정확히 올려보고 판단하세요.
+  </div>
+
+  <script>
+    const root = document.getElementById('root')
+    let playing = true
+
+    document.getElementById('togglePlay').addEventListener('click', () => {
+      playing = !playing
+      root.classList.toggle('paused', !playing)
+      document.getElementById('togglePlay').textContent = playing ? '⏸ 일시정지' : '▶ 재생'
+    })
+
+    document.getElementById('speed').addEventListener('input', (e) => {
+      document.documentElement.style.setProperty('--dur', e.target.value + 's')
+      document.getElementById('speedVal').textContent = e.target.value + 's'
+    })
+
+    document.getElementById('scaleA').addEventListener('input', (e) => {
+      document.documentElement.style.setProperty('--ovA-scale', e.target.value)
+      document.getElementById('scaleAVal').textContent = e.target.value + '×'
+    })
+    document.getElementById('scaleB').addEventListener('input', (e) => {
+      document.documentElement.style.setProperty('--ovB-w', e.target.value + '%')
+      document.getElementById('scaleBVal').textContent = e.target.value + '%'
+    })
+    document.documentElement.style.setProperty('--ovA-scale', '1.6')
+    document.documentElement.style.setProperty('--ovB-w', '37.86%')
+
+    function makeDraggable (el, readoutId, label) {
+      let dragging = false
+      let startX, startY, origL, origT
+      el.style.cursor = 'grab'
+      el.addEventListener('pointerdown', (e) => {
+        dragging = true
+        startX = e.clientX
+        startY = e.clientY
+        const scene = el.parentElement.getBoundingClientRect()
+        const rect = el.getBoundingClientRect()
+        origL = ((rect.left - scene.left) / scene.width) * 100
+        origT = ((rect.top - scene.top) / scene.height) * 100
+        el.setPointerCapture(e.pointerId)
+      })
+      el.addEventListener('pointermove', (e) => {
+        if (!dragging) return
+        const scene = el.parentElement.getBoundingClientRect()
+        const newL = origL + ((e.clientX - startX) / scene.width) * 100
+        const newT = origT + ((e.clientY - startY) / scene.height) * 100
+        el.style.left = newL.toFixed(1) + '%'
+        el.style.top = newT.toFixed(1) + '%'
+        document.getElementById(readoutId).textContent =
+          label + ': left ' + newL.toFixed(1) + '%, top ' + newT.toFixed(1) + '%'
+      })
+      el.addEventListener('pointerup', () => { dragging = false })
+    }
+
+    makeDraggable(document.getElementById('ovA'), 'posA', 'A')
+    makeDraggable(document.getElementById('ovB'), 'posB', 'B')
+  </script>
+</body>
+</html>

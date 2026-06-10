@@ -31,9 +31,19 @@
     /* === 2026-02-20 Update v3 (UI & Notion Sync) === */
     window.APP_TIER = (function () {
       if (typeof location === 'undefined') return 'basic';
-      if (location.search.includes('tier=pro')) return 'pro';
+      var params = new URLSearchParams(location.search);
+      var tierParam = params.get('tier');
+      if (tierParam === 'pro' || tierParam === 'basic') return tierParam;
       var h = location.hostname || '';
       if (h.includes('haruchipro') || h.includes('-pro') || h.includes('.pro.')) return 'pro';
+      /* 로컬 Live Server: Pro 프리뷰 기본 (노션 없이 UI만). ?tier=basic 또는 토글로 Basic 전환 */
+      if (/^(localhost|127\.0\.0\.1)$/i.test(h)) {
+        try {
+          var saved = localStorage.getItem('haruchi_dev_tier');
+          if (saved === 'basic' || saved === 'pro') return saved;
+        } catch (_) { /* private mode */ }
+        return 'pro';
+      }
       return 'basic';
     })();
     window.IS_PRO = window.APP_TIER === 'pro';
@@ -76,6 +86,11 @@
     </div>
     <div class="credit-start">제작 by bbaekyohan</div>
     <div class="start-tap-hint">화면을 눌러 시작</div>
+    <div class="dev-tier-toggle" id="devTierToggle" hidden aria-label="로컬 프리뷰 버전 전환">
+      <span class="dev-tier-label">Preview</span>
+      <button type="button" class="dev-tier-btn" data-tier="basic">Basic</button>
+      <button type="button" class="dev-tier-btn" data-tier="pro">Pro</button>
+    </div>
   </div>
 
   <div class="device-wrapper" id="deviceWrapper" style="display: none;">
@@ -88,6 +103,7 @@
           <img src="./assets/scene/bg.png" class="bg-image" alt="배경">
           <img src="./assets/hamster/normal.png" class="hamster bounce" id="hamster" alt="하루치">
           <div class="grooming-overlay" id="groomingOverlay"></div>
+          <div class="wheel-overlay" id="wheelOverlay"></div>
           <div class="hamster-click-area" onclick="handleHamsterClick()" title="클릭: 쓰다듬기" data-i18n-title="tooltip_pet">
           </div>
 
@@ -284,6 +300,30 @@
   </div>
   <div class="credit-game" data-i18n="credit">제작 by bbaekyohan</div>
 
+  <script>
+    (function initDevTierToggle() {
+      var isLocal = /^(localhost|127\.0\.0\.1)$/i.test(location.hostname || '');
+      if (!isLocal) return;
+      document.addEventListener('DOMContentLoaded', function () {
+        var root = document.getElementById('devTierToggle');
+        if (!root) return;
+        root.hidden = false;
+        var current = window.APP_TIER;
+        root.querySelectorAll('.dev-tier-btn').forEach(function (btn) {
+          var tier = btn.getAttribute('data-tier');
+          btn.classList.toggle('is-active', tier === current);
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (tier === current) return;
+            try { localStorage.setItem('haruchi_dev_tier', tier); } catch (_) { /* ignore */ }
+            var url = new URL(location.href);
+            url.searchParams.set('tier', tier);
+            location.assign(url.toString());
+          });
+        });
+      });
+    })();
+  </script>
   <script src="js/game.js"></script>
 
   <!-- Vercel Speed Insights: 웹사이트 성능 모니터링 -->
