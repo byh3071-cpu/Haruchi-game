@@ -3,11 +3,13 @@ vhk_format: 1
 type: goal
 id: 2
 title: Pro 2.0 Notion 자동 동기화 검증
-status: NOT_STARTED
+status: BLOCKED
 priority: P1
 ---
 
 # Goal 2: Pro 2.0 Notion 자동 동기화 검증
+
+> **보류 (2026-06-10):** 웹앱 Pro UI 먼저 — Notion 연동 검증은 이후 재개.
 
 ## 배경
 원격에서 pull 한 Pro 2.0 MVP(trigger-sync API, Make.com 연동, cron 5분 간격)가

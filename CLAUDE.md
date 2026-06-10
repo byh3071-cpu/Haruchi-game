@@ -12,7 +12,7 @@ tags: [process, documentation]
 ## 현재 상태
 - **Phase:** Phase 1 — MVP
 - **블로커:** 없음
-- **다음 액션:** Goal 1 완료 처리 후 Notion 동기화 검증 (Goal 2)
+- **다음 액션:** 웹앱 Pro UI 개발 (Goal 3 로직 분리 병행) — Notion(Goal 2) 보류
 - **마지막 업데이트:** 2026-06-10
 
 <!-- vhk:rules:start -->
