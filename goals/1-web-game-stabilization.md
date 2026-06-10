@@ -3,8 +3,9 @@ vhk_format: 1
 type: goal
 id: 1
 title: 4개월 공백 후 웹 게임 안정화
-status: IN_PROGRESS
+status: DONE
 priority: P0
+completed: 2026-06-10
 ---
 
 # Goal 1: 4개월 공백 후 웹 게임 안정화

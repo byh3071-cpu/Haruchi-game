@@ -12,7 +12,7 @@ tags: [process, documentation]
 ## 현재 상태
 - **Phase:** Phase 1 — MVP
 - **블로커:** 없음
-- **다음 액션:** **FILL**
+- **다음 액션:** Goal 1 완료 처리 후 Notion 동기화 검증 (Goal 2)
 - **마지막 업데이트:** 2026-06-10
 
 <!-- vhk:rules:start -->
