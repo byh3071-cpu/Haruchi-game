@@ -49,7 +49,7 @@
 - 에셋(tama/assets/)은 로컬 버전이 SoT — 원격이 덮어쓰지 않도록 주의
 - 게임 로직은 추후 ESP32 펌웨어 포팅을 고려해 UI 와 분리 유지
 
-<!-- YOHAN-ROSTER-CARD:BEGIN (managed by yohan-brain ops/propagation ??SoT瑜?怨좎퀜?? 吏곸젒?섏젙 湲덉?) -->
+<!-- YOHAN-ROSTER-CARD:BEGIN (managed by yohan-brain ops/propagation — SoT를 고쳐라, 직접수정 금지) -->
 ## 상시 지휘자 — 라우팅 카드 (yohan ecosystem)
 
 > SoT: yohan-brain `memory/core/agent-roster.yaml` `conductor_always_on` (v0.4+, status=active면 obey).
