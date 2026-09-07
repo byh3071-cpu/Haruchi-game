@@ -1,10 +1,9 @@
-# Next Task
+# 현재 작업 확인
 
-_Auto-updated 2026-06-10T04:15:36.167Z via `vhk goal next`._
+> 상태 조회용 진입점. 실행 상태·완료 조건은 아래 원본과 현재 Git에서 확인한다.
 
-```
-TASK: Goal 1 — 4개월 공백 후 웹 게임 안정화
-  status: IN_PROGRESS
-  priority: P0
-  file: goals\1-web-game-stabilization.md
-```
+- [goals/1-web-game-stabilization.md](../../goals/1-web-game-stabilization.md)
+- [goals/2-notion-sync-verification.md](../../goals/2-notion-sync-verification.md)
+
+- 작업 전 `goals/*.md` frontmatter와 보류·차단 사유를 함께 읽고, 이번 세션에서 수행할 작업 하나를 선택한다.
+- 과거 스냅샷만으로 작업 재개·완료·배포를 판단하지 않는다.
